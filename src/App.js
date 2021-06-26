@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState,useContext} from 'react';
+// components
+import Banner from './components/Banner';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import TimesheetEntry from './components/TimesheetEntry';
+// other internal
+import {UserContext} from "./contexts/UserContext";
+import AppCss from './styles/app.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [user, setUser] = useState({firstname: "Carlos", lastname: "Weatherby"});
+    const [page, setPage] = useState("TimesheetEntry"); // ['Login','Logout', 'Signup', 'TimesheetEntry', 'AddAnother']
+    return (
+        <>
+            <header>              
+                <UserContext.Provider value={{user, setUser}}>
+                    <Banner />
+                    {page.toUpperCase()==='LOGIN'&&<Login setPage={setPage}/>}
+                    {page.toUpperCase()==='SIGNUP'&&<Signup setPage={setPage}/>}
+                    {page.toUpperCase()==='TIMESHEETENTRY'&&<TimesheetEntry />}
+                </UserContext.Provider>
+            </header>
+            <AppCss />
+        </>
+    );
 }
 
 export default App;
