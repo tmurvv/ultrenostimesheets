@@ -180,11 +180,17 @@ function TimesheetEntry({setPage}) {
         console.log('here')
         async function getSupportLists() {
             const tasks = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
+            // const tasks = await axios.get(`https://findaharp-api.herokuapp.com/api/v1/`);
+            // const tasks = await axios.get(`http://localhost:3000`);
             console.log(tasks.data)
             setTasks(tasks.data)
         }
-      
-        getSupportLists()
+        try {
+            getSupportLists()
+        } catch(e) {
+            console.log(e.message)
+        }
+        
         
     },[]);
 
