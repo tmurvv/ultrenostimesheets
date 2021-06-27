@@ -7,6 +7,8 @@ import uuid from 'react-uuid';
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
 import {UserContext} from "../contexts/UserContext";
+import {ENTRY_INIT} from "../constants/inits";
+import {calcHoursWorked} from "../utils/helpers";
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -20,63 +22,89 @@ import {UserContext} from "../contexts/UserContext";
 //     loginClasses: 'login-signup l-attop',
 //     signupClasses: 'login-signup s-atbottom'
 // }
-function TimesheetEntry({setPage}) {
+function TimesheetEntry(props) {
     const { user } = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
+    const [currentJobs, setCurrentJobs] = useState();
+    const [fullCurrentJobs, setFullCurrentJobs] = useState();
+    const [lunchTimes, setLunchTimes] = useState();
+    const [entry, setEntry]= useState(ENTRY_INIT);
     // declare variables
     // const { setUser } = useContext(UserContext);
     // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
     // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
     // const [needVerify, setNeedVerify] = useState(false);
-    const [userLogin, setUserLogin] = useState({
-        loginemail: '',
-        loginpassword: '',
-        loginchange: false
-    });
+    // const [userLogin, setUserLogin] = useState({
+    //     loginemail: '',
+    //     loginpassword: '',
+    //     loginchange: false
+    // });
     const handleChange = (evt) => {
         switch (evt.target.name) {
-            case 'loginemail': 
-                setUserLogin({...userLogin, loginemail: evt.target.value, loginchange: true});
+            case 'dateofwork': 
+                setEntry({...entry, dateofwork: evt.target.value});
                 break
-            case 'loginpassword': 
-                setUserLogin({...userLogin, loginpassword: evt.target.value, loginchange: true});
+            case 'starttime': 
+                setEntry({...entry, starttime: evt.target.value});
+                break
+            case 'endtime': 
+                setEntry({...entry, endtime: evt.target.value});
+                break
+            case 'lunchtime': 
+                setEntry({...entry, lunchtime: evt.target.value});
+                break
+            case 'jobname': 
+                setEntry({...entry, jobname: evt.target.value});
+                break
+            case 'task': 
+                setEntry({...entry, task: evt.target.value});
+                break
+            case 'notes': 
+                setEntry({...entry, notes: evt.target.value});
                 break
             default :
         }
     }
-    // function resetResults() {
-    //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();
-    //     document.querySelector('#loadingLoginText').innerText='';
-    //     dispatchResultInfo({type: 'initial'});
-    // }
-    // // function resetLoginForm() { 
-    // //     setUserLogin({
-    // //         loginemail: '',
-    // //         loginpassword: '',
-    // //         loginchange: false
-    // //     });
-    // // }
-    // function handleLoginClick(evt) {
-    //     dispatchActiveWindow({type: 'login'});
-    // }
-    // const handleSubmit = async (evt) => {
-    //     evt.preventDefault();
+   
+    const handleSubmit = async (evt) => {
+        // calculate hours
+        const submitHoursWorked = calcHoursWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
+        //get submit time
+        const todayDateRaw = new Date();
+        console.log('todayDateRaw-minutes:', todayDateRaw.getMinutes())
+        const month=todayDateRaw.getMonth()+1<10?`0${todayDateRaw.getMonth()+1}`:todayDateRaw.getMonth()+1;
+        const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
+        const hour=todayDateRaw.getHours()<10?`0${todayDateRaw.getHours()}`:todayDateRaw.getHours();
+        const minute=todayDateRaw.getMinutes()<10?`0${todayDateRaw.getMinutes()}`:todayDateRaw.getMinutes();
+        
+        const submitTime=`${todayDateRaw.getFullYear()}/${month}/${day}T${hour}:${minute}`;
+        //find job id
+        let jobId;
+        fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
+        // create submit object
+        const entryArray = ['user id', 'user name', entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime, submitHoursWorked, jobId, entry.jobname, entry.task, entry.notes, submitTime]
+        console.log('entryArray:', entryArray);
+        window.confirm(`Submit timesheet entry for ${submitHoursWorked} on ${entry.dateofwork}?`);
+
     //     const resultText = document.querySelector('#loadingLoginText');
-    //     if (userLogin.loginpassword.length<8) {
-    //         resultText.innerText=`Passwords must be at least 8 characters long.`;
-    //         dispatchResultInfo({type: 'tryAgain'});
-    //         return
-    //     }
+    // if end time > starttime
+        // if (userLogin.loginpassword.length<8) {
+        //     resultText.innerText=`Passwords must be at least 8 characters long.`;
+        //     dispatchResultInfo({type: 'tryAgain'});
+        //     return
+        // }
     //     // set loading image
     //     dispatchResultInfo({type:'loadingImage'});        
-    //     try {
-    //         // login user
-    //         const res = await axios.post(`${process.env.backend}/api/v1/users/loginuser`, {email: userLogin.loginemail, password: userLogin.loginpassword});
-            
-    //         const returnedUser = res.data.user;
-    //         const jwt = res.data.token;
+        try {
+            // Submit Entry
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
+            console.log('res.status', res.status);
+            alert(`Your timesheet entry has been successful.`);
+            setEntry(ENTRY_INIT);
+            // const returnedUser = res.data.user;
+            // const jwt = res.data.token;
 
     //         // set user context to login user
     //         await setUser({
@@ -89,11 +117,13 @@ function TimesheetEntry({setPage}) {
     //         // display result window
     //         resultText.innerText=`Login Successful: Welcome ${returnedUser.firstname}`;
     //         dispatchResultInfo({type: 'OK'});
-    //     } catch(e) {
-    //         // email not found #1
-    //         if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Cannot read property 'emailverified' of null") {
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
+        } catch(e) {
+            console.error(e.message);
+            alert('Something went wrong, please try again');
+            // email not found #1
+            // if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Cannot read property 'emailverified' of null") {
+                // resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
+                // dispatchResultInfo({type: 'okTryAgain'});
     //         // email not verified
     //         } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('verified')) {
     //             setNeedVerify(true);                
@@ -113,60 +143,21 @@ function TimesheetEntry({setPage}) {
     //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on login. Please check your network connection.'} Login as guest?`;
     //             dispatchResultInfo({type: 'okTryAgain'});
     //         }
-    //     }
+        }
+    }
+    // function resetResults() {
+    //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();
+    //     document.querySelector('#loadingLoginText').innerText='';
+    //     dispatchResultInfo({type: 'initial'});
     // }
-    // // handle forgotPassword click
-    // async function handleForgot() {
-    //     const resultText = document.querySelector('#loadingLoginText');
-    //     // shortcut no email entered
-    //     if (!userLogin.loginemail) {
-    //         resultText.innerText='Please enter your account email.';
-    //         dispatchResultInfo({type: 'tryAgain'});
-    //         return;
-    //     }
-    //     try {
-    //         // send forgot password email
-    //         const res = await axios.get(`${process.env.backend}/api/v1/users/sendresetemail/${userLogin.loginemail}`);
-    //         // display results
-    //         if (res.status===200) {
-    //             resultText.innerText=`Please check your inbox for an email with instructions to reset your password.`;
-    //             dispatchResultInfo({type: 'OK'});
-    //         }
-    //     } catch (e) {
-    //         // display error
-    //         resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong with password reset. Please check your netword connection.'} Log in as guest user?`
-    //         dispatchResultInfo({type: 'okTryAgain'});
-    //     }
+    // function resetLoginForm() { 
+    //     setUserLogin({
+    //         loginemail: '',
+    //         loginpassword: '',
+    //         loginchange: false
+    //     });
     // }
-    // async function loginGuest(evt) {
-    //     if (needVerify) {
-    //         // display loader
-    //         const resultText = document.querySelector('#loadingLoginText');
-    //         dispatchResultInfo({ type: 'loadingImage' });  
-    //         //create user object
-    //         const forgotPasswordUser = {
-    //             firstname: 'findaharp.com',
-    //             lastname: 'user',
-    //             email: userLogin.loginemail
-    //         }
-    //         try {
-    //             // this is a hack because program not returning for axios post, needs to be debugged and next three lines put below axios call
-    //             // display result
-    //             resultText.innerText=`Verify email sent.`;
-    //             dispatchResultInfo({type: 'OK'});
-    //             setNeedVerify(false);
-    //             // send forgot password email
-    //             await axios.post(`${process.env.backend}/api/v1/resendverify`, forgotPasswordUser);
-    //         } catch (e) {
-    //             // display error
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong sending verification email. Please check your network connection.'} Log in as guest user?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         }
-    //     }
-    //     resetResults();
-    //     // go to main window
-    //     Router.push('/');
-    // }
+
     // set environment
     useEffect(()=>{
         const todayDateRaw = new Date();
@@ -177,23 +168,33 @@ function TimesheetEntry({setPage}) {
     },[]);
     // get data
     useEffect(()=>{
-        console.log('here')
         async function getSupportLists() {
-            const tasks = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-            // const tasks = await axios.get(`https://findaharp-api.herokuapp.com/api/v1/`);
-            // const tasks = await axios.get(`http://localhost:3000`);
-            console.log(tasks.data)
-            setTasks(tasks.data)
+            // tasks
+            // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
+            const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
+            let incomingTasks = [];
+            Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
+            setTasks(incomingTasks);
+            // lunch times
+            // const lunchTimesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
+            const lunchTimesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
+            let incomingLunchTimes = [];
+            Array.from(lunchTimesArrays.data.data).map(lunchTimeArray=>incomingLunchTimes.push(lunchTimeArray[0]))
+            setLunchTimes(incomingLunchTimes);
+            // current jobs
+            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            let incomingCurrentJobs = [];
+            Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push(currentJobArray[1]))
+            setCurrentJobs(incomingCurrentJobs);
+            setFullCurrentJobs(currentJobsArrays.data.data);
         }
         try {
             getSupportLists()
         } catch(e) {
             console.log(e.message)
-        }
-        
-        
+        }      
     },[]);
-
     return ( 
        <>
        <div className='login-signup-container'>
@@ -205,12 +206,8 @@ function TimesheetEntry({setPage}) {
                 loginGuest={loginGuest}
                 resetResults={resetResults} 
             /> */}
-            <div className='form-container' id="signup" 
-                // onClick={()=>handleSignupClick()}
-            >
-                <form style={{marginTop: `${winWidth<750?'-50px':''}`}}
-                // onSubmit={()=>handleSubmit()}
-                >
+            <div className='form-container' id="signup">
+                <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     {winWidth>750&&<div className="login-signup-title">
                         Timesheet Entry
                     </div>}
@@ -222,11 +219,10 @@ function TimesheetEntry({setPage}) {
                             className="field-input"
                             type='date'
                             id={uuid()}
-                            // value={userSignup.firstname}
+                            value={entry.dateofwork}
                             onChange={handleChange}
                             name='dateofwork'
-                            required
-                            // disabled={activeWindow.active==='login'}
+                            // required
                         />
                         <div className="input-name">
                             <h3>Start Time</h3>
@@ -235,11 +231,10 @@ function TimesheetEntry({setPage}) {
                             className="field-input"
                             type='time'
                             id={uuid()}
-                            // value={userSignup.lastname}
+                            value={entry.starttime}
                             onChange={handleChange}
                             name='starttime'
-                            required
-                            // disabled={activeWindow.active==='login'}
+                            // required
                         />
                         <div className="input-name input-margin">
                             <h3>End Time</h3>
@@ -248,11 +243,10 @@ function TimesheetEntry({setPage}) {
                             className="field-input"
                             type='time'
                             id={uuid()}
-                            // value={userSignup.signupemail}
+                            value={entry.endtime}
                             onChange={handleChange}
                             name='endtime'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            // required
                         />
                         <div className="input-name input-margin">
                             <h3>Lunch</h3>
@@ -260,22 +254,15 @@ function TimesheetEntry({setPage}) {
                         <select 
                             className="input field-input"
                             style={{width: '100%'}}
-                            type='password'
+                            type='text'
                             id={uuid()}
-                            // value={userSignup.signuppassword}
+                            value={entry.lunchtime}
                             onChange={handleChange}
-                            name='signuppassword'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            name='lunchtime'
+                            // required
                         >
-                            <option name='15' value='15'>How long for lunch?</option>
-                            <option name='15' value='15'>Will be autopopulated.</option>
-                            <option name='15' value='15'>15 Minutes</option>
-                            <option name='30' value='30'>30 Minutes</option>
-                            <option name='45' value='45'>45 Minutes</option>
-                            <option name='60' value='60'>60 Minutes</option>
-                            <option name='90' value='90'>90 Minutes</option>
-                            <option name='120' value='120'>120 Minutes</option>
+                            <option name='15' value='15' key='howlongforlunch'>How long for lunch?</option>
+                            {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime}</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Job Name</h3>
@@ -283,20 +270,15 @@ function TimesheetEntry({setPage}) {
                         <select 
                             className="field-input"
                             style={{width: '100%'}}
-                            type='password'
+                            type='text'
                             id={uuid()}
-                            // value={userSignup.confirmpassword}
+                            value={entry.jobname}
                             onChange={handleChange}
                             name='jobname'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            // required
                         > 
-                            <option>Which Job-site?</option>  
-                            <option>will be auto-populated</option>  
-                            <option>option 1</option>  
-                            <option>option 2</option>  
-                            <option>option 3</option>  
-                            <option>option 4</option>
+                            <option key='whichjobsite'>Which Job-site?</option>  
+                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob}</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Specific Task</h3>
@@ -304,38 +286,28 @@ function TimesheetEntry({setPage}) {
                         <select 
                             className="field-input"
                             style={{width: '100%'}}
-                            type='password'
                             id={uuid()}
-                            // value={userSignup.confirmpassword}
+                            value={entry.task}
                             onChange={handleChange}
                             name='task'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            // required
                         > 
-                            <option>What type of work?</option>  
-                            <option>Will be auto-populated.</option>  
-                            <option>option 1</option>  
-                            <option>option 2</option>  
-                            <option>option 3</option>  
-                            <option>option 4</option>
+                            <option key='whattypeofwork'>What type of work?</option>
+                            {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)} 
+                            
                         </select>
                         <div className="input-name input-margin">
                             <h3>Notes</h3>
                         </div>
                         <textarea 
                             className="field-input"
-                            type='password'
                             id={uuid()}
-                            // value={userSignup.confirmpassword}
+                            value={entry.notes}
                             onChange={handleChange}
                             name='notes'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
                         /> 
                     </div>
-                    <button type='submit' className="submit-btn login-signup-title" 
-                    // onClick={handleSubmit}
-                    >
+                    <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit}>
                         Submit
                     </button>
                 </form>

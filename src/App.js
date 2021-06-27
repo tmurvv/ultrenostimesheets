@@ -1,4 +1,5 @@
-import {useState,useContext} from 'react';
+import {useState,useEffect} from 'react';
+import axios from 'axios';
 // components
 import Banner from './components/Banner';
 import Login from './components/Login';
