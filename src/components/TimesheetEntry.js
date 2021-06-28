@@ -101,7 +101,8 @@ function TimesheetEntry(props) {
     //     dispatchResultInfo({type:'loadingImage'});        
         try {
             // Submit Entry
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
+            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
             console.log('res.status', res.status);
             alert(`Your timesheet has been submitted.`);
             setEntry(ENTRY_INIT);
@@ -172,8 +173,8 @@ function TimesheetEntry(props) {
     useEffect(()=>{
         async function getSupportLists() {
             // tasks
-            // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-            const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
+            const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
+            // const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
             let incomingTasks = [];
             Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
             setTasks(incomingTasks);
@@ -193,8 +194,8 @@ function TimesheetEntry(props) {
             // setLunchTimes(incomingLunchTimes);
             setLunchTimes(lunchTimes);
             // current jobs
-            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
             let incomingCurrentJobs = [];
             Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push(currentJobArray[1]))
             setCurrentJobs(incomingCurrentJobs);

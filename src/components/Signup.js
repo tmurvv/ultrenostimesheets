@@ -79,7 +79,8 @@ function Signup({setPage}) {
         };
         // signup user
         try {
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/signup`, newUser);
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/signup`, newUser);
+            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/signup`, newUser);
             if (res.status===201 || res.status===200) {                   
                 // set userContext to added user
                 const addeduser = res.data.newuser;

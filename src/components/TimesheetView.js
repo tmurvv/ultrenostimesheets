@@ -32,8 +32,8 @@ function TimesheetView({ maintitle, subtitle }) {
     useEffect(()=>{
         async function getSupportLists() {
             // tasks
-            // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-            const entriesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/`);
+            const entriesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/`);
+            // const entriesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/`);
             console.log('entryArrays:', entriesArrays)
             let incomingEntries = [];
             Array.from(entriesArrays.data.data).map((entryArray, idx)=>idx>0&&incomingEntries.push(entryArray))
