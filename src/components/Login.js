@@ -6,6 +6,7 @@ import uuid from 'react-uuid';
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
+import {UserContext} from '../contexts/UserContext';
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -21,7 +22,7 @@ import PageTitle from '../components/PageTitle';
 // }
 function Login({setPage}) {
     // declare variables
-    // const { setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
     // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
     // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
     // const [needVerify, setNeedVerify] = useState(false);
@@ -56,60 +57,63 @@ function Login({setPage}) {
     // function handleLoginClick(evt) {
     //     dispatchActiveWindow({type: 'login'});
     // }
-    // const handleSubmit = async (evt) => {
-    //     evt.preventDefault();
-    //     const resultText = document.querySelector('#loadingLoginText');
-    //     if (userLogin.loginpassword.length<8) {
-    //         resultText.innerText=`Passwords must be at least 8 characters long.`;
-    //         dispatchResultInfo({type: 'tryAgain'});
-    //         return
-    //     }
-    //     // set loading image
-    //     dispatchResultInfo({type:'loadingImage'});        
-    //     try {
-    //         // login user
-    //         const res = await axios.post(`${process.env.backend}/api/v1/users/loginuser`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+    const handleSubmit = async (evt) => {
+        // const resultText = document.querySelector('#loadingLoginText');
+        // if (userLogin.loginpassword.length<8) {
+        //     resultText.innerText=`Passwords must be at least 8 characters long.`;
+        //     dispatchResultInfo({type: 'tryAgain'});
+        //     return
+        // }
+        // // set loading image
+        // dispatchResultInfo({type:'loadingImage'});        
+        try {
+            // login user
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             
-    //         const returnedUser = res.data.user;
-    //         const jwt = res.data.token;
+            console.log(res.data);
+            const returnedUser = res.data.data;
+            // const jwt = res.data.token;
 
-    //         // set user context to login user
-    //         await setUser({
-    //             firstname: returnedUser.firstname, 
-    //             lastname: returnedUser.lastname, 
-    //             email: returnedUser.email
-    //         });
-    //         // set JWT cookie
-    //             document.cookie = `JWT=${jwt}`
-    //         // display result window
-    //         resultText.innerText=`Login Successful: Welcome ${returnedUser.firstname}`;
-    //         dispatchResultInfo({type: 'OK'});
-    //     } catch(e) {
-    //         // email not found #1
-    //         if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Cannot read property 'emailverified' of null") {
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         // email not verified
-    //         } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('verified')) {
-    //             setNeedVerify(true);                
-    //             await setUserLogin({...userLogin, loginemail: e.response.data.useremail})
-    //             resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'Email not yet verified. Please see your inbox for verification email.'} Resend verification email?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         // passwords don't match
-    //         } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('incorrect')) {
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Password does not match our records.'} Login as guest?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         // email not found #2
-    //         } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('Email')) {
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         // other error
-    //         } else {
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on login. Please check your network connection.'} Login as guest?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         }
-    //     }
-    // }
+            // set user context to login user
+            setUser({
+                firstname: returnedUser.firstname, 
+                lastname: returnedUser.lastname, 
+                email: returnedUser.email
+            });
+            alert(`Login successful. Welcome ${returnedUser.firstname}`);
+            setPage('TimesheetEntry');
+            // // set JWT cookie
+            //     document.cookie = `JWT=${jwt}`
+            // // display result window
+            // resultText.innerText=`Login Successful: Welcome ${returnedUser.firstname}`;
+            // dispatchResultInfo({type: 'OK'});
+        } catch(e) {
+            console.log('error', e.message)
+            // // email not found #1
+            // if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Cannot read property 'emailverified' of null") {
+            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
+            //     dispatchResultInfo({type: 'okTryAgain'});
+            // // email not verified
+            // } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('verified')) {
+            //     setNeedVerify(true);                
+            //     await setUserLogin({...userLogin, loginemail: e.response.data.useremail})
+            //     resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'Email not yet verified. Please see your inbox for verification email.'} Resend verification email?`;
+            //     dispatchResultInfo({type: 'okTryAgain'});
+            // // passwords don't match
+            // } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('incorrect')) {
+            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Password does not match our records.'} Login as guest?`;
+            //     dispatchResultInfo({type: 'okTryAgain'});
+            // // email not found #2
+            // } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('Email')) {
+            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
+            //     dispatchResultInfo({type: 'okTryAgain'});
+            // // other error
+            // } else {
+            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on login. Please check your network connection.'} Login as guest?`;
+            //     dispatchResultInfo({type: 'okTryAgain'});
+            // }
+        }
+    }
     // handle forgotPassword click
     async function handleForgot() {
         alert('Forgot Password coming soon!')
@@ -169,7 +173,7 @@ function Login({setPage}) {
         <div className='login-signup-container'>
             {/* <Spinner /> */}
             <PageTitle maintitle='Login' subtitle='' />
-            <div style={{curson: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Signup')}}>
+            <div style={{cursor: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Signup')}}>
                 <button type="button" className='link-btn' style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px',}}>Click Here to Signup</button>
             </div>
             
@@ -179,15 +183,11 @@ function Login({setPage}) {
                 resetResults={resetResults} 
             /> */}
             
-            <div className="form-container"
-                // onClick={handleLoginClick}
-            >
-                <div className="login-signup-title">
+            <div className="form-container" style={{marginTop: '0'}}>
+                {/* <div className="login-signup-title">
                     LOG IN
-                </div>
-                <form 
-                // onSubmit={handleSubmit}
-                >
+                </div> */}
+                <form>
                     <>
                         <div style={{padding: '25px'}}>   
                             <div className="input-name" id='loginEmail'>
@@ -198,7 +198,7 @@ function Login({setPage}) {
                                 type='email'
                                 id={uuid()}
                                 value={userLogin.loginemail}
-                                // onChange={handleChange}
+                                onChange={handleChange}
                                 name='loginemail'
                                 required
                             />
@@ -210,7 +210,7 @@ function Login({setPage}) {
                                 type='password'
                                 id={uuid()}
                                 value={userLogin.loginpassword}
-                                // onChange={handleChange}
+                                onChange={handleChange}
                                 name='loginpassword'
                                 required
                             />
@@ -224,14 +224,19 @@ function Login({setPage}) {
                                 </div>
                             </div> */}
                         </div>
-                        <button type='submit' className="submit-btn login-signup-title">
+                        {/* <button type='button' onClick={handleSubmit} className="submit-btn login-signup-title">
                             Submit
-                        </button>
+                        </button> */}
+                        <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+                            <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '150px', margin: 'auto'}}>
+                                Submit
+                            </button>
+                        </div>
                         <div className="forgot-pass"
                             style={{cursor: 'pointer'}} 
                         onClick={handleForgot}
                         >
-                            <button class='link-btn' style={{fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
+                            <button className='link-btn' style={{fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
                         </div>
                     </>
                     

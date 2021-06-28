@@ -71,6 +71,8 @@ function TimesheetEntry(props) {
     const handleSubmit = async (evt) => {
         // calculate hours
         const submitHoursWorked = calcHoursWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
+        if (submitHoursWorked.toUpperCase()==='END TIME ERROR') return alert('End Time must be after Start Time.');
+        if (submitHoursWorked.toUpperCase()==='LUNCH TIME ERROR') return alert('Lunch Time is longer that hours worked.');
         //get submit time
         const todayDateRaw = new Date();
         console.log('todayDateRaw-minutes:', todayDateRaw.getMinutes())
@@ -84,9 +86,9 @@ function TimesheetEntry(props) {
         let jobId;
         fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
         // create submit object
-        const entryArray = ['user id', 'user name', entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime, submitHoursWorked, jobId, entry.jobname, entry.task, entry.notes, submitTime]
+        const entryArray = [user.email, `${user.firstname} ${user.lastname}`, entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime, submitHoursWorked, jobId, entry.jobname, entry.task, entry.notes, submitTime]
         console.log('entryArray:', entryArray);
-        window.confirm(`Submit timesheet entry for ${submitHoursWorked} on ${entry.dateofwork}?`);
+        if (!window.confirm(`Submit timesheet entry for ${submitHoursWorked} on ${entry.dateofwork}?`)) return;
 
     //     const resultText = document.querySelector('#loadingLoginText');
     // if end time > starttime
@@ -101,7 +103,7 @@ function TimesheetEntry(props) {
             // Submit Entry
             const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
             console.log('res.status', res.status);
-            alert(`Your timesheet entry has been successful.`);
+            alert(`Your timesheet has been submitted.`);
             setEntry(ENTRY_INIT);
             // const returnedUser = res.data.user;
             // const jwt = res.data.token;
@@ -176,11 +178,20 @@ function TimesheetEntry(props) {
             Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
             setTasks(incomingTasks);
             // lunch times
-            // const lunchTimesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            const lunchTimesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            let incomingLunchTimes = [];
-            Array.from(lunchTimesArrays.data.data).map(lunchTimeArray=>incomingLunchTimes.push(lunchTimeArray[0]))
-            setLunchTimes(incomingLunchTimes);
+            const lunchTimes = [
+                '0 minutes',
+                '15 minutes',
+                '30 minutes',
+                '45 minutes',
+                '60 minutes',
+                '90 minutes'
+            ]
+            // // const lunchTimesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
+            // const lunchTimesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
+            // let incomingLunchTimes = [];
+            // Array.from(lunchTimesArrays.data.data).map(lunchTimeArray=>incomingLunchTimes.push(lunchTimeArray[0]))
+            // setLunchTimes(incomingLunchTimes);
+            setLunchTimes(lunchTimes);
             // current jobs
             // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
             const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
@@ -199,18 +210,18 @@ function TimesheetEntry(props) {
        <>
        <div className='login-signup-container'>
             {/* <Spinner /> */}
-            <PageTitle maintitle='Timesheet Entry' subtitle={`for ${user.firstname} ${user.lastname}`} />
+            <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
             {/* <Results 
                 resultInfo={resultInfo} 
                 loginGuest={loginGuest}
                 resetResults={resetResults} 
             /> */}
-            <div className='form-container' id="signup">
+            <div className='form-container' id="signup" style={{marginTop: '0px'}}>
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
-                    {winWidth>750&&<div className="login-signup-title">
+                    {/* {winWidth>750&&<div className="login-signup-title">
                         Timesheet Entry
-                    </div>}
+                    </div>} */}
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>Date of Work</h3>
@@ -307,9 +318,14 @@ function TimesheetEntry(props) {
                             name='notes'
                         /> 
                     </div>
-                    <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit}>
+                    <div style={{width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+                        <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '150px', margin: 'auto'}}>
+                            Submit
+                        </button>
+                    </div>
+                    {/* <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit}>
                         Submit
-                    </button>
+                    </button> */}
                 </form>
                 <LoginSignupCSS />
             </div>

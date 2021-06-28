@@ -61,6 +61,7 @@ function LoginSignupCSS() {
             select.field-input,
             textarea.field-input {
                 width: calc(100% - 24px);
+                height: 40px;
                 background-color: rgba(2, 2, 2, 0.07);
                 border: 1px solid rgba(0, 0, 0, 0.02);
                 padding: 6px 12px;
@@ -114,7 +115,6 @@ function LoginSignupCSS() {
             }          
             .forgot-pass {
                 width: 100%;
-                border-top: 1px solid #E0E0E0;
                 padding: 5px 0;
                 text-align: center;
             }

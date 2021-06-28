@@ -8,6 +8,9 @@ function NavBarCss() {
                 height: 40px;
                 border-bottom: 1px solid grey;
             }
+            .navBarOuter>div {
+                height: 100%;
+            }
             @media only screen and (max-width: 550px) {
                 .navBarOuter {
                     padding-right: 10px;
@@ -16,54 +19,34 @@ function NavBarCss() {
                     justify-content: flex-end;
                 }
             }
-            #partnerSubMenu {
-                transform: translateX(25%);
-                display: none;
-                width: fit-content;
-                position: absolute;
-                top: 20px;
-                z-index: 9998;
-                padding: 10px;
-                background-color: #f9bf1e;
-                box-shadow: 3px 3px 13px #f7dd93;
-                flex-direction: column;
-                justify-content: flex-start;
-            }
-            #partnerSubMenu a {
-                white-space: nowrap;
-                text-align: left;
-            }
-            @media only screen and (max-width: 550px) {
-                #partnerSubMenu {
-                    transform: translateX(-75%);
-                    justify-content: flex-end;
-                }
-                #partnerSubMenu a {
-                    text-align: right;
-                }
-            }
+            
             .mirrorATagFont {
                 color: #000;
                 font-size: 16px;
             }
-            @media only screen and (max-width: 950px) {
-                a,
-                aclass {
-                    font-size: 14px;
-                }
-            }
-            @media only screen and (max-width: 700px) {
-                a,
-                aclass {
-                    font-size: 12px;
-                }
-            }
+            // @media only screen and (max-width: 950px) {
+            //     a,
+            //     aclass {
+            //         font-size: 14px;
+            //     }
+            // }
+            // @media only screen and (max-width: 700px) {
+            //     a,
+            //     aclass {
+            //         font-size: 12px;
+            //     }
+            // }
             .navLinks {
                 height: 100%;
                 display: flex;
                 justify-content: space-evenly;
                 align-items: center;
                 position: relative;
+            }
+            ul {
+                list-style: none;
+                font-size: 14px;
+                margin-block:0;
             }
             @media only screen and (max-width: 550px) {
                 .navLinks {
@@ -90,22 +73,22 @@ function NavBarCss() {
             a:hover {
                 opacity: 1;
             }
-            @media only screen and (max-width: 950px) {
-                a {
-                    font-size: 14px;
-                }
-                .mirrorATagFont {
-                    font-size: 14px;
-                }
-            }
-            @media only screen and (max-width: 700px) {
-                a {
-                    font-size: 12px;
-                }
-                .mirrorATagFont {
-                    font-size: 12px;
-                }
-            }
+            // @media only screen and (max-width: 950px) {
+            //     a {
+            //         font-size: 14px;
+            //     }
+            //     .mirrorATagFont {
+            //         font-size: 14px;
+            //     }
+            // }
+            // @media only screen and (max-width: 700px) {
+            //     a {
+            //         font-size: 12px;
+            //     }
+            //     .mirrorATagFont {
+            //         font-size: 12px;
+            //     }
+            // }
             .hamburgerMenu img {
                 height: 35px;
             }

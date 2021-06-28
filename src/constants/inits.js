@@ -5,5 +5,12 @@ export const ENTRY_INIT = {
     lunchtime: '',
     jobname: '',
     task: '',
-    notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-}
+    notes: ''
+};
+export const USER_INIT = {
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
+    confirmpassword: '',
+};

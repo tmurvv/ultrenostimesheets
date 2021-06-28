@@ -6,6 +6,8 @@ import uuid from 'react-uuid';
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
+import {USER_INIT} from '../constants/inits';
+import {UserContext} from '../contexts/UserContext';
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -13,30 +15,30 @@ import PageTitle from '../components/PageTitle';
 // import { resultInfoReducer, activeWindowReducer } from '../src/main/reducers/reducers';
 // import { parseJwt } from '../src/main/utils/helpers';
 
-// // initialize reducer object
-// const activeWindowInitialState = {
-//     activeWindow: 'login',
-//     loginClasses: 'login-signup l-attop',
-//     signupClasses: 'login-signup s-atbottom'
-// }
 function Signup({setPage}) {
     // declare variables
     // const { setUser } = useContext(UserContext);
     // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
     // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
     // const [needVerify, setNeedVerify] = useState(false);
-    const [userLogin, setUserLogin] = useState({
-        loginemail: '',
-        loginpassword: '',
-        loginchange: false
-    });
+    const {user, setUser} = useContext(UserContext);
+    const [signupUser, setSignupUser] = useState(USER_INIT);
     const handleChange = (evt) => {
         switch (evt.target.name) {
-            case 'loginemail': 
-                setUserLogin({...userLogin, loginemail: evt.target.value, loginchange: true});
+            case 'firstname': 
+                setSignupUser({...signupUser, firstname: evt.target.value, change: true});
                 break
-            case 'loginpassword': 
-                setUserLogin({...userLogin, loginpassword: evt.target.value, loginchange: true});
+            case 'lastname': 
+                setSignupUser({...signupUser, lastname: evt.target.value, change: true});
+                break
+            case 'email': 
+                setSignupUser({...signupUser, email: evt.target.value, change: true});
+                break
+            case 'password': 
+                setSignupUser({...signupUser, password: evt.target.value, change: true});
+                break
+            case 'confirmpassword': 
+                setSignupUser({...signupUser, confirmpassword: evt.target.value, change: true});
                 break
             default :
         }
@@ -46,24 +48,77 @@ function Signup({setPage}) {
     //     document.querySelector('#loadingLoginText').innerText='';
     //     dispatchResultInfo({type: 'initial'});
     // }
-    // // function resetLoginForm() { 
-    // //     setUserLogin({
-    // //         loginemail: '',
-    // //         loginpassword: '',
-    // //         loginchange: false
-    // //     });
-    // // }
+    function resetSignupForm() { 
+        setSignupUser(USER_INIT);
+    }
     // function handleLoginClick(evt) {
     //     dispatchActiveWindow({type: 'login'});
     // }
-    // const handleSubmit = async (evt) => {
-    //     evt.preventDefault();
+    const handleSubmit = async (evt) => {
     //     const resultText = document.querySelector('#loadingLoginText');
-    //     if (userLogin.loginpassword.length<8) {
-    //         resultText.innerText=`Passwords must be at least 8 characters long.`;
-    //         dispatchResultInfo({type: 'tryAgain'});
-    //         return
-    //     }
+        // shortcut - password not long enough
+        if ((!signupUser.password)||signupUser.password.length<8) {
+            // resultText.innerText=`Passwords must be at least 8 characters long.`;
+            // dispatchResultInfo({type: 'tryAgain'});
+            alert('Passwords must be at least 8 characters.');
+            return
+        }
+        // shortcut - passwords not matching
+        if (signupUser.password !== signupUser.confirmpassword) {
+            // resultText.innerText=`Passwords do not match.`;
+            // dispatchResultInfo({type: 'tryAgain'});
+            alert('Passwords do not match.');
+            return
+        } 
+        // create signup user object
+        const newUser = {
+            firstname: signupUser.firstname,
+            lastname: signupUser.lastname,
+            email: signupUser.email,
+            password: signupUser.password,
+        };
+        // signup user
+        try {
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/signup`, newUser);
+            if (res.status===201 || res.status===200) {                   
+                // set userContext to added user
+                const addeduser = res.data.newuser;
+                console.log('addeduser:', addeduser)
+                setUser({
+                    firstname: addeduser.firstname, 
+                    lastname: addeduser.lastname, 
+                    email: addeduser.email,
+            });
+            alert('Signup Successful.');
+            setPage('Timesheet Entry');
+                // resultText.innerText=`Signup Successful. Please check your inbox to verify your email.`;
+                // dispatchResultInfo({type: 'OK'});  
+        }
+        // Error on signup
+        } catch (e) {
+            console.log('error');
+            console.log(e.response)
+            
+            // duplicate email
+            if (e.response&&e.response.data&&e.response.data.message.toUpperCase().includes('EXISTS')) {
+                alert(e.response.data.message);
+                setSignupUser(USER_INIT);
+                setPage('login')
+                // resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'We already have that email in our records. Please try to login and/or select "forgot password" in the login box.'}`;
+                // dispatchResultInfo({type: 'okTryAgain'});
+            // email not valid
+            } else if (e.response&&e.response.data&&e.response.data.data&&e.response.data.data.message.includes('not valid')) {
+                // resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'Please enter a valid email address. Log in as guest user?'}`;
+                // dispatchResultInfo({type: 'okTryAgain'});
+            // other error
+            } else {
+                alert(`Something went wrong on signup.`)
+                // resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on signup. Please check your network connection. Log in as guest user?'}`;
+                // dispatchResultInfo({type: 'okTryAgain'});
+            }
+            setSignupUser(USER_INIT);
+        }
+        
     //     // set loading image
     //     dispatchResultInfo({type:'loadingImage'});        
     //     try {
@@ -109,7 +164,7 @@ function Signup({setPage}) {
     //             dispatchResultInfo({type: 'okTryAgain'});
     //         }
     //     }
-    // }
+    }
     // // handle forgotPassword click
     // async function handleForgot() {
     //     const resultText = document.querySelector('#loadingLoginText');
@@ -168,7 +223,7 @@ function Signup({setPage}) {
        <div className='login-signup-container'>
             {/* <Spinner /> */}
             <PageTitle maintitle='Signup' subtitle='' />
-            <div style={{curson: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Login')}}>
+            <div style={{cursor: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Login')}}>
                 <button type="button" className='link-btn' style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px',}}>Click Here to Login</button>
             </div>
             {/* <Results 
@@ -176,15 +231,11 @@ function Signup({setPage}) {
                 loginGuest={loginGuest}
                 resetResults={resetResults} 
             /> */}
-            <div className='form-container' id="signup" 
-                // onClick={()=>handleSignupClick()}
-            >
-                <form 
-                // onSubmit={()=>handleSubmit()}
-                >
-                    <div className="login-signup-title">
+            <div className='form-container' id="signup" style={{marginTop: '0px'}}>
+                <form onSubmit={()=>handleSubmit()}>
+                    {/* <div className="login-signup-title">
                         SIGN UP
-                    </div>
+                    </div> */}
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>First Name</h3>
@@ -192,11 +243,10 @@ function Signup({setPage}) {
                         <input 
                             className="field-input"
                             id={uuid()}
-                            // value={userSignup.firstname}
+                            value={signupUser.firstname}
                             onChange={handleChange}
                             name='firstname'
                             required
-                            // disabled={activeWindow.active==='login'}
                         />
                         <div className="input-name">
                             <h3>Last Name</h3>
@@ -204,24 +254,22 @@ function Signup({setPage}) {
                         <input 
                             className="field-input"
                             id={uuid()}
-                            // value={userSignup.lastname}
+                            value={signupUser.lastname}
                             onChange={handleChange}
                             name='lastname'
                             required
-                            // disabled={activeWindow.active==='login'}
                         />
                         <div className="input-name input-margin">
-                            <h3>E-Mail</h3>
+                            <h3>Email</h3>
                         </div>
                         <input 
                             className="field-input"
                             type='email'
                             id={uuid()}
-                            // value={userSignup.signupemail}
+                            value={signupUser.email}
                             onChange={handleChange}
-                            name='signupemail'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            name='email'
+                            required
                         />
                         <div className="input-name input-margin">
                             <h3>Password</h3>
@@ -230,11 +278,10 @@ function Signup({setPage}) {
                             className="field-input"
                             type='password'
                             id={uuid()}
-                            // value={userSignup.signuppassword}
+                            value={signupUser.password}
                             onChange={handleChange}
-                            name='signuppassword'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            name='password'
+                            required
                         />
                         <div className="input-name input-margin">
                             <h3>Confirm Password</h3>
@@ -243,18 +290,17 @@ function Signup({setPage}) {
                             className="field-input"
                             type='password'
                             id={uuid()}
-                            // value={userSignup.confirmpassword}
+                            value={signupUser.confirmpassword}
                             onChange={handleChange}
                             name='confirmpassword'
-                            // required={activeWindow.active==='signup'}
-                            // disabled={activeWindow.active==='login'}
+                            required
                         />   
                     </div>
-                    <button type='submit' className="submit-btn login-signup-title" 
-                    // onClick={handleSubmit}
-                    >
-                        Submit
-                    </button>
+                    <div style={{width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+                        <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '150px', margin: 'auto'}}>
+                            Submit
+                        </button>
+                    </div>
                 </form>
                 <LoginSignupCSS />
             </div>
