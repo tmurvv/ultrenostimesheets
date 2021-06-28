@@ -39,7 +39,17 @@ export default function NavBar(props) {
     //     });
     // },[]);
     useEffect(()=>window.innerWidth<550&&setMobile(true),[]);
-    
+    // reset window width on window resize
+    useEffect(() => {
+        const handleResize = () => {
+            window.innerWidth<550&&setMobile(true);
+            window.innerWidth<550&&setOpen(false);
+            window.innerWidth>=550&&setMobile(false);
+            window.innerWidth>=550&&setOpen(true);
+        }
+        window.addEventListener('resize', handleResize);
+        return () => { window.removeEventListener('resize', handleResize) }
+    }, []);
     return(
         <>
         <div className='navBarOuter'>
@@ -54,7 +64,7 @@ export default function NavBar(props) {
                 <Router>
                 <nav style={{height: '100%'}}>
                     <ul className='navLinks'>
-                        <div className='closeIcon' style={{opacity: `${open?.6:0}`}} onClick={(e)=>setOpen(false)}>
+                        <div className='closeIcon' style={{opacity: `${open&&mobile?.6:0}`}} onClick={(e)=>setOpen(false)}>
                             <img src='/img/close.png' alt="close mobile menu icon" style={{height: '15px'}}/>
                         </div>
                         <li>

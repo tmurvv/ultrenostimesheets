@@ -16,7 +16,16 @@ import {USER_INIT} from './constants/inits';
 function App() {
     const [user, setUser] = useState(USER_INIT);
     const [page, setPage] = useState("login"); // ['Login','Logout', 'Signup', 'TimesheetEntry', 'TimesheetView', 'AddAnother']
-    
+    const [winWidth, setWinWidth] = useState(0);
+    // reset window width on window resize
+    useEffect(() => {
+        setWinWidth(window.innerWidth);
+        const handleResize = () => {
+            setWinWidth(window.innerWidth);
+        }
+        window.addEventListener('resize', handleResize);
+        return () => { window.removeEventListener('resize', handleResize) }
+    }, []);
     return (
         <>
             <header>            
