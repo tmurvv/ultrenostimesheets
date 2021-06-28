@@ -30,6 +30,7 @@ function TimesheetView({ maintitle, subtitle }) {
     },[]);
     // get data
     useEffect(()=>{
+        if (!user) return;
         async function getSupportLists() {
             // tasks
             const entriesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/`);
@@ -37,9 +38,9 @@ function TimesheetView({ maintitle, subtitle }) {
             console.log('entryArrays:', entriesArrays)
             let incomingEntries = [];
             Array.from(entriesArrays.data.data).map((entryArray, idx)=>idx>0&&incomingEntries.push(entryArray))
-            console.log(incomingEntries[0][0], user.email)
+            // console.log(incomingEntries[0][0], user.email)
             const entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email); 
-            console.log('entriesFilter:', entriesFilter)
+            // console.log('entriesFilter:', entriesFilter)
             setEntries(entriesFilter);
             // // tasks
             // // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
@@ -66,7 +67,7 @@ function TimesheetView({ maintitle, subtitle }) {
         } catch(e) {
             console.log(e.message)
         }      
-    },[]);
+    },[user]);
     return (
         <div style={{marginTop: '50px'}}>
         {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
