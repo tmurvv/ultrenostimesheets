@@ -92,8 +92,6 @@ function TimesheetView({ maintitle, subtitle }) {
         </table>:''
         }
         {winWidth>=750&&
-
-        
         <table className='table' style={{maxWidth: 'unset'}}>
             <tr className='row'>
                 <th className='header'>Date Worked</th>

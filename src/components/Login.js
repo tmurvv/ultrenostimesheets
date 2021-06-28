@@ -68,7 +68,8 @@ function Login({setPage}) {
         // dispatchResultInfo({type:'loadingImage'});        
         try {
             // login user
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            const res = await axios.post(`https://ultrenos.herokuapp.com/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             
             console.log(res.data);
             const returnedUser = res.data.data;
