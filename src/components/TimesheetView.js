@@ -71,12 +71,12 @@ function TimesheetView({ maintitle, subtitle }) {
     return (
         <div style={{marginTop: '50px'}}>
         {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
-        <PageTitle maintitle='View Timesheets' subtitle= {`For ${user.firstname} ${user.lastname}. Entries may be edited within 24 hours of submission.`}/>
+        <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname}. Entries may be edited within 24 hours of submission.`}/>
         <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
         {winWidth<750?
-        <table className='table'>
+        <table className='table' style={{boxShadow: 'none'}}>
             {Array.isArray(entries)?entries.map(entry=>
-            <tr className='row'>
+            <tr className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                 {/* <td className='cell' style={{display: `{${checkEntryEditable(entry[11])}:'flex':;none'}`, justifyContent: 'flex-end'}}> */}
                 <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Edit Entry coming soon.')} alt='edit button' />
@@ -85,8 +85,8 @@ function TimesheetView({ maintitle, subtitle }) {
                 <td className='cell'><span className='header'>Date Worked:&nbsp;</span>{entry[2]}</td>
                 <td className='cell'><span className='header'>Start Time:&nbsp;</span>{entry[3]}</td>
                 <td className='cell'><span className='header'>End Time:&nbsp;</span>{entry[4]}</td>
-                <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry[5]}</td>
-                <td className='cell'><span className='header'>Job Name:&nbsp;</span>{entry[8]}</td>
+                <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry[6]}</td>
+                <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{entry[7]}&nbsp;&nbsp;{entry[8]}</td>
                 <td className='cell'><span className='header'>Task:&nbsp;</span>{entry[9]}</td>
                 <td className='cell'><span className='header'>Notes:&nbsp;</span>{entry[10]}</td>
             </tr>):<p>No entries found.</p>}
@@ -95,21 +95,26 @@ function TimesheetView({ maintitle, subtitle }) {
         {winWidth>=750&&
         <table className='table' style={{maxWidth: 'unset'}}>
             <tr className='row'>
+                <th className='header'></th>
                 <th className='header'>Date Worked</th>
                 <th className='header'>Start Time</th>
                 <th className='header'>End Time</th>
                 <th className='header'>Hours Worked</th>
+                <th className='header'>Job Worked</th>
                 <th className='header'>Task</th>
-                <th className='header'>Job Name</th>
                 <th className='header'>Notes</th>
             </tr>
             {Array.isArray(entries)?entries.map(entry=>
             <tr className='row'>
+                <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
+                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Edit Entry coming soon.')} alt='edit button' />
+                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Delete Entry coming soon.')} alt='delete button' />
+                </td>
                 <td className='cell'>{entry[2]}</td>
                 <td className='cell'>{entry[3]}</td>
                 <td className='cell'>{entry[4]}</td>
-                <td className='cell'>{entry[5]}</td>
-                <td className='cell'>{entry[8]}</td>
+                <td className='cell'>{entry[6]}</td>
+                <td className='cell'>{entry[7]}&nbsp;&nbsp;{entry[8]}</td>
                 <td className='cell'>{entry[9]}</td>
                 <td className='cell'>{entry[10]}</td>
             </tr>

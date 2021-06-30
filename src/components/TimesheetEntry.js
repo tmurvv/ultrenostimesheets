@@ -8,7 +8,7 @@ import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
 import {UserContext} from "../contexts/UserContext";
 import {ENTRY_INIT} from "../constants/inits";
-import {calcHoursWorked} from "../utils/helpers";
+import {getMinutesWorked, minutesToDigital, minutesToText, getNowYYYYMMDDTHHMM} from "../utils/helpers";
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -69,26 +69,32 @@ function TimesheetEntry(props) {
     }
    
     const handleSubmit = async (evt) => {
+        // shortcuts
+        if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
+        if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
+
         // calculate hours
-        const submitHoursWorked = calcHoursWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
-        if (submitHoursWorked.toUpperCase()==='END TIME ERROR') return alert('End Time must be after Start Time.');
-        if (submitHoursWorked.toUpperCase()==='LUNCH TIME ERROR') return alert('Lunch Time is longer that hours worked.');
-        //get submit time
-        const todayDateRaw = new Date();
-        console.log('todayDateRaw-minutes:', todayDateRaw.getMinutes())
-        const month=todayDateRaw.getMonth()+1<10?`0${todayDateRaw.getMonth()+1}`:todayDateRaw.getMonth()+1;
-        const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
-        const hour=todayDateRaw.getHours()<10?`0${todayDateRaw.getHours()}`:todayDateRaw.getHours();
-        const minute=todayDateRaw.getMinutes()<10?`0${todayDateRaw.getMinutes()}`:todayDateRaw.getMinutes();
+        const minutesWorked = getMinutesWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
+        const submitHoursWorked = minutesToDigital(minutesWorked);
+        const responseText = minutesToText(minutesWorked);
         
-        const submitTime=`${todayDateRaw.getFullYear()}/${month}/${day}T${hour}:${minute}`;
+        if (minutesWorked===-1) return alert('End Time must be after Start Time.');
+        if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
+        
+        const submitTime=getNowYYYYMMDDTHHMM();
+        console.log('getNowYYYYMMDDTHHMM:', getNowYYYYMMDDTHHMM())
+        
         //find job id
-        let jobId;
+        const jobId=entry.jobname.split(',')[0];
+        const jobName=entry.jobname.split(',')[1];
+
+        console.log('fullCurrentJobs:', fullCurrentJobs[0])
+        console.log('currentJobs:', currentJobs[0])
         fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
         // create submit object
-        const entryArray = [user.email, `${user.firstname} ${user.lastname}`, entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime, submitHoursWorked, jobId, entry.jobname, entry.task, entry.notes, submitTime]
+        const entryArray = [user.email, `${user.firstname} ${user.lastname}`, entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime, submitHoursWorked, jobId, jobName, entry.task, entry.notes, submitTime]
         console.log('entryArray:', entryArray);
-        if (!window.confirm(`Submit timesheet entry for ${submitHoursWorked} on ${entry.dateofwork}?`)) return;
+        if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.dateofwork}?`)) return;
 
     //     const resultText = document.querySelector('#loadingLoginText');
     // if end time > starttime
@@ -197,7 +203,7 @@ function TimesheetEntry(props) {
             const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
             // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
             let incomingCurrentJobs = [];
-            Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push(currentJobArray[1]))
+            Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]}`, `${currentJobArray[1]}`]))
             setCurrentJobs(incomingCurrentJobs);
             setFullCurrentJobs(currentJobsArrays.data.data);
         }
@@ -234,7 +240,7 @@ function TimesheetEntry(props) {
                             value={entry.dateofwork}
                             onChange={handleChange}
                             name='dateofwork'
-                            // required
+                            required
                         />
                         <div className="input-name">
                             <h3>Start Time</h3>
@@ -246,7 +252,7 @@ function TimesheetEntry(props) {
                             value={entry.starttime}
                             onChange={handleChange}
                             name='starttime'
-                            // required
+                            required
                         />
                         <div className="input-name input-margin">
                             <h3>End Time</h3>
@@ -258,7 +264,7 @@ function TimesheetEntry(props) {
                             value={entry.endtime}
                             onChange={handleChange}
                             name='endtime'
-                            // required
+                            required
                         />
                         <div className="input-name input-margin">
                             <h3>Lunch</h3>
@@ -271,7 +277,7 @@ function TimesheetEntry(props) {
                             value={entry.lunchtime}
                             onChange={handleChange}
                             name='lunchtime'
-                            // required
+                            required
                         >
                             <option name='15' value='15' key='howlongforlunch'>How long for lunch?</option>
                             {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime}</option>)} 
@@ -287,10 +293,10 @@ function TimesheetEntry(props) {
                             value={entry.jobname}
                             onChange={handleChange}
                             name='jobname'
-                            // required
+                            required
                         > 
                             <option key='whichjobsite'>Which Job-site?</option>  
-                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob}</option>)} 
+                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob[0]}&nbsp;&nbsp;{currentJob[1]}</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Specific Task</h3>
@@ -302,7 +308,7 @@ function TimesheetEntry(props) {
                             value={entry.task}
                             onChange={handleChange}
                             name='task'
-                            // required
+                            required
                         > 
                             <option key='whattypeofwork'>What type of work?</option>
                             {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)} 
