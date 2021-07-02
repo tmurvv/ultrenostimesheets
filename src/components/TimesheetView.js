@@ -61,16 +61,8 @@ function TimesheetView({ maintitle, subtitle }) {
             let incomingEntries = [];
             Array.from(entriesArrays.data.data).map((entryArray, idx)=>idx>0&&incomingEntries.push(entryArray))
             // add zeros to time entries
-         
-            incomingEntries.map(entry=>console.log(entry[3]));
-            incomingEntries.map(entry=>console.log(entry[4]));
-            // console.log(incomingEntries[0][0], user.email)
-            
             let entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email);
-            console.log('entriesFilter:', entriesFilter)
             entriesFilter.map(entry=>{
-                console.log(entry[7])
-                console.log(entry[8])
                 if (entry[3].split(':')[0]<10) entry[3]=`0${entry[3]}`;
                 if (entry[4].split(':')[0]<10) entry[4]=`0${entry[3]}`;
             });

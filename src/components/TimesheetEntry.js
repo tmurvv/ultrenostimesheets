@@ -87,14 +87,11 @@ function TimesheetEntry(props) {
         if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
         
         const submitTime=getNowYYYYMMDDTHHMMSS();
-        console.log('getNowYYYYMMDDTHHMMSS:', getNowYYYYMMDDTHHMMSS())
         
         //find job id
         const jobId=entry.jobname.split(',')[0];
         const jobName=entry.jobname.split(',')[1];
 
-        console.log('fullCurrentJobs:', fullCurrentJobs[0])
-        console.log('currentJobs:', currentJobs[0])
         fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
         // create submit object
         const entryArray = [
@@ -119,7 +116,6 @@ function TimesheetEntry(props) {
             // Submit Entry
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
             const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
-            console.log('res.status', res.status);
             alert(`Your timesheet has been submitted.`);
             setEntry(ENTRY_INIT);
         } catch(e) {
