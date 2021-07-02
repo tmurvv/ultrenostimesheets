@@ -63,8 +63,8 @@ function TimesheetView({ maintitle, subtitle }) {
             // add zeros to time entries
             let entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email);
             entriesFilter.map(entry=>{
-                if (entry[3].split(':')[0]<10) entry[3]=`0${entry[3]}`;
-                if (entry[4].split(':')[0]<10) entry[4]=`0${entry[3]}`;
+                if (entry[3].split(':')[0].length===1) entry[3]=`0${entry[3]}`;
+                if (entry[4].split(':')[0].length===1) entry[4]=`0${entry[4]}`;
             });
             setEntries(entriesFilter);
             // // tasks
