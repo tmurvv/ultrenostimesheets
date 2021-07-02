@@ -124,7 +124,7 @@ function EditTimesheet(props) {
            if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
            // Submit Entry
         //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
-           const res = await axios.patch(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
+           const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
            console.log('res.status', res.status);
            setEditEntry(ENTRY_INIT);
            setPage('TimesheetView');
