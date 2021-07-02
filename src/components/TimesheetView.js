@@ -2,6 +2,9 @@ import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import {UserContext} from '../contexts/UserContext';
+import {PageContext} from '../contexts/PageContext';
+import {EditEntryContext} from '../contexts/EditEntryContext';
+
 import TimesheetViewCss from '../styles/TimesheetView.css';
 
 function TimesheetView({ maintitle, subtitle }) {
@@ -9,6 +12,8 @@ function TimesheetView({ maintitle, subtitle }) {
     const [todayDate, setTodayDate] = useState(2000);
     const [entries, setEntries] = useState(2000);
     const {user} = useContext(UserContext);
+    const {page, setPage} = useContext(PageContext);
+    const {editEntry, setEditEntry} = useContext(EditEntryContext);
     
     function checkEntryEditable(date) {
         const nowDate = new Date;
@@ -19,6 +24,23 @@ function TimesheetView({ maintitle, subtitle }) {
         console.log('entryTime:', entryTime)
         return false;
         return nowDate.getTime()-entryTime.getTime()<dayMillies;
+    }
+    async function handleDelete(delId) {
+        if (!window.confirm(`Delete this timesheet entry?`)) return;
+
+        try {
+            // shortcut entryId
+            if (!delId) throw new Error('Entry Id not found. Entry not updated');
+            // Submit Entry
+            // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delId});
+            const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delId});
+            console.log('res.status', res.status);
+            setPage('TimesheetEntry');
+            alert(`Your timesheet entry has been deleted.`);
+        } catch(e) {
+            console.error(e.message);
+            alert('Something went wrong, please try again.');  
+        }
     }
     // set environment
     useEffect(()=>{
@@ -38,9 +60,20 @@ function TimesheetView({ maintitle, subtitle }) {
             console.log('entryArrays:', entriesArrays)
             let incomingEntries = [];
             Array.from(entriesArrays.data.data).map((entryArray, idx)=>idx>0&&incomingEntries.push(entryArray))
+            // add zeros to time entries
+         
+            incomingEntries.map(entry=>console.log(entry[3]));
+            incomingEntries.map(entry=>console.log(entry[4]));
             // console.log(incomingEntries[0][0], user.email)
-            const entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email); 
-            // console.log('entriesFilter:', entriesFilter)
+            
+            let entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email);
+            console.log('entriesFilter:', entriesFilter)
+            entriesFilter.map(entry=>{
+                console.log(entry[7])
+                console.log(entry[8])
+                if (entry[3].split(':')[0]<10) entry[3]=`0${entry[3]}`;
+                if (entry[4].split(':')[0]<10) entry[4]=`0${entry[3]}`;
+            });
             setEntries(entriesFilter);
             // // tasks
             // // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
@@ -79,12 +112,24 @@ function TimesheetView({ maintitle, subtitle }) {
             <tr className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                 {/* <td className='cell' style={{display: `{${checkEntryEditable(entry[11])}:'flex':;none'}`, justifyContent: 'flex-end'}}> */}
                 <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
-                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Edit Entry coming soon.')} alt='edit button' />
-                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Delete Entry coming soon.')} alt='delete button' />
+                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
+                        setPage('EditTimesheet'); 
+                            setEditEntry({
+                            entryId: entry[12],
+                            dateofwork: entry[2],
+                            starttime: entry[3],
+                            endtime: entry[4],
+                            lunchtime: entry[5],
+                            jobname: `${entry[7]} ${entry[8]}`,
+                            task: entry[9],
+                            notes: entry[10],
+                    })}} alt='edit button' />
+                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>handleDelete(entry[12])} alt='delete button' />
                 </td>
                 <td className='cell'><span className='header'>Date Worked:&nbsp;</span>{entry[2]}</td>
                 <td className='cell'><span className='header'>Start Time:&nbsp;</span>{entry[3]}</td>
                 <td className='cell'><span className='header'>End Time:&nbsp;</span>{entry[4]}</td>
+                <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry[5]}</td>
                 <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry[6]}</td>
                 <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{entry[7]}&nbsp;&nbsp;{entry[8]}</td>
                 <td className='cell'><span className='header'>Task:&nbsp;</span>{entry[9]}</td>
@@ -99,6 +144,7 @@ function TimesheetView({ maintitle, subtitle }) {
                 <th className='header'>Date Worked</th>
                 <th className='header'>Start Time</th>
                 <th className='header'>End Time</th>
+                <th className='header'>Lunch Time</th>
                 <th className='header'>Hours Worked</th>
                 <th className='header'>Job Worked</th>
                 <th className='header'>Task</th>
@@ -107,18 +153,28 @@ function TimesheetView({ maintitle, subtitle }) {
             {Array.isArray(entries)?entries.map(entry=>
             <tr className='row'>
                 <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
-                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Edit Entry coming soon.')} alt='edit button' />
-                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>alert('Delete Entry coming soon.')} alt='delete button' />
+                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{setPage('EditTimesheet'); setEditEntry({
+                        entryId: entry[12],
+                        dateofwork: entry[2],
+                        starttime: entry[3],
+                        endtime: entry[4],
+                        lunchtime: entry[5],
+                        jobname: `${entry[7]} ${entry[8]}`,
+                        task: entry[9],
+                        notes: entry[10],
+                    })}} alt='edit button' />
+                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>handleDelete(entry[12])} alt='delete button' />
                 </td>
                 <td className='cell'>{entry[2]}</td>
                 <td className='cell'>{entry[3]}</td>
                 <td className='cell'>{entry[4]}</td>
+                <td className='cell'>{entry[5]}</td>
                 <td className='cell'>{entry[6]}</td>
-                <td className='cell'>{entry[7]}&nbsp;&nbsp;{entry[8]}</td>
+                <td className='cell'>{entry[7]}  {entry[8]}</td>
                 <td className='cell'>{entry[9]}</td>
                 <td className='cell'>{entry[10]}</td>
             </tr>
-            ):<tr>No entries found.</tr>} 
+            ):<tr>Loading...</tr>} 
         </table>
         }
             
