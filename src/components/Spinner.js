@@ -1,6 +1,5 @@
 import React from 'react';
-import IndexCss from '../../styles/index.css.js';
-import Router from 'next/router';
+import IndexCss from '../styles/index.css';
 
 function PageTitle({ maintitle, subtitle }) {
     return (

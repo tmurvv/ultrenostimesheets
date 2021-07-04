@@ -1,10 +1,12 @@
 import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
+import Spinner from '../components/Spinner'
 import {UserContext} from '../contexts/UserContext';
 import {PageContext} from '../contexts/PageContext';
 import {EditEntryContext} from '../contexts/EditEntryContext';
 
+import {entryEditable} from '../utils/helpers';
 import TimesheetViewCss from '../styles/TimesheetView.css';
 
 function TimesheetView({ maintitle, subtitle }) {
@@ -15,19 +17,9 @@ function TimesheetView({ maintitle, subtitle }) {
     const {page, setPage} = useContext(PageContext);
     const {editEntry, setEditEntry} = useContext(EditEntryContext);
     
-    function checkEntryEditable(date) {
-        const nowDate = new Date;
-        const entryTime = new Date(date);
-        const dayMillies = 24*60*60*1000;
-        console.log('nowDate:', nowDate)
-        console.log('nowDateMillies:', nowDate.getTime())
-        console.log('entryTime:', entryTime)
-        return false;
-        return nowDate.getTime()-entryTime.getTime()<dayMillies;
-    }
     async function handleDelete(delId) {
         if (!window.confirm(`Delete this timesheet entry?`)) return;
-
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // shortcut entryId
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
@@ -41,6 +33,7 @@ function TimesheetView({ maintitle, subtitle }) {
             console.error(e.message);
             alert('Something went wrong, please try again.');  
         }
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
     // set environment
     useEffect(()=>{
@@ -49,52 +42,41 @@ function TimesheetView({ maintitle, subtitle }) {
         const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
         setTodayDate(`${todayDateRaw.getFullYear()}/${month}/${day}`);
         setWinWidth(window.innerWidth);
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
     // get data
     useEffect(()=>{
         if (!user) return;
-        async function getSupportLists() {
-            // tasks
+        async function getEntries() {
+            // get entries
             const entriesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/`);
             // const entriesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/`);
             console.log('entryArrays:', entriesArrays)
+            // split up array of entry arrays into entries
             let incomingEntries = [];
             Array.from(entriesArrays.data.data).map((entryArray, idx)=>idx>0&&incomingEntries.push(entryArray))
-            // add zeros to time entries
+            // add zeros to single digit hour times
             let entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email);
             entriesFilter.map(entry=>{
                 if (entry[3].split(':')[0].length===1) entry[3]=`0${entry[3]}`;
                 if (entry[4].split(':')[0].length===1) entry[4]=`0${entry[4]}`;
             });
+            // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
+            entriesFilter.sort((a,b) => (
+                new Date(a[2].replaceAll('/','-').replace('T',',')) < new Date(b[2].replaceAll('/','-').replace('T',','))) 
+                ? 1 : ((new Date(b[2].replaceAll('/','-').replace('T',',')) < new Date(a[2].replaceAll('/','-').replace('T',','))) ? -1 : 0));
+            // update state
             setEntries(entriesFilter);
-            // // tasks
-            // // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-            // const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
-            // let incomingTasks = [];
-            // Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
-            // setTasks(incomingTasks);
-            // // lunch times
-            // // const lunchTimesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            // const lunchTimesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            // let incomingLunchTimes = [];
-            // Array.from(lunchTimesArrays.data.data).map(lunchTimeArray=>incomingLunchTimes.push(lunchTimeArray[0]))
-            // setLunchTimes(incomingLunchTimes);
-            // // current jobs
-            // // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            // let incomingCurrentJobs = [];
-            // Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push(currentJobArray[1]))
-            // setCurrentJobs(incomingCurrentJobs);
-            // setFullCurrentJobs(currentJobsArrays.data.data);
         }
         try {
-            getSupportLists(user.email)
+            getEntries(user.email)
         } catch(e) {
             console.log(e.message)
         }      
     },[user]);
     return (
         <div style={{marginTop: '50px'}}>
+        <Spinner />
         {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
         <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname}. Entries may be edited within 24 hours of submission.`}/>
         <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
@@ -103,7 +85,7 @@ function TimesheetView({ maintitle, subtitle }) {
             {Array.isArray(entries)?entries.map(entry=>
             <tr className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                 {/* <td className='cell' style={{display: `{${checkEntryEditable(entry[11])}:'flex':;none'}`, justifyContent: 'flex-end'}}> */}
-                <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
+                <td className='cell' style={{display: `${entryEditable(entry[11])?'flex':'none'}`, justifyContent: 'flex-end'}} >
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
                         setPage('EditTimesheet'); 
                             setEditEntry({
@@ -117,6 +99,9 @@ function TimesheetView({ maintitle, subtitle }) {
                             notes: entry[10],
                     })}} alt='edit button' />
                     <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>handleDelete(entry[12])} alt='delete button' />
+                </td>
+                <td className='cell' style={{display: `${!entryEditable(entry[11])?'flex':'none'}`, justifyContent: 'flex-end', fontSize: '14px', opacity: '.8', fontStyle: 'italic'}} >
+                    contact office to change
                 </td>
                 <td className='cell'><span className='header'>Date Worked:&nbsp;</span>{entry[2]}</td>
                 <td className='cell'><span className='header'>Start Time:&nbsp;</span>{entry[3]}</td>
@@ -143,7 +128,7 @@ function TimesheetView({ maintitle, subtitle }) {
                 <th className='header'>Notes</th>
             </tr>
             {Array.isArray(entries)?entries.map(entry=>
-            <tr className='row'>
+            <tr key={entry[12]} className='row'>
                 <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{setPage('EditTimesheet'); setEditEntry({
                         entryId: entry[12],
@@ -157,6 +142,7 @@ function TimesheetView({ maintitle, subtitle }) {
                     })}} alt='edit button' />
                     <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>handleDelete(entry[12])} alt='delete button' />
                 </td>
+                
                 <td className='cell'>{entry[2]}</td>
                 <td className='cell'>{entry[3]}</td>
                 <td className='cell'>{entry[4]}</td>

@@ -6,11 +6,18 @@ import uuid from 'react-uuid';
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
+import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
 import {PageContext} from "../contexts/PageContext";
 import {EditEntryContext} from "../contexts/EditEntryContext";
 import {ENTRY_INIT} from "../constants/inits";
-import {getMinutesWorked, minutesToDigital, minutesToText, getNowYYYYMMDDTHHMMSS} from "../utils/helpers";
+import {
+    getMinutesWorked, 
+    minutesToDigital, 
+    minutesToText, 
+    getNowYYYYMMDDTHHMMSS, 
+    isFutureDay
+} from "../utils/helpers";
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -36,7 +43,6 @@ function EditTimesheet(props) {
     const {page, setPage} = useContext(PageContext);
     const [entry, setEntry]= useState(editEntry);
     const handleChange = (evt) => {
-        console.log('handlechagne', evt.target.lunchtime)
         switch (evt.target.name) {
             case 'dateofwork': 
                 setEntry({...entry, dateofwork: evt.target.value});
@@ -62,7 +68,6 @@ function EditTimesheet(props) {
             default :
         }
     }
-   
     const handleSubmit = async (evt) => {
         if (!window.confirm(`Make changes to this timesheet, are you sure?`)) return; 
         // combine editEntry and entry objects into one update object
@@ -75,125 +80,65 @@ function EditTimesheet(props) {
             jobid: entry.jobid,
             task: entry.task,
             notes: entry.notes,
+            submitTime: entry.submiTime,
             entryId: editEntry.entryId
         }
         console.log('updateObject:', updateObject)
-        console.log('editEntryId:', editEntry.entryId)
-       // shortcuts
-       if (!updateObject.jobname||updateObject.jobname==='Which Job-site?') return alert('Please select a Job-site.');
-       if (!updateObject.task||updateObject.task==='What type of work?') return alert('Please select type of work.');
-
-       // calculate hours
-       const minutesWorked = getMinutesWorked(updateObject.dateofwork, updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
-       const submitHoursWorked = minutesToDigital(minutesWorked);
-       const responseText = minutesToText(minutesWorked);
-       
-       if (minutesWorked===-1) return alert('End Time must be after Start Time.');
-       if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
-       
-       const submitTime=getNowYYYYMMDDTHHMMSS();
-       console.log('getNowYYYYMMDDTHHMMSS:', getNowYYYYMMDDTHHMMSS())
-       
-       //find job id
-       let jobId=updateObject.jobname.split(' ')[0];
-       let jobName=updateObject.jobname.split(' ')[1];
-    //    let jobName=Array.isArray(updateObject.jobname)?updateObject.jobname[1]:updateObject.jobname.split('|!|')[1];
-    //    let jobId=Array.isArray(updateObject.jobname)?updateObject.jobname[0]:updateObject.jobname.split('|!|')[0];
-    //    let jobName=Array.isArray(updateObject.jobname)?updateObject.jobname[1]:updateObject.jobname.split('|!|')[1];
-    //    fullCurrentJobs.map(job=>job[1].toUpperCase()===updateObject.jobname.toUpperCase()?jobId=job[0]:'');
-       // create submit object
-       const entryArray = [
-           user.email, 
-           `${user.firstname} ${user.lastname}`, 
-           updateObject.dateofwork, 
-           updateObject.starttime, 
-           updateObject.endtime, 
-           updateObject.lunchtime, 
-           submitHoursWorked, 
-           jobId, 
-           jobName, 
-           updateObject.task, 
-           updateObject.notes, 
-           submitTime,
-           editEntry.entryId
-       ]
-       console.log('entryArray:', entryArray)
+        // shortcuts
+        if (!entry.dateofwork||entry.dateofwork==='Date of Work?') return alert('Please enter date of work.');
+        if (isFutureDay(entry.dateofwork)) return alert("Timesheet may not be submitted for a future date.")
+        if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
+        if (!entry.endtime||entry.endtime==='End Time?') return alert('Please enter end time.');
+        if (!entry.lunchtime||entry.endtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
+        if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
+        if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
+        // calculate hours
+        const minutesWorked = getMinutesWorked(updateObject.dateofwork, updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
+        const submitHoursWorked = minutesToDigital(minutesWorked);
+        const responseText = minutesToText(minutesWorked);
+        
+        if (minutesWorked===-1) return alert('End Time must be after Start Time.');
+        if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
+        
+        //find job id
+        let jobId=updateObject.jobname.split(' ')[0];
+        let jobName=updateObject.jobname.split(' ')[1];
+    // create submit object
+    const entryArray = [
+        user.email, 
+        `${user.firstname} ${user.lastname}`, 
+        updateObject.dateofwork, 
+        updateObject.starttime, 
+        updateObject.endtime, 
+        updateObject.lunchtime, 
+        submitHoursWorked, 
+        jobId, 
+        jobName, 
+        updateObject.task, 
+        updateObject.notes, 
+        updateObject.submitTime,
+        editEntry.entryId
+    ]
+    console.log('entryArray:', entryArray)
             
-       try {
-           // shortcut entryId
-           if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
-           // Submit Entry
-        //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
-           const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
-           console.log('res.status', res.status);
-           setEditEntry(ENTRY_INIT);
-           setPage('TimesheetView');
-           alert(`Your timesheet has been updated.`);
-       } catch(e) {
-           console.error(e.message);
-           alert('Something went wrong, please try again');  
-       }
-               
-    // 00000000000000000000000000000000000000000000
-        
-        // place find formula in hidden worksheet
-
-        
-        // find row of entry
-
-
-        // update entry
-
-
-        // delete hidden sheet
-
-
-
-
-
-
-
-        // // shortcuts
-        // if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
-        // if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
-
-        // // calculate hours
-        // const minutesWorked = getMinutesWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
-        // const submitHoursWorked = minutesToDigital(minutesWorked);
-        // const responseText = minutesToText(minutesWorked);
-        
-        // if (minutesWorked===-1) return alert('End Time must be after Start Time.');
-        // if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
-        
-        // const submitTime=getNowYYYYMMDDTHHMM();
-        // console.log('getNowYYYYMMDDTHHMM:', getNowYYYYMMDDTHHMM())
-        
-        // //find job id
-        // const jobId=entry.jobname.split(',')[0];
-        // const jobName=entry.jobname.split(',')[1];
-
-        // console.log('fullCurrentJobs:', fullCurrentJobs[0])
-        // console.log('currentJobs:', currentJobs[0])
-        // fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
-        // // create submit object
-        // const entryArray = [user.email, `${user.firstname} ${user.lastname}`, entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime, submitHoursWorked, jobId, jobName, entry.task, entry.notes, submitTime]
-        // console.log('entryArray:', entryArray);
-        // if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.dateofwork}?`)) return;
-
-           
-        // try {
-        //     // Submit Entry
-        //     // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
-        //     const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
-        //     console.log('res.status', res.status);
-        //     alert(`Your timesheet has been submitted.`);
-        //     setEntry(ENTRY_INIT);
+    try {
+        // shortcut entryId
+        if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
+        // Submit Entry
+            //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
+        const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
+        console.log('res.status', res.status);
+        setEditEntry(ENTRY_INIT);
+        setPage('TimesheetView');
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+        alert(`Your timesheet has been updated.`);
+    } catch(e) {
+        console.error(e.message);
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+        alert('Something went wrong, please try again');  
+    }
             
-        // } catch(e) {
-        //     console.error(e.message);
-        //     alert('Something went wrong, please try again');
-           
-        // }
     }
     // function resetResults() {
     //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();
@@ -210,12 +155,12 @@ function EditTimesheet(props) {
 
     // set environment
     useEffect(()=>{
-        console.log('editEntry:', editEntry)
         const todayDateRaw = new Date();
         const month=todayDateRaw.getMonth()+1<10?`0${todayDateRaw.getMonth()+1}`:todayDateRaw.getMonth()+1;
         const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
         setTodayDate(`${todayDateRaw.getFullYear()}/${month}/${day}`);
         setWinWidth(window.innerWidth);
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
     },[]);
     // get data
     useEffect(()=>{
@@ -235,11 +180,6 @@ function EditTimesheet(props) {
                 '60 minutes',
                 '90 minutes'
             ]
-            // // const lunchTimesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            // const lunchTimesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            // let incomingLunchTimes = [];
-            // Array.from(lunchTimesArrays.data.data).map(lunchTimeArray=>incomingLunchTimes.push(lunchTimeArray[0]))
-            // setLunchTimes(incomingLunchTimes);
             setLunchTimes(lunchTimes);
             // current jobs
             const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
@@ -256,9 +196,9 @@ function EditTimesheet(props) {
         }      
     },[]);
     return ( 
-       <>
-       <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
-            {/* <Spinner /> */}
+    <>
+    <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
+            <Spinner />
             <PageTitle maintitle='Edit Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
             {/* <Results 

@@ -31,3 +31,18 @@ export function minutesToText(minutes) {
     
     return `${hoursDisplay} hour${minuteDisplay!==1?'s':''} and ${minuteDisplay} minute${minuteDisplay!==1?'s':''}`;
 }
+export function entryEditable(date) {
+    let dateFormat = date;
+    dateFormat=dateFormat.replaceAll('/','-').replace('T',',');
+    const timeOfEntry = new Date(dateFormat);
+    const timeNow = (new Date()).getTime();
+    return (timeNow-timeOfEntry.getTime())<86400000;
+}
+export function isFutureDay(idate) {
+    const idateMillies = (new Date(idate)).getTime();
+    const today = new Date();
+    today.setHours(23);
+    today.setMinutes(59);
+    today.setSeconds(59);
+    return (today - idateMillies) < 0;
+}

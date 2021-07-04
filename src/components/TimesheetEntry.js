@@ -6,9 +6,16 @@ import uuid from 'react-uuid';
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
+import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
 import {ENTRY_INIT} from "../constants/inits";
-import {getMinutesWorked, minutesToDigital, minutesToText, getNowYYYYMMDDTHHMMSS} from "../utils/helpers";
+import {
+    getMinutesWorked, 
+    minutesToDigital, 
+    minutesToText, 
+    getNowYYYYMMDDTHHMMSS, 
+    isFutureDay
+} from "../utils/helpers";
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -67,11 +74,10 @@ function TimesheetEntry(props) {
             default :
         }
     }
-   
     const handleSubmit = async (evt) => {
-        // BREAKING test that date and times were all three entered, required not working
-        // shortcuts
+        // Validations
         if (!entry.dateofwork||entry.dateofwork==='Date of Work?') return alert('Please enter date of work.');
+        if (isFutureDay(entry.dateofwork)) return alert("Timesheet may not be submitted for a future date.")
         if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
         if (!entry.endtime||entry.endtime==='End Time?') return alert('Please enter end time.');
         if (!entry.lunchtime||entry.endtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
@@ -80,13 +86,10 @@ function TimesheetEntry(props) {
 
         // calculate hours
         const minutesWorked = getMinutesWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
+        if (minutesWorked===-1) return alert('End Time must be after Start Time.');
+        if (minutesWorked===-2) return alert('Lunch Time is longer than hours worked.');
         const submitHoursWorked = minutesToDigital(minutesWorked);
         const responseText = minutesToText(minutesWorked);
-        
-        if (minutesWorked===-1) return alert('End Time must be after Start Time.');
-        if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
-        
-        const submitTime=getNowYYYYMMDDTHHMMSS();
         
         //find job id
         const jobId=entry.jobname.split(',')[0];
@@ -106,36 +109,26 @@ function TimesheetEntry(props) {
             jobName, 
             entry.task, 
             entry.notes, 
-            submitTime,
+            getNowYYYYMMDDTHHMMSS(),
             uuid()
         ]
         console.log('entryArray:', entryArray);
         if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.dateofwork}?`)) return;
-
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // Submit Entry
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
-            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
+            await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             alert(`Your timesheet has been submitted.`);
             setEntry(ENTRY_INIT);
         } catch(e) {
             console.error(e.message);
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             alert('Something went wrong, please try again');
-            
         }
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
-    // function resetResults() {
-    //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();
-    //     document.querySelector('#loadingLoginText').innerText='';
-    //     dispatchResultInfo({type: 'initial'});
-    // }
-    // function resetLoginForm() { 
-    //     setUserLogin({
-    //         loginemail: '',
-    //         loginpassword: '',
-    //         loginchange: false
-    //     });
-    // }
 
     // set environment
     useEffect(()=>{
@@ -144,8 +137,9 @@ function TimesheetEntry(props) {
         const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
         setTodayDate(`${todayDateRaw.getFullYear()}/${month}/${day}`);
         setWinWidth(window.innerWidth);
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
-    // get data
+    // get support lists
     useEffect(()=>{
         async function getSupportLists() {
             // tasks
@@ -163,11 +157,6 @@ function TimesheetEntry(props) {
                 '60 minutes',
                 '90 minutes'
             ]
-            // // const lunchTimesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            // const lunchTimesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/lunchtimes`);
-            // let incomingLunchTimes = [];
-            // Array.from(lunchTimesArrays.data.data).map(lunchTimeArray=>incomingLunchTimes.push(lunchTimeArray[0]))
-            // setLunchTimes(incomingLunchTimes);
             setLunchTimes(lunchTimes);
             // current jobs
             const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
@@ -186,7 +175,7 @@ function TimesheetEntry(props) {
     return ( 
        <>
        <div className='login-signup-container'>
-            {/* <Spinner /> */}
+            <Spinner />
             <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
             {/* <Results 
