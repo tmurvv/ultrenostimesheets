@@ -29,7 +29,7 @@ function TimesheetView({ maintitle, subtitle }) {
             // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delId});
             const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delId});
             console.log('res.status', res.status);
-            setPage('TimesheetView');
+            setPage('TimesheetEntryy');
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
         } catch(e) {
