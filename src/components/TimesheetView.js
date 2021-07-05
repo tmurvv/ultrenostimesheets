@@ -75,19 +75,20 @@ function TimesheetView({ maintitle, subtitle }) {
         }      
     },[user]);
     return (
-        <div style={{marginTop: '50px'}}>
+        <div style={{marginTop: '50px', marginBottom: '50px'}}>
         <Spinner />
         {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
         <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname}. Entries may be edited within 24 hours of submission.`}/>
         <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
-        {winWidth<750?
+        {winWidth<950?
         <table className='table' style={{boxShadow: 'none'}}>
             {Array.isArray(entries)?entries.map(entry=>
             <tr className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                 {/* <td className='cell' style={{display: `{${checkEntryEditable(entry[11])}:'flex':;none'}`, justifyContent: 'flex-end'}}> */}
-                <td className='cell' style={{display: `${entryEditable(entry[11])?'flex':'none'}`, justifyContent: 'flex-end'}} >
+                <td className='cell' style={{opacity: `${entryEditable(entry[11])?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
-                        setPage('EditTimesheet'); 
+                        if (entryEditable(entry[11])) {    
+                            setPage('EditTimesheet'); 
                             setEditEntry({
                             entryId: entry[12],
                             dateofwork: entry[2],
@@ -97,12 +98,15 @@ function TimesheetView({ maintitle, subtitle }) {
                             jobname: `${entry[7]} ${entry[8]}`,
                             task: entry[9],
                             notes: entry[10],
-                    })}} alt='edit button' />
-                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>handleDelete(entry[12])} alt='delete button' />
+                    })} else {
+                        alert('Please contact office to make changes.');
+                    }
+                    }} alt='edit button' />
+                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>entryEditable(entry[11])&&handleDelete(entry[12])} alt='delete button' />
                 </td>
-                <td className='cell' style={{display: `${!entryEditable(entry[11])?'flex':'none'}`, justifyContent: 'flex-end', fontSize: '14px', opacity: '.8', fontStyle: 'italic'}} >
+                {/* <td className='cell' style={{display: `${!entryEditable(entry[11])?'flex':'none'}`, justifyContent: 'flex-end', fontSize: '14px', opacity: '.8', fontStyle: 'italic'}} >
                     contact office to change
-                </td>
+                </td> */}
                 <td className='cell'><span className='header'>Date Worked:&nbsp;</span>{entry[2]}</td>
                 <td className='cell'><span className='header'>Start Time:&nbsp;</span>{entry[3]}</td>
                 <td className='cell'><span className='header'>End Time:&nbsp;</span>{entry[4]}</td>
@@ -110,11 +114,11 @@ function TimesheetView({ maintitle, subtitle }) {
                 <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry[6]}</td>
                 <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{entry[7]}&nbsp;&nbsp;{entry[8]}</td>
                 <td className='cell'><span className='header'>Task:&nbsp;</span>{entry[9]}</td>
-                <td className='cell'><span className='header'>Notes:&nbsp;</span>{entry[10]}</td>
+                <td className='cell'><div style={{maxHeight: '50px', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry[10]}</div></td>
             </tr>):<p>No entries found.</p>}
         </table>:''
         }
-        {winWidth>=750&&
+        {winWidth>=950&&
         <table className='table' style={{maxWidth: 'unset'}}>
             <tr className='row'>
                 <th className='header'></th>
@@ -129,8 +133,8 @@ function TimesheetView({ maintitle, subtitle }) {
             </tr>
             {Array.isArray(entries)?entries.map(entry=>
             <tr key={entry[12]} className='row'>
-                <td className='cell' style={{display: `${((new Date).getTime()-86400000>(new Date).getTime(entry[11]))&&'none'}`, justifyContent: 'flex-end'}}>
-                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{setPage('EditTimesheet'); setEditEntry({
+                <td className='cell' style={{opacity: `${entryEditable(entry[11])?1:.2}`, display: 'flex', justifyContent: 'flex-end'}} disable={!entryEditable(entry[11])}>
+                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{if (entryEditable(entry[11])) {setPage('EditTimesheet'); setEditEntry({
                         entryId: entry[12],
                         dateofwork: entry[2],
                         starttime: entry[3],
@@ -139,8 +143,16 @@ function TimesheetView({ maintitle, subtitle }) {
                         jobname: `${entry[7]} ${entry[8]}`,
                         task: entry[9],
                         notes: entry[10],
-                    })}} alt='edit button' />
-                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>handleDelete(entry[12])} alt='delete button' />
+                    })} else {
+                        alert('Please contact office to make changes.');
+                    }}} alt='edit button' />
+                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
+                        if (entryEditable(entry[11])) {
+                            handleDelete(entry[12])
+                        } else {
+                            alert('Please contact office to make changes.')
+                        }
+                    }} alt='delete button'/>
                 </td>
                 
                 <td className='cell'>{entry[2]}</td>
@@ -150,7 +162,7 @@ function TimesheetView({ maintitle, subtitle }) {
                 <td className='cell'>{entry[6]}</td>
                 <td className='cell'>{entry[7]}  {entry[8]}</td>
                 <td className='cell'>{entry[9]}</td>
-                <td className='cell'>{entry[10]}</td>
+                <td className='cell'><div style={{maxHeight: '40px', maxWidth: '200px', overflowY: 'auto'}}>{entry[10]}</div></td>
             </tr>
             ):<tr>Loading...</tr>} 
         </table>

@@ -28,7 +28,7 @@ function TimesheetViewCss() {
         max-width: 350px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         display: table;}
-        @media screen and (max-width: 750px)
+        @media screen and (max-width: 950px)
           {.table{display: block;}}
       
       .row
@@ -39,14 +39,14 @@ function TimesheetViewCss() {
         .header
          { font-weight: 900;
           }
-          @media screen and (max-width: 750px)
+          @media screen and (max-width: 950px)
           {.header {padding: 8px 0;
           display: block;}}
         .row.green
           {background: #27ae60;}
         .row.blue
           {background: #2980b9;}
-        @media screen and (max-width: 750px)
+        @media screen and (max-width: 950px)
           {.row {padding: 8px 0;
           display: block;}}
       .row>span {
@@ -54,10 +54,11 @@ function TimesheetViewCss() {
       }
       .cell {
           padding: 6px 12px;
+          max-height: 40px;
         //   display: table-cell;
       }
         
-        @media screen and (max-width: 750px)
+        @media screen and (max-width: 950px)
           {.cell {padding: 2px 12px;
           display: flex;align-items: center}}
             `}
