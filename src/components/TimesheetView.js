@@ -1,5 +1,6 @@
 import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
+import uuid from 'react-uuid';
 import PageTitle from '../components/PageTitle';
 import Spinner from '../components/Spinner'
 import {UserContext} from '../contexts/UserContext';
@@ -20,6 +21,7 @@ function TimesheetView({ maintitle, subtitle }) {
     async function handleDelete(delId) {
         if (!window.confirm(`Delete this timesheet entry?`)) return;
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
+        console.log(delId);
         try {
             // shortcut entryId
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
@@ -27,11 +29,13 @@ function TimesheetView({ maintitle, subtitle }) {
             // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delId});
             const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delId});
             console.log('res.status', res.status);
-            setPage('TimesheetEntry');
-            alert(`Your timesheet entry has been deleted.`);
+            setPage('TimesheetView');
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
         } catch(e) {
             console.error(e.message);
-            alert('Something went wrong, please try again.');  
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none"; 
+            setTimeout(()=>{alert(`Something went wrong, please try again.`)},200);
         }
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
@@ -82,8 +86,9 @@ function TimesheetView({ maintitle, subtitle }) {
         <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
         {winWidth<950?
         <table className='table' style={{boxShadow: 'none'}}>
+            <tbody>
             {Array.isArray(entries)?entries.map(entry=>
-            <tr className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
+            <tr key={entry[12]} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                 {/* <td className='cell' style={{display: `{${checkEntryEditable(entry[11])}:'flex':;none'}`, justifyContent: 'flex-end'}}> */}
                 <td className='cell' style={{opacity: `${entryEditable(entry[11])?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
@@ -98,6 +103,7 @@ function TimesheetView({ maintitle, subtitle }) {
                             jobname: `${entry[7]} ${entry[8]}`,
                             task: entry[9],
                             notes: entry[10],
+                            timesubmitted: entry[11],
                     })} else {
                         alert('Please contact office to make changes.');
                     }
@@ -116,10 +122,12 @@ function TimesheetView({ maintitle, subtitle }) {
                 <td className='cell'><span className='header'>Task:&nbsp;</span>{entry[9]}</td>
                 <td className='cell'><div style={{maxHeight: '50px', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry[10]}</div></td>
             </tr>):<p>No entries found.</p>}
+            </tbody>
         </table>:''
         }
         {winWidth>=950&&
         <table className='table' style={{maxWidth: 'unset'}}>
+            <tbody>
             <tr className='row'>
                 <th className='header'></th>
                 <th className='header'>Date Worked</th>
@@ -143,6 +151,7 @@ function TimesheetView({ maintitle, subtitle }) {
                         jobname: `${entry[7]} ${entry[8]}`,
                         task: entry[9],
                         notes: entry[10],
+                        timesubmitted: entry[11]
                     })} else {
                         alert('Please contact office to make changes.');
                     }}} alt='edit button' />
@@ -155,7 +164,7 @@ function TimesheetView({ maintitle, subtitle }) {
                     }} alt='delete button'/>
                 </td>
                 
-                <td className='cell'>{entry[2]}</td>
+                <td className='cell'><span style={{whiteSpace: 'nowrap'}}>{entry[2]}</span></td>
                 <td className='cell'>{entry[3]}</td>
                 <td className='cell'>{entry[4]}</td>
                 <td className='cell'>{entry[5]}</td>
@@ -165,11 +174,9 @@ function TimesheetView({ maintitle, subtitle }) {
                 <td className='cell'><div style={{maxHeight: '40px', maxWidth: '200px', overflowY: 'auto'}}>{entry[10]}</div></td>
             </tr>
             ):<tr>Loading...</tr>} 
+            </tbody>
         </table>
         }
-            
-            
-        
         <TimesheetViewCss />
         </div>
     )

@@ -120,7 +120,7 @@ function TimesheetEntry(props) {
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
             await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            alert(`Your timesheet has been submitted.`);
+            setTimeout(()=>{alert(`Your timesheet has been submitted.`)},200);
             setEntry(ENTRY_INIT);
         } catch(e) {
             console.error(e.message);

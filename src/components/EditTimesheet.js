@@ -80,8 +80,8 @@ function EditTimesheet(props) {
             jobid: entry.jobid,
             task: entry.task,
             notes: entry.notes,
-            submitTime: entry.submiTime,
-            entryId: editEntry.entryId
+            submitTime: editEntry.timesubmitted,
+            entryId: editEntry.entryId,
         }
         console.log('updateObject:', updateObject)
         // shortcuts
@@ -126,13 +126,13 @@ function EditTimesheet(props) {
         if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         // Submit Entry
-            //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
+        //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
         const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
         console.log('res.status', res.status);
         setEditEntry(ENTRY_INIT);
         setPage('TimesheetView');
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-        alert(`Your timesheet has been updated.`);
+        setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
     } catch(e) {
         console.error(e.message);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
