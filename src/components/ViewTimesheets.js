@@ -8,9 +8,9 @@ import {PageContext} from '../contexts/PageContext';
 import {EditEntryContext} from '../contexts/EditEntryContext';
 
 import {entryEditable} from '../utils/helpers';
-import TimesheetViewCss from '../styles/TimesheetView.css';
+import ViewTimesheetsCss from '../styles/ViewTimesheets.css';
 
-function TimesheetView({ maintitle, subtitle }) {
+function ViewTimesheets({ maintitle, subtitle }) {
     const [winWidth, setWinWidth] = useState(2000);
     const [todayDate, setTodayDate] = useState(2000);
     const [entries, setEntries] = useState(2000);
@@ -29,7 +29,7 @@ function TimesheetView({ maintitle, subtitle }) {
             // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delId});
             const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delId});
             console.log('res.status', res.status);
-            setPage('TimesheetEntryy');
+            setPage('RefreshView');
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
         } catch(e) {
@@ -177,9 +177,9 @@ function TimesheetView({ maintitle, subtitle }) {
             </tbody>
         </table>
         }
-        <TimesheetViewCss />
+        <ViewTimesheetsCss />
         </div>
     )
 }
 
-export default TimesheetView;
+export default ViewTimesheets;

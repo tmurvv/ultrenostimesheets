@@ -1,13 +1,15 @@
 import {useState,useEffect} from 'react';
 import axios from 'axios';
+import atob from 'atob';
 // components
 import Banner from './components/Banner';
 import NavBar from './components/NavBar';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import TimesheetEntry from './components/TimesheetEntry';
-import TimesheetView from './components/TimesheetView';
+import EnterTimesheet from './components/EnterTimesheet';
+import ViewTimesheets from './components/ViewTimesheets';
 import EditTimesheet from './components/EditTimesheet';
+import ResetPassword from './components/ResetPassword';
 // other internal
 import {UserContext} from "./contexts/UserContext";
 import {PageContext} from "./contexts/PageContext";
@@ -17,8 +19,9 @@ import {USER_INIT} from './constants/inits';
 
 function App() {
     const [user, setUser] = useState(USER_INIT);
-    const [page, setPage] = useState("login"); // ['Login','Logout', 'Signup', 'TimesheetEntry', 'TimesheetView', 'EditTimesheet']
+    const [page, setPage] = useState("Login"); // ['Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView']
     const [editEntry, setEditEntry] = useState(USER_INIT);
+    const [resetPasswordEmail, setResetPasswordEmail] = useState();
     const [winWidth, setWinWidth] = useState(0);
     // reset window width on window resize
     useEffect(() => {
@@ -29,6 +32,15 @@ function App() {
         window.addEventListener('resize', handleResize);
         return () => { window.removeEventListener('resize', handleResize) }
     }, []);
+    // param check
+    useEffect(()=>{
+        const params = new URLSearchParams(window.location.search) // id=123
+        console.log('hereabv')
+        if (!params.has('reset')) return // true
+        console.log('herebelow', params.get('reset'));
+        setPage('ResetPassword');
+        setResetPasswordEmail(atob(params.get('reset')));
+    },[]);
     return (
         <>
             <header>            
@@ -40,9 +52,10 @@ function App() {
                             {page.toUpperCase()==='LOGIN'&&<Login setPage={setPage}/>}
                             {page.toUpperCase()==='SIGNUP'&&<Signup setPage={setPage}/>}
                             {page.toUpperCase()==='EDITTIMESHEET'&&<EditTimesheet />}
-                            {page.toUpperCase()==='TIMESHEETENTRY'&&<TimesheetEntry />}
-                            {page.toUpperCase()==='TIMESHEETVIEW'&&<TimesheetView />}
-                            
+                            {page.toUpperCase()==='ENTERTIMESHEET'&&<EnterTimesheet setPage={setPage} />}
+                            {page.toUpperCase()==='VIEWTIMESHEETS'&&<ViewTimesheets setPage={setPage}/>}
+                            {page.toUpperCase()==='RESETPASSWORD'&&<ResetPassword useremail={resetPasswordEmail} setPage={setPage}/>}
+                            {page.toUpperCase()==='REFRESHVIEW'&&<ViewTimesheets setPage={setPage}/>} {/* a hack to get viewtimesheets page to refresh after delete */}
                         </EditEntryContext.Provider>
                     </UserContext.Provider>
                 </PageContext.Provider>

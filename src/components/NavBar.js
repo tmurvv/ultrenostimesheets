@@ -68,10 +68,10 @@ export default function NavBar(props) {
                             <img src='/img/close.png' alt="close mobile menu icon" style={{height: '15px'}}/>
                         </div>
                         <li>
-                            <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('TimesheetEntry');}else{alert('Please Login to enter Timesheets.');setPage('login');setOpen(false)}}}>Enter Timesheet</Link>
+                            <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('EnterTimesheet');}else{alert('Please Login to enter Timesheets.');setPage('login');setOpen(false)}}}>Enter Timesheet</Link>
                         </li>
                         <li>
-                            <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('TimesheetView');}else{alert('Please Login to view Timesheets.');setPage('login');setOpen(false)}}}>View Timesheets</Link>
+                            <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('ViewTimesheets');}else{alert('Please Login to view Timesheets.');setPage('login');setOpen(false)}}}>View Timesheets</Link>
                         </li>
                         <li>
                             {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('login')}}>Login</Link>}

@@ -29,7 +29,7 @@ import {
 //     loginClasses: 'login-signup l-attop',
 //     signupClasses: 'login-signup s-atbottom'
 // }
-function TimesheetEntry(props) {
+function EnterTimesheet(props) {
     const { user } = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
@@ -120,7 +120,7 @@ function TimesheetEntry(props) {
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
             await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            setTimeout(()=>{alert(`Your timesheet has been submitted.`)},200);
+            setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
             setEntry(ENTRY_INIT);
         } catch(e) {
             console.error(e.message);
@@ -305,4 +305,4 @@ function TimesheetEntry(props) {
     )
 }
 
-export default TimesheetEntry;
+export default EnterTimesheet;

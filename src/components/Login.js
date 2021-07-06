@@ -82,7 +82,7 @@ function Login({setPage}) {
                 email: returnedUser.email
             });
             alert(`Login successful. Welcome ${returnedUser.firstname}`);
-            setPage('TimesheetEntry');
+            setPage('EnterTimesheet');
             // // set JWT cookie
             //     document.cookie = `JWT=${jwt}`
             // // display result window
@@ -117,27 +117,31 @@ function Login({setPage}) {
     }
     // handle forgotPassword click
     async function handleForgot() {
-        alert('Forgot Password coming soon!')
-        // const resultText = document.querySelector('#loadingLoginText');
-        // // shortcut no email entered
-        // if (!userLogin.loginemail) {
-        //     resultText.innerText='Please enter your account email.';
-        //     dispatchResultInfo({type: 'tryAgain'});
-        //     return;
-        // }
-        // try {
-        //     // send forgot password email
-        //     const res = await axios.get(`${process.env.backend}/api/v1/users/sendresetemail/${userLogin.loginemail}`);
-        //     // display results
-        //     if (res.status===200) {
-        //         resultText.innerText=`Please check your inbox for an email with instructions to reset your password.`;
-        //         dispatchResultInfo({type: 'OK'});
-        //     }
-        // } catch (e) {
-        //     // display error
-        //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong with password reset. Please check your netword connection.'} Log in as guest user?`
-        //     dispatchResultInfo({type: 'okTryAgain'});
-        // }
+        console.log('in handle forg', userLogin.loginemail)
+        // shortcut no email entered
+        if (!userLogin.loginemail) {
+            alert('Please enter your account email.');
+            // resultText.innerText='Please enter your account email.';
+            // dispatchResultInfo({type: 'tryAgain'});
+            return;
+        }
+        try {
+            // send forgot password email
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
+            // const res = await axios.get(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.email});
+            // const res = await axios.get(`${process.env.backend}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
+            // display results
+            if (res.status===200) {
+                alert('Please check your inbox for an email with instructions to reset your password.');
+                // resultText.innerText=`Please check your inbox for an email with instructions to reset your password.`;
+                // dispatchResultInfo({type: 'OK'});
+            }
+        } catch (e) {
+            // display error
+            alert('Something went wrong with password reset. Please check your network connection.');
+            // resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong with password reset. Please check your netword connection.'} Log in as guest user?`
+            // dispatchResultInfo({type: 'okTryAgain'});
+        }
     }
     // async function loginGuest(evt) {
     //     if (needVerify) {
@@ -235,9 +239,9 @@ function Login({setPage}) {
                         </div>
                         <div className="forgot-pass"
                             style={{cursor: 'pointer'}} 
-                        onClick={handleForgot}
+                            onClick={handleForgot}
                         >
-                            <button className='link-btn' style={{fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
+                            <button type='button' className='link-btn' style={{fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
                         </div>
                     </>
                     

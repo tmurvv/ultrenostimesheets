@@ -130,7 +130,7 @@ function EditTimesheet(props) {
         const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryArray);
         console.log('res.status', res.status);
         setEditEntry(ENTRY_INIT);
-        setPage('TimesheetView');
+        setPage('ViewTimesheets');
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
     } catch(e) {
@@ -322,7 +322,7 @@ function EditTimesheet(props) {
                             </button>
                         </div>
                         <div style={{marginLeft: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                            <button type='button' className="submit-btn login-signup-title" onClick={()=>setPage('TimesheetView')} style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
+                            <button type='button' className="submit-btn login-signup-title" onClick={()=>setPage('ViewTimesheets')} style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
                                 Cancel
                             </button>
                         </div>
