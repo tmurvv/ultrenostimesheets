@@ -95,30 +95,32 @@ function EnterTimesheet(props) {
         const jobId=entry.jobname.split(',')[0];
         const jobName=entry.jobname.split(',')[1];
 
+        // format start and endtime
+
+        const submitStart = `${entry.dateofwork}T${entry.starttime}`;
+        const submitEnd = `${entry.dateofwork}T${entry.endtime}`;
+
         fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
         // create submit object
-        const entryArray = [
-            user.email, 
-            `${user.firstname} ${user.lastname}`, 
-            entry.dateofwork, 
-            entry.starttime, 
-            entry.endtime, 
-            entry.lunchtime, 
-            submitHoursWorked, 
-            jobId, 
-            jobName, 
-            entry.task, 
-            entry.notes, 
-            getNowYYYYMMDDTHHMMSS(),
-            uuid()
-        ]
-        console.log('entryArray:', entryArray);
+        const entryObject = {
+            "userid": user.email,
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+            "starttime": submitStart,
+            "endtime": submitEnd,
+            "lunchtime": entry.lunchtime,
+            "jobid": jobId,
+            "jobname": jobName,
+            "task": entry.task,
+            "notes": entry.notes
+        }
+        console.log('entryObject:', entryObject)
         if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.dateofwork}?`)) return;
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // Submit Entry
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets`, entryArray);
-            await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets`, entryArray);
+            await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            // await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
             setEntry(ENTRY_INIT);
@@ -129,7 +131,6 @@ function EnterTimesheet(props) {
         }
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
-
     // set environment
     useEffect(()=>{
         const todayDateRaw = new Date();
@@ -239,7 +240,7 @@ function EnterTimesheet(props) {
                             required
                         >
                             <option name='15' value='15' key='howlongforlunch'>How long for lunch?</option>
-                            {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime}</option>)} 
+                            {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime.substr(0,2)}>{lunchTime}</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Job Name</h3>

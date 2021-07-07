@@ -9,13 +9,15 @@ export function getNowYYYYMMDDTHHMMSS() {
     
     return `${todayDateRaw.getFullYear()}/${month}/${day}T${hour}:${minute}:${second}`;
 }
-export function getMinutesWorked(dateofwork, starttime, endtime, lunchtime) {
-    const startFullDate = new Date(`${dateofwork}T${String(starttime.substr(0,2))}:${String(starttime.substr(3,2))}:00`);
-    const endFullDate = new Date(`${dateofwork}T${String(endtime.substr(0,2))}:${String(endtime.substr(3,2))}:00`);
+export function getMinutesWorked(starttime, endtime, lunchtime) {
+    // shortcut if endtime before starttime
+    if ((new Date(endtime)).getTime()-(new Date(starttime)).getTime()<=0) return -1;
+    // calculate time worked
     const lunchMillies = Number(String(lunchtime).substr(0,2)*60*1000);
-    if (endFullDate-startFullDate<0) return -1;
-    const milliesWorked = endFullDate-startFullDate-lunchMillies;
+    const milliesWorked = (new Date(endtime)).getTime()-(new Date(starttime)).getTime()-lunchMillies;
+    // short cut is lunchtime greater than time worked
     if (milliesWorked<=0) return -2;
+    //return minutes worked
     return Math.round((milliesWorked/60)/1000);
 }
 export function minutesToDigital(minutes) {
@@ -32,11 +34,14 @@ export function minutesToText(minutes) {
     return `${hoursDisplay} hour${minuteDisplay!==1?'s':''} and ${minuteDisplay} minute${minuteDisplay!==1?'s':''}`;
 }
 export function entryEditable(date) {
-    let dateFormat = date;
-    dateFormat=dateFormat.replaceAll('/','-').replace('T',',');
-    const timeOfEntry = new Date(dateFormat);
-    const timeNow = (new Date()).getTime();
-    return (timeNow-timeOfEntry.getTime())<86400000;
+    return ((new Date()).getTime()-(new Date(date)).getTime())<86400000;
+}
+export function getDateWorked(entry) {
+    const entryDate = new Date(entry);
+    const month=(entryDate.getMonth()+1)<10?`0${entryDate.getMonth()+1}`:entryDate.getMonth()+1;
+    const date=(entryDate.getDate())<10?`0${entryDate.getDate()}`:entryDate.getDate();
+    console.log(`${entryDate.getFullYear()}-${month}-${date}`)
+    return `${entryDate.getFullYear()}-${month}-${date}`
 }
 export function isFutureDay(idate) {
     const idateMillies = (new Date(idate)).getTime();
@@ -45,4 +50,16 @@ export function isFutureDay(idate) {
     today.setMinutes(59);
     today.setSeconds(59);
     return (today - idateMillies) < 0;
+}
+export function updateStartEndTimeFromEdit(dateofwork, newTime) {
+    // return full date time
+    console.log('updatefunc', `${dateofwork}T${newTime}`)
+    return `${dateofwork}T${newTime}`
+}
+export function updateLunchTimeFromEdit(newLunchtime) {
+    console.log('newLunchtime:', newLunchtime)
+    !newLunchtime?newLunchtime='0':newLunchtime=String(newLunchtime);
+    console.log('newLunchtime:', newLunchtime)
+    // return number of minutes
+    return Number(newLunchtime.substr(0,2));
 }

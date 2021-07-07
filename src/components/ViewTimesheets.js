@@ -7,7 +7,7 @@ import {UserContext} from '../contexts/UserContext';
 import {PageContext} from '../contexts/PageContext';
 import {EditEntryContext} from '../contexts/EditEntryContext';
 
-import {entryEditable} from '../utils/helpers';
+import {getDateWorked, entryEditable, getMinutesWorked, minutesToDigital, minutesToText} from '../utils/helpers';
 import ViewTimesheetsCss from '../styles/ViewTimesheets.css';
 
 function ViewTimesheets({ maintitle, subtitle }) {
@@ -26,14 +26,15 @@ function ViewTimesheets({ maintitle, subtitle }) {
             // shortcut entryId
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
             // Submit Entry
-            // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delId});
-            const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delId});
+            const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
+            // const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
             console.log('res.status', res.status);
             setPage('RefreshView');
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
         } catch(e) {
             console.error(e.message);
+            console.error(e.response.data.error);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none"; 
             setTimeout(()=>{alert(`Something went wrong, please try again.`)},200);
         }
@@ -53,24 +54,22 @@ function ViewTimesheets({ maintitle, subtitle }) {
         if (!user) return;
         async function getEntries() {
             // get entries
-            const entriesArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/`);
-            // const entriesArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/`);
-            console.log('entryArrays:', entriesArrays)
-            // split up array of entry arrays into entries
-            let incomingEntries = [];
-            Array.from(entriesArrays.data.data).map((entryArray, idx)=>idx>0&&incomingEntries.push(entryArray))
-            // add zeros to single digit hour times
-            let entriesFilter = incomingEntries.filter(entry=>entry[0]===user.email);
-            entriesFilter.map(entry=>{
-                if (entry[3].split(':')[0].length===1) entry[3]=`0${entry[3]}`;
-                if (entry[4].split(':')[0].length===1) entry[4]=`0${entry[4]}`;
+            // const entriesArrays = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            let entries = res.data.data
+            entries.map(entry=>{
+                entry.dateofwork=getDateWorked(entry.starttime);
+                entry.starttimeview=`${(new Date(entry.starttime)).getHours()}:${(new Date(entry.starttime)).getMinutes()}`;
+                entry.endtimeview=`${(new Date(entry.endtime)).getHours()}:${(new Date(entry.endtime)).getMinutes()}`;
+                entry.lunchtimeview=`${entry.lunchtime} minutes`;
+                entry.hoursworked= minutesToText(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime));
+                entry.editable=entryEditable(entry.timesubmitted); // BREAKING
+                console.log(entry)
             });
             // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
-            entriesFilter.sort((a,b) => (
-                new Date(a[2].replaceAll('/','-').replace('T',',')) < new Date(b[2].replaceAll('/','-').replace('T',','))) 
-                ? 1 : ((new Date(b[2].replaceAll('/','-').replace('T',',')) < new Date(a[2].replaceAll('/','-').replace('T',','))) ? -1 : 0));
+            entries.sort((a,b) => (a.starttime > b.starttime) ? 1 : ((b.starttime > a.starttime) ? -1 : 0));
             // update state
-            setEntries(entriesFilter);
+            setEntries(entries);
         }
         try {
             getEntries(user.email)
@@ -78,6 +77,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
             console.log(e.message)
         }      
     },[user]);
+    
     return (
         <div style={{marginTop: '50px', marginBottom: '50px'}}>
         <Spinner />
@@ -88,39 +88,38 @@ function ViewTimesheets({ maintitle, subtitle }) {
         <table className='table' style={{boxShadow: 'none'}}>
             <tbody>
             {Array.isArray(entries)?entries.map(entry=>
-            <tr key={entry[12]} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
-                {/* <td className='cell' style={{display: `{${checkEntryEditable(entry[11])}:'flex':;none'}`, justifyContent: 'flex-end'}}> */}
-                <td className='cell' style={{opacity: `${entryEditable(entry[11])?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
+            <tr key={entry._id} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
+                <td className='cell' style={{opacity: `${entry.editable?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
-                        if (entryEditable(entry[11])) {    
+                        if (entry.editable) { 
                             setPage('EditTimesheet'); 
                             setEditEntry({
-                            entryId: entry[12],
-                            dateofwork: entry[2],
-                            starttime: entry[3],
-                            endtime: entry[4],
-                            lunchtime: entry[5],
-                            jobname: `${entry[7]} ${entry[8]}`,
-                            task: entry[9],
-                            notes: entry[10],
-                            timesubmitted: entry[11],
+                            entryId: entry._id,
+                            dateofwork: entry.dateofwork,
+                            starttime: entry.starttime,
+                            starttimeview: entry.starttimeview,
+                            endtime: entry.endtime,
+                            endtimeview: entry.endtimeview,
+                            lunchtime: entry.lunchtime,
+                            lunchtimeview: entry.lunchtimeview,
+                            jobname: `${entry.jobid} ${entry.jobname}`,
+                            task: entry.task,
+                            notes: entry.notes,
+                            timesubmitted: entry.timesubmitted,
                     })} else {
                         alert('Please contact office to make changes.');
                     }
                     }} alt='edit button' />
-                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>entryEditable(entry[11])&&handleDelete(entry[12])} alt='delete button' />
+                    <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>entry.editable&&handleDelete(entry._id)} alt='delete button' />
                 </td>
-                {/* <td className='cell' style={{display: `${!entryEditable(entry[11])?'flex':'none'}`, justifyContent: 'flex-end', fontSize: '14px', opacity: '.8', fontStyle: 'italic'}} >
-                    contact office to change
-                </td> */}
-                <td className='cell'><span className='header'>Date Worked:&nbsp;</span>{entry[2]}</td>
-                <td className='cell'><span className='header'>Start Time:&nbsp;</span>{entry[3]}</td>
-                <td className='cell'><span className='header'>End Time:&nbsp;</span>{entry[4]}</td>
-                <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry[5]}</td>
-                <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry[6]}</td>
-                <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{entry[7]}&nbsp;&nbsp;{entry[8]}</td>
-                <td className='cell'><span className='header'>Task:&nbsp;</span>{entry[9]}</td>
-                <td className='cell'><div style={{maxHeight: '50px', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry[10]}</div></td>
+                <td className='cell'><span className='header'>Date Worked:&nbsp;</span>{entry.dateofwork}</td>
+                <td className='cell'><span className='header'>Start Time:&nbsp;</span>{entry.starttimeview}</td>
+                <td className='cell'><span className='header'>End Time:&nbsp;</span>{entry.endtimeview}</td>
+                <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry.lunchtimeview}</td>
+                <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
+                <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{entry.jobid}&nbsp;&nbsp;{entry.jobname}</td>
+                <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
+                <td className='cell'><div style={{maxHeight: '70px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
             </tr>):<p>No entries found.</p>}
             </tbody>
         </table>:''
@@ -140,38 +139,43 @@ function ViewTimesheets({ maintitle, subtitle }) {
                 <th className='header'>Notes</th>
             </tr>
             {Array.isArray(entries)?entries.map(entry=>
-            <tr key={entry[12]} className='row'>
-                <td className='cell' style={{opacity: `${entryEditable(entry[11])?1:.2}`, display: 'flex', justifyContent: 'flex-end'}} disable={!entryEditable(entry[11])}>
-                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} onClick={()=>{if (entryEditable(entry[11])) {setPage('EditTimesheet'); setEditEntry({
-                        entryId: entry[12],
-                        dateofwork: entry[2],
-                        starttime: entry[3],
-                        endtime: entry[4],
-                        lunchtime: entry[5],
-                        jobname: `${entry[7]} ${entry[8]}`,
-                        task: entry[9],
-                        notes: entry[10],
-                        timesubmitted: entry[11]
+            <tr key={entry._id} className='row'>
+                <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'flex-end'}} disable={entry.editable}>
+                    <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} 
+                    onClick={()=>{if (entry.editable) {setPage('EditTimesheet'); setEditEntry({
+                        entryId: entry._id,
+                        dateofwork: entry.dateofwork,
+                        starttime: entry.starttime,
+                        starttimeview: entry.starttimeview,
+                        endtime: entry.endtime,
+                        endtimeview: entry.endtimeview,
+                        lunchtime: entry.lunchtime,
+                        lunchtimeview: entry.lunchtimeview,
+                        jobname: `${entry.jobid} ${entry.jobname}`,
+                        task: entry.task,
+                        notes: entry.notes,
+                        timesubmitted: entry.timesubmitted
                     })} else {
                         alert('Please contact office to make changes.');
-                    }}} alt='edit button' />
+                    }}} 
+                    alt='edit button' 
+                    />
                     <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px'}} onClick={()=>{
-                        if (entryEditable(entry[11])) {
-                            handleDelete(entry[12])
+                        if (entry.editable) {
+                            handleDelete(entry._id)
                         } else {
                             alert('Please contact office to make changes.')
                         }
                     }} alt='delete button'/>
                 </td>
-                
-                <td className='cell'><span style={{whiteSpace: 'nowrap'}}>{entry[2]}</span></td>
-                <td className='cell'>{entry[3]}</td>
-                <td className='cell'>{entry[4]}</td>
-                <td className='cell'>{entry[5]}</td>
-                <td className='cell'>{entry[6]}</td>
-                <td className='cell'>{entry[7]}  {entry[8]}</td>
-                <td className='cell'>{entry[9]}</td>
-                <td className='cell'><div style={{maxHeight: '40px', maxWidth: '200px', overflowY: 'auto'}}>{entry[10]}</div></td>
+                <td className='cell'><span style={{whiteSpace: 'nowrap'}}>{entry.dateofwork}</span></td>
+                <td className='cell'>{entry.starttimeview}</td>
+                <td className='cell'>{entry.endtimeview}</td>
+                <td className='cell'>{entry.lunchtimeview}</td>
+                <td className='cell'>{entry.hoursworked}</td>
+                <td className='cell'>{entry.jobid}  {entry.jobname}</td>
+                <td className='cell'>{entry.task}</td>
+                <td className='cell'><div style={{maxHeight: '40px', maxWidth: '200px', overflowY: 'auto'}}>{entry.notes}</div></td>
             </tr>
             ):<tr>Loading...</tr>} 
             </tbody>
