@@ -21,7 +21,7 @@ import {USER_INIT} from './constants/inits';
 
 function App() {
     const [user, setUser] = useState(USER_INIT);
-    const [page, setPage] = useState("UploadFile"); // BREAKING ['Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'DownloadTimesheets', 'UploadFile']
+    const [page, setPage] = useState("Login"); // BREAKING ['Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'DownloadTimesheets', 'UploadFile']
     const [editEntry, setEditEntry] = useState(USER_INIT);
     const [resetPasswordEmail, setResetPasswordEmail] = useState();
     const [winWidth, setWinWidth] = useState(0);

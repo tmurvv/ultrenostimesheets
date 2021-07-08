@@ -124,8 +124,8 @@ function EditTimesheet(props) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         // Submit Entry
         //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-           const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-        // const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+        //    const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+        const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
         console.log('res.status', res.status);
         setEditEntry(ENTRY_INIT);
         setPage('ViewTimesheets');

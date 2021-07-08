@@ -68,13 +68,18 @@ export default function NavBar(props) {
                             <img src='/img/close.png' alt="close mobile menu icon" style={{height: '15px'}}/>
                         </div>
                         <li>
+                            {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
+                        </li>
+                        {user.firstname.toUpperCase()==='ADMIN'&&
+                            <li>
+                                <Link to="/" onClick={()=>{setOpen(false);setPage('UploadFile');}}>Admin</Link>
+                            </li>
+                        }
+                        <li>
                             <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('EnterTimesheet');}else{alert('Please Login to enter Timesheets.');setPage('login');setOpen(false)}}}>Enter Timesheet</Link>
                         </li>
                         <li>
                             <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('ViewTimesheets');}else{alert('Please Login to view Timesheets.');setPage('login');setOpen(false)}}}>View Timesheets</Link>
-                        </li>
-                        <li>
-                            {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('login')}}>Login</Link>}
                         </li>
                         <li>
                             {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/signup" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}

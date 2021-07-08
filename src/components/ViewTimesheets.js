@@ -26,9 +26,9 @@ function ViewTimesheets({ maintitle, subtitle }) {
             // shortcut entryId
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
             // Submit Entry
-            const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
+            // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
             // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
-            // const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
+            const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
             console.log('res.status', res.status);
             setPage('RefreshView');
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
@@ -55,8 +55,8 @@ function ViewTimesheets({ maintitle, subtitle }) {
         if (!user) return;
         async function getEntries() {
             // get entries
-            // const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
-            const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
             let entries = res.data.data
             entries.map(entry=>{
