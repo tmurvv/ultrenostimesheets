@@ -21,14 +21,7 @@ function DownloadTimesheets({setPage}) {
     useEffect(()=>{
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
-    useEffect(()=>{
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        if (params.success==='true') {
-            alert('Your file has been uploaded.');
-            setPage('Login')
-        }
-    },[setPage]);
+    
     return ( 
        <>
         <div className='login-signup-container'>
