@@ -10,6 +10,7 @@ import EnterTimesheet from './components/EnterTimesheet';
 import ViewTimesheets from './components/ViewTimesheets';
 import EditTimesheet from './components/EditTimesheet';
 import ResetPassword from './components/ResetPassword';
+import DownloadTimesheets from './components/DownloadTimesheets';
 // other internal
 import {UserContext} from "./contexts/UserContext";
 import {PageContext} from "./contexts/PageContext";
@@ -19,7 +20,7 @@ import {USER_INIT} from './constants/inits';
 
 function App() {
     const [user, setUser] = useState(USER_INIT);
-    const [page, setPage] = useState("Login"); // ['Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView']
+    const [page, setPage] = useState("DownloadTimesheets"); // BREAKING ['Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'DownloadTimesheets']
     const [editEntry, setEditEntry] = useState(USER_INIT);
     const [resetPasswordEmail, setResetPasswordEmail] = useState();
     const [winWidth, setWinWidth] = useState(0);
@@ -56,6 +57,7 @@ function App() {
                             {page.toUpperCase()==='VIEWTIMESHEETS'&&<ViewTimesheets setPage={setPage}/>}
                             {page.toUpperCase()==='RESETPASSWORD'&&<ResetPassword useremail={resetPasswordEmail} setPage={setPage}/>}
                             {page.toUpperCase()==='REFRESHVIEW'&&<ViewTimesheets setPage={setPage}/>} {/* a hack to get viewtimesheets page to refresh after delete */}
+                            {page.toUpperCase()==='DOWNLOADTIMESHEETS'&&<DownloadTimesheets setPage={setPage}/>}
                         </EditEntryContext.Provider>
                     </UserContext.Provider>
                 </PageContext.Provider>
