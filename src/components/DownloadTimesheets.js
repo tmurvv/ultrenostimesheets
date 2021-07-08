@@ -69,7 +69,8 @@ function DownloadTimesheets({setPage}) {
         // dispatchResultInfo({type:'loadingImage'});        
         try {
             // login user
-            const res = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/downloadtimesheets`);
+            // const res = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/downloadtimesheets`);
+            const res = await axios.get(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/downloadtimesheets`);
             // const res = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/downloadtimesheets`);
             
             console.log(res);
@@ -128,9 +129,9 @@ function DownloadTimesheets({setPage}) {
         }
         try {
             // send forgot password email
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
             // const res = await axios.get(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.email});
-            // const res = await axios.get(`${process.env.backend}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
+            const res = await axios.get(`${process.env.BACKEND}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
             // display results
             if (res.status===200) {
                 alert('Please check your inbox for an email with instructions to reset your password.');

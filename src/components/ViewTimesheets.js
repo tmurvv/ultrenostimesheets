@@ -26,7 +26,8 @@ function ViewTimesheets({ maintitle, subtitle }) {
             // shortcut entryId
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
             // Submit Entry
-            const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
+            const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
+            // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
             // const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
             console.log('res.status', res.status);
             setPage('RefreshView');
@@ -54,8 +55,9 @@ function ViewTimesheets({ maintitle, subtitle }) {
         if (!user) return;
         async function getEntries() {
             // get entries
-            // const entriesArrays = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            // const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
             let entries = res.data.data
             entries.map(entry=>{
                 entry.dateofwork=getDateWorked(entry.starttime);
@@ -117,7 +119,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
                 <td className='cell'><span className='header'>End Time:&nbsp;</span>{entry.endtimeview}</td>
                 <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry.lunchtimeview}</td>
                 <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
-                <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{entry.jobid}&nbsp;&nbsp;{entry.jobname}</td>
+                <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{`${entry.jobid} `}{entry.jobname}</td>
                 <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
                 <td className='cell'><div style={{maxHeight: '70px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
             </tr>):<p>No entries found.</p>}
@@ -173,7 +175,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
                 <td className='cell'>{entry.endtimeview}</td>
                 <td className='cell'>{entry.lunchtimeview}</td>
                 <td className='cell'>{entry.hoursworked}</td>
-                <td className='cell'>{entry.jobid}  {entry.jobname}</td>
+                <td className='cell'>{`${entry.jobid} `}{entry.jobname}</td>
                 <td className='cell'>{entry.task}</td>
                 <td className='cell'><div style={{maxHeight: '40px', maxWidth: '200px', overflowY: 'auto'}}>{entry.notes}</div></td>
             </tr>
