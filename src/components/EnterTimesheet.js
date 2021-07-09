@@ -35,19 +35,9 @@ function EnterTimesheet(props) {
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
     const [currentJobs, setCurrentJobs] = useState();
-    const [fullCurrentJobs, setFullCurrentJobs] = useState();
     const [lunchTimes, setLunchTimes] = useState();
     const [entry, setEntry]= useState(ENTRY_INIT);
-    // declare variables
-    // const { setUser } = useContext(UserContext);
-    // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
-    // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
-    // const [needVerify, setNeedVerify] = useState(false);
-    // const [userLogin, setUserLogin] = useState({
-    //     loginemail: '',
-    //     loginpassword: '',
-    //     loginchange: false
-    // });
+    
     const handleChange = (evt) => {
         switch (evt.target.name) {
             case 'dateofwork': 
@@ -83,16 +73,18 @@ function EnterTimesheet(props) {
         if (!entry.lunchtime||entry.endtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
-
+        const startTimeDate = `${entry.dateofwork},${entry.starttime}`;
+        console.log('startTimeDate:', startTimeDate)
+        const endTimeDate = `${entry.dateofwork},${entry.endtime}`;
+        console.log('endTimeDate:', endTimeDate)
         // calculate hours
-        const minutesWorked = getMinutesWorked(entry.dateofwork, entry.starttime, entry.endtime, entry.lunchtime);
+        const minutesWorked = getMinutesWorked(startTimeDate, endTimeDate, entry.lunchtime);
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer than hours worked.');
-        const submitHoursWorked = minutesToDigital(minutesWorked);
         const responseText = minutesToText(minutesWorked);
         
         //find job id
-        const jobId=entry.jobname.split(',')[0];
+        let jobId=entry.jobname.split(',')[0];
         const jobName=entry.jobname.split(',')[1];
 
         // format start and endtime
@@ -100,7 +92,7 @@ function EnterTimesheet(props) {
         const submitStart = `${entry.dateofwork}T${entry.starttime}`;
         const submitEnd = `${entry.dateofwork}T${entry.endtime}`;
 
-        fullCurrentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
+        currentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
         // create submit object
         const entryObject = {
             "userid": user.email,
@@ -161,12 +153,13 @@ function EnterTimesheet(props) {
             ]
             setLunchTimes(lunchTimes);
             // current jobs
-            const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            
+            console.log(currentJobsArrays.data)
             let incomingCurrentJobs = [];
-            Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]}`, `${currentJobArray[1]}`]))
+            Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
             setCurrentJobs(incomingCurrentJobs);
-            setFullCurrentJobs(currentJobsArrays.data.data);
         }
         try {
             getSupportLists()
@@ -186,6 +179,7 @@ function EnterTimesheet(props) {
                 resetResults={resetResults} 
             /> */}
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
+                
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     {/* {winWidth>750&&<div className="login-signup-title">
                         Timesheet Entry

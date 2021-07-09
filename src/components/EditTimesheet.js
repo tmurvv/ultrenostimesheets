@@ -44,7 +44,6 @@ function EditTimesheet(props) {
     const {page, setPage} = useContext(PageContext);
     const [entry, setEntry]= useState(editEntry);
     const handleChange = (evt) => {
-        console.log('handle change', evt.target.value)
         switch (evt.target.name) {
             case 'dateofwork': 
                 setEntry({...entry, dateofwork: evt.target.value});
@@ -73,7 +72,6 @@ function EditTimesheet(props) {
     const handleSubmit = async (evt) => {
         if (!window.confirm(`Make changes to this timesheet, are you sure?`)) return;
         // combine editEntry and entry objects into one update object
-        console.log(' submit entry:', entry)
         const updateObject = {
             starttime: updateStartEndTimeFromEdit(entry.dateofwork, entry.starttimeview),
             endtime: updateStartEndTimeFromEdit(entry.dateofwork, entry.endtimeview),
@@ -85,7 +83,6 @@ function EditTimesheet(props) {
             submitTime: editEntry.timesubmitted,
             entryId: editEntry.entryId,
         }
-        console.log('updateObject:', updateObject)
         // shortcuts
         if (!entry.dateofwork||entry.dateofwork==='Date of Work?') return alert('Please enter date of work.');
         if (isFutureDay(entry.dateofwork)) return alert("Timesheet may not be submitted for a future date.")
@@ -95,7 +92,7 @@ function EditTimesheet(props) {
         if (!updateObject.jobname||updateObject.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!updateObject.task||updateObject.task==='What type of work?') return alert('Please select type of work.');
         // calculate hours
-        const minutesWorked = getMinutesWorked(updateObject.dateofwork, updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
+        const minutesWorked = getMinutesWorked(updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
         const submitHoursWorked = minutesToDigital(minutesWorked);
         const responseText = minutesToText(minutesWorked);
         
@@ -116,7 +113,6 @@ function EditTimesheet(props) {
         notes: updateObject.notes, 
         id: editEntry.entryId
     }
-    console.log('entryObject:', entryObject)
             
     try {
         // shortcut entryId
@@ -126,13 +122,11 @@ function EditTimesheet(props) {
         //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
         //    const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
         const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-        console.log('res.status', res.status);
         setEditEntry(ENTRY_INIT);
         setPage('ViewTimesheets');
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
     } catch(e) {
-        console.error(e.message);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         alert('Something went wrong, please try again');  
     }
@@ -162,7 +156,6 @@ function EditTimesheet(props) {
     },[]);
     // get data
     useEffect(()=>{
-        editEntry&&console.log('editEntry:', editEntry)
         async function getSupportLists() {
             // tasks
             const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
@@ -180,13 +173,23 @@ function EditTimesheet(props) {
                 '90 minutes'
             ]
             setLunchTimes(lunchTimes);
+
             // current jobs
-            const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            
             let incomingCurrentJobs = [];
-            Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]} ${currentJobArray[1]}`]))
+            Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
             setCurrentJobs(incomingCurrentJobs);
             setFullCurrentJobs(currentJobsArrays.data.data);
+
+            // // current jobs
+            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            // // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            // let incomingCurrentJobs = [];
+            // Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]} ${currentJobArray[1]}`]))
+            // setCurrentJobs(incomingCurrentJobs);
+            // setFullCurrentJobs(currentJobsArrays.data.data);
         }
         try {
             getSupportLists()
@@ -282,7 +285,7 @@ function EditTimesheet(props) {
                             required
                         >  
                             <option key='whichjobsite'>Which Job-site?</option>  
-                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob[0]}&nbsp;&nbsp;{currentJob[1]}</option>)} 
+                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={`${currentJob[0]} ${currentJob[1]}`}>{currentJob[0]}&nbsp;{currentJob[1]}</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Specific Task</h3>

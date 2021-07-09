@@ -10,13 +10,19 @@ export function getNowYYYYMMDDTHHMMSS() {
     return `${todayDateRaw.getFullYear()}/${month}/${day}T${hour}:${minute}:${second}`;
 }
 export function getMinutesWorked(starttime, endtime, lunchtime) {
+    console.log('starttime:', starttime)
+    console.log('endtime:', endtime)
+    console.log('lunchtime:', lunchtime)
     // shortcut if endtime before starttime
     if ((new Date(endtime)).getTime()-(new Date(starttime)).getTime()<=0) return -1;
     // calculate time worked
     const lunchMillies = Number(String(lunchtime).substr(0,2)*60*1000);
+    console.log('lunchMillies:', lunchMillies)
     const milliesWorked = (new Date(endtime)).getTime()-(new Date(starttime)).getTime()-lunchMillies;
+    console.log('milliesWorked:', milliesWorked)
     // short cut is lunchtime greater than time worked
     if (milliesWorked<=0) return -2;
+    console.log(Math.round((milliesWorked/60)/1000))
     //return minutes worked
     return Math.round((milliesWorked/60)/1000);
 }
@@ -28,6 +34,7 @@ export function minutesToDigital(minutes) {
     return parseFloat(parseInt(h, 10) + '.' + (dec<10?'0':'') + dec);
 }
 export function minutesToText(minutes) {
+    console.log('minutes:', minutes)
     const minuteDisplay = minutes%60;
     const hoursDisplay = Math.floor(minutes/60);
     
@@ -40,7 +47,6 @@ export function getDateWorked(entry) {
     const entryDate = new Date(entry);
     const month=(entryDate.getMonth()+1)<10?`0${entryDate.getMonth()+1}`:entryDate.getMonth()+1;
     const date=(entryDate.getDate())<10?`0${entryDate.getDate()}`:entryDate.getDate();
-    console.log(`${entryDate.getFullYear()}-${month}-${date}`)
     return `${entryDate.getFullYear()}-${month}-${date}`
 }
 export function isFutureDay(idate) {
