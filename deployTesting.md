@@ -1,51 +1,51 @@
 # Deploy Testing
 
-## local testing
-#### [x] menu
-- [x] check links
-- [x] check resize
-### [x] membership
-#### [x] Login
-- [x] bad email
-- [x] bad password
-- [x] no network
-- [x] forgot Password
-- [x] signup link
-- [X] good login
-#### [x] signup
-- [x] emails not match
-- [x] email exists
-- [x] bad password
-- [x] passwords not match
-- [x] no network
-- [x] login link
-- [x] good signup
-- [x] cancel button
-#### [x] logout
-### [x]time sheets
-#### [x] enter
-- [x] empty fields
-- [x] future date
-- [x] end before start
-- [x] lunchtime too long
-- [x] no network
-- [x] cancel button
-- [x] good entry
-- [x] no network
-#### [x] View
-- [x] no entries message
-- [x] del/edit buttons disabled correctly
-- [x] del/edit buttons work
-- [x] no network on arrival
-- [x] no network on delete
-#### [x] Edit
-- [x] past data comes in correctly
-- [x] data updates correctly
-- [x] no network
-### [x] Admin
-- [x] download timesheets works
-- [x] upload WIPs works
-- [x] no network
+## [xx] local testing
+#### [ ] menu
+- [ ] check links
+- [ ] check resize
+### [ ] membership
+#### [ ] Login
+- [ ] bad email
+- [ ] bad password
+- [ ] no network
+- [ ] forgot Password
+- [ ] signup link
+- [ ] good login
+#### [ ] signup
+- [ ] emails not match
+- [ ] email exists
+- [ ] bad password
+- [ ] passwords not match
+- [ ] no network
+- [ ] login link
+- [ ] good signup
+- [ ] cancel button
+#### [ ] logout
+### [ ]time sheets
+#### [ ] enter
+- [ ] empty fields
+- [ ] future date
+- [ ] end before start
+- [ ] lunchtime too long
+- [ ] no network
+- [ ] cancel button
+- [ ] good entry
+- [ ] no network
+#### [ ] View
+- [ ] no entries message
+- [ ] del/edit buttons disabled correctly
+- [ ] del/edit buttons work
+- [ ] no network on arrival
+- [ ] no network on delete
+#### [ ] Edit
+- [ ] past data comes in correctly
+- [ ] data updates correctly
+- [ ] no network
+### [ ] Admin
+- [ ] download timesheets works
+- [ ] upload WIPs works
+- [ ] no network
 ## Desktop testing
 ## Samsung phone testing
 ## iPhone testing
