@@ -17,6 +17,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
     const {user} = useContext(UserContext);
     const {page, setPage} = useContext(PageContext);
     const {editEntry, setEditEntry} = useContext(EditEntryContext);
+    const [found, setFound] = useState(true);
     
     async function handleDelete(delId) {
         if (!window.confirm(`Delete this timesheet entry?`)) return;
@@ -56,6 +57,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
             const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
             // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+            if (res.data.num_returned===0) setFound(false);
             let entries = res.data.data;
             
             entries.map(entry=>{
@@ -94,7 +96,9 @@ function ViewTimesheets({ maintitle, subtitle }) {
         <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
         {winWidth<950?
         <table className='table' style={{boxShadow: 'none'}}>
+            {!found&&<h4 style={{textAlign: 'center'}}>No timesheets entries found.</h4>}
             <tbody>
+            
             {Array.isArray(entries)?entries.map(entry=>
             <tr key={entry._id} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                 <td className='cell' style={{opacity: `${entry.editable?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
@@ -146,6 +150,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
                 <th className='header'>Task</th>
                 <th className='header'>Notes</th>
             </tr>
+            {!found&&<h4>No timesheets entries found.</h4>}
             {Array.isArray(entries)?entries.map(entry=>
             <tr key={entry._id} className='row'>
                 <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'flex-end'}} disable={entry.editable}>

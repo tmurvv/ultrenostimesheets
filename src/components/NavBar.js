@@ -72,7 +72,7 @@ export default function NavBar(props) {
                         </li>
                         {user.firstname.toUpperCase()==='ADMIN'&&
                             <li>
-                                <Link to="/" onClick={()=>{setOpen(false);setPage('UploadFile');}}>Admin</Link>
+                                <Link to="/" onClick={()=>{setOpen(false);setPage('Admin');}}>Admin</Link>
                             </li>
                         }
                         <li>

@@ -6,23 +6,16 @@ export function getNowYYYYMMDDTHHMMSS() {
     const hour=todayDateRaw.getHours()<10?`0${todayDateRaw.getHours()}`:todayDateRaw.getHours();
     const minute=todayDateRaw.getMinutes()<10?`0${todayDateRaw.getMinutes()}`:todayDateRaw.getMinutes();
     const second=todayDateRaw.getSeconds()<10?`0${todayDateRaw.getSeconds()}`:todayDateRaw.getSeconds();
-    
     return `${todayDateRaw.getFullYear()}/${month}/${day}T${hour}:${minute}:${second}`;
 }
 export function getMinutesWorked(starttime, endtime, lunchtime) {
-    console.log('starttime:', starttime)
-    console.log('endtime:', endtime)
-    console.log('lunchtime:', lunchtime)
     // shortcut if endtime before starttime
     if ((new Date(endtime)).getTime()-(new Date(starttime)).getTime()<=0) return -1;
     // calculate time worked
     const lunchMillies = Number(String(lunchtime).substr(0,2)*60*1000);
-    console.log('lunchMillies:', lunchMillies)
     const milliesWorked = (new Date(endtime)).getTime()-(new Date(starttime)).getTime()-lunchMillies;
-    console.log('milliesWorked:', milliesWorked)
     // short cut is lunchtime greater than time worked
     if (milliesWorked<=0) return -2;
-    console.log(Math.round((milliesWorked/60)/1000))
     //return minutes worked
     return Math.round((milliesWorked/60)/1000);
 }
@@ -30,14 +23,11 @@ export function minutesToDigital(minutes) {
     const m = minutes % 60;  
     const h = (minutes-m)/60;   
     const dec = parseInt((m/6)*10, 10);
-
     return parseFloat(parseInt(h, 10) + '.' + (dec<10?'0':'') + dec);
 }
 export function minutesToText(minutes) {
-    console.log('minutes:', minutes)
     const minuteDisplay = minutes%60;
     const hoursDisplay = Math.floor(minutes/60);
-    
     return `${hoursDisplay} hour${minuteDisplay!==1?'s':''} and ${minuteDisplay} minute${minuteDisplay!==1?'s':''}`;
 }
 export function entryEditable(date) {
@@ -59,13 +49,10 @@ export function isFutureDay(idate) {
 }
 export function updateStartEndTimeFromEdit(dateofwork, newTime) {
     // return full date time
-    console.log('updatefunc', `${dateofwork}T${newTime}`)
     return `${dateofwork}T${newTime}`
 }
 export function updateLunchTimeFromEdit(newLunchtime) {
-    console.log('newLunchtime:', newLunchtime)
     !newLunchtime?newLunchtime='0':newLunchtime=String(newLunchtime);
-    console.log('newLunchtime:', newLunchtime)
     // return number of minutes
     return Number(newLunchtime.substr(0,2));
 }

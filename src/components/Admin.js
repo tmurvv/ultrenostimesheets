@@ -8,7 +8,7 @@ import PageTitle from '../components/PageTitle';
 import Spinner from '../components/Spinner';
 import {UserContext} from '../contexts/UserContext';
 
-function DownloadTimesheets({setPage}) {
+function Admin({setPage}) {
     // declare variables
     const [numSheets, setNumSheets] = useState();
     const [userLogin, setUserLogin] = useState({
@@ -21,13 +21,35 @@ function DownloadTimesheets({setPage}) {
     useEffect(()=>{
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
-    
+    useEffect(()=>{
+        const numSheets = async () => {
+            const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/admin/numtimesheets');
+            // const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/numtimesheets');
+            console.log('numsheets',res.data)
+            setNumSheets(res.data.numsheets);
+        }
+        numSheets();
+    },[]);
     return ( 
        <>
+       <Spinner />
+       <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '0px'}}>
+            <PageTitle maintitle='Download Timesheets' subtitle={`${numSheets} timesheet${numSheets===1?'':'s'} ready for download`} />          
+            <div className="form-container" style={{marginTop: '50px'}}>
+                <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+                    <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                        <a href='http://localhost:3000/api/v1/ultrenostimesheets/admin/downloadtimesheets' onClick={()=>setNumSheets('Refresh window for number of ')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a>
+                        {/* <a href='https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/downloadtimesheets' onClick={()=>setNumSheets('Refresh window for number of ')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a> */}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+            <img src="/img/tapered_line_blue.png" alt='tapered blue dividing line' style={{minWidth: '80%', height: '50px'}}/>
+        </div>
         <div className='login-signup-container'>
             <PageTitle maintitle='Upload Works in Progress List' subtitle={`The listings uploaded here will replace all of the listings in the timesheet "job name" select box.`} />
-            <Spinner />
-            
+
             <div className="form-container" style={{marginTop: '50px'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <form action="http://localhost:3000/api/v1/ultrenostimesheets/admin/uploadjoblist" encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
@@ -40,7 +62,8 @@ function DownloadTimesheets({setPage}) {
                 </div>
                 
             </div>
-            <h4>Sample file:</h4>
+            <h3 style={{textAlign: 'center'}}>Sample</h3>
+            <p style={{textAlign: 'center'}}>Your file should look like this with as many rows as required:</p>
             <div style={{display: 'flex', justifyContent:'center', width: '100%'}}>   
                 <img src="/img/joblistexample.png" alt="job list example file" style={{border: '1px solid lightgrey', padding: '15px', margin: 'auto', width: '80%', maxWidth: '400px'}}/>
             </div>
@@ -52,4 +75,4 @@ function DownloadTimesheets({setPage}) {
     )
 }
 
-export default DownloadTimesheets;
+export default Admin;

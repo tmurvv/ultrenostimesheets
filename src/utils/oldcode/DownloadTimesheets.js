@@ -23,8 +23,8 @@ function DownloadTimesheets({setPage}) {
     },[]);
     useEffect(()=>{
         const numSheets = async () => {
-            // const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/numtimesheets');
-            const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/numtimesheets');
+            const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/numtimesheets');
+            // const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/numtimesheets');
             setNumSheets(res.data.numsheets);
         }
         numSheets();

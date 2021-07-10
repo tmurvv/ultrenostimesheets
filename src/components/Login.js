@@ -68,8 +68,8 @@ function Login({setPage}) {
         // dispatchResultInfo({type:'loadingImage'});        
         try {
             // login user
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
-            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            // const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             
             console.log(res.data);
             const returnedUser = res.data.data;
@@ -90,6 +90,14 @@ function Login({setPage}) {
             // dispatchResultInfo({type: 'OK'});
         } catch(e) {
             console.log('error', e.message)
+            console.log(e.response)
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Email not found.") {
+                return alert('Email not found.')
+            }
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
+                return alert('Password does not match our records.')
+            }
+            alert('Login not successful.')
             // // email not found #1
             // if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Cannot read property 'emailverified' of null") {
             //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
@@ -127,8 +135,8 @@ function Login({setPage}) {
         }
         try {
             // send forgot password email
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
-            const res = await axios.get(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.email});
+            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
+            // const res = await axios.get(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.email});
             // const res = await axios.get(`${process.env.backend}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
             // display results
             if (res.status===200) {
