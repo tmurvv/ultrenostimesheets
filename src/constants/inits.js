@@ -11,6 +11,7 @@ export const USER_INIT = {
     firstname: '',
     lastname: '',
     email: '',
+    confirmemail: '',
     password: '',
     confirmpassword: '',
 };

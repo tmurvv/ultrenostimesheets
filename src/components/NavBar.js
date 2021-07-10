@@ -64,12 +64,14 @@ export default function NavBar(props) {
                 <Router>
                 <nav style={{height: '100%'}}>
                     <ul className='navLinks'>
-                        <div className='closeIcon' style={{opacity: `${open&&mobile?.6:0}`}} onClick={(e)=>setOpen(false)}>
+                        <div className='closeIcon' style={{opacity: `${open&&mobile?.6:0}`, display: `${open&&mobile?'flex':'none'}`}} onClick={(e)=>setOpen(false)}>
                             <img src='/img/close.png' alt="close mobile menu icon" style={{height: '15px'}}/>
                         </div>
-                        <li>
-                            {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
-                        </li>
+                        {user.email&&
+                            <li style={{fontSize: '16px'}}>
+                                {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
+                            </li>
+                        }
                         {user.firstname.toUpperCase()==='ADMIN'&&
                             <li>
                                 <Link to="/" onClick={()=>{setOpen(false);setPage('Admin');}}>Admin</Link>
@@ -81,6 +83,11 @@ export default function NavBar(props) {
                         <li>
                             <Link to="/" onClick={()=>{if (user.email){setOpen(false);setPage('ViewTimesheets');}else{alert('Please Login to view Timesheets.');setPage('login');setOpen(false)}}}>View Timesheets</Link>
                         </li>
+                        {!user.email&&
+                            <li style={{fontSize: '16px'}}>
+                                <Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>
+                            </li>                      
+                        }
                         <li>
                             {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/signup" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}
                         </li>

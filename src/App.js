@@ -4,6 +4,7 @@ import atob from 'atob';
 // components
 import Banner from './components/Banner';
 import NavBar from './components/NavBar';
+import HomePage from './components/HomePage';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import EnterTimesheet from './components/EnterTimesheet';
@@ -20,7 +21,7 @@ import {USER_INIT} from './constants/inits';
 
 function App() {
     const [user, setUser] = useState(USER_INIT);
-    const [page, setPage] = useState("Login"); // BREAKING ['Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'Admin']
+    const [page, setPage] = useState("Login"); // BREAKING ['Homepage', 'Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'Admin']
     const [editEntry, setEditEntry] = useState(USER_INIT);
     const [resetPasswordEmail, setResetPasswordEmail] = useState();
     const [winWidth, setWinWidth] = useState(0);
@@ -48,7 +49,7 @@ function App() {
         const params = Object.fromEntries(urlSearchParams.entries());
         if (params.success==='true') {
             alert('Your file has been uploaded.');
-            setPage('Login')
+            setPage('Homepage')
         }
     },[setPage]);
     return (
@@ -59,6 +60,7 @@ function App() {
                         <EditEntryContext.Provider value={{editEntry, setEditEntry}}>
                             <Banner />
                             <NavBar />
+                            {page.toUpperCase()==='HOMEPAGE'&&<HomePage setPage={setPage}/>}
                             {page.toUpperCase()==='LOGIN'&&<Login setPage={setPage}/>}
                             {page.toUpperCase()==='SIGNUP'&&<Signup setPage={setPage}/>}
                             {page.toUpperCase()==='EDITTIMESHEET'&&<EditTimesheet />}

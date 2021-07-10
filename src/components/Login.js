@@ -6,6 +6,7 @@ import uuid from 'react-uuid';
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
+import Spinner from '../components/Spinner'
 import {UserContext} from '../contexts/UserContext';
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
@@ -65,11 +66,12 @@ function Login({setPage}) {
         //     return
         // }
         // // set loading image
-        // dispatchResultInfo({type:'loadingImage'});        
+        // dispatchResultInfo({type:'loadingImage'});  
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
             // login user
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
-            // const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             
             console.log(res.data);
             const returnedUser = res.data.data;
@@ -81,8 +83,9 @@ function Login({setPage}) {
                 lastname: returnedUser.lastname, 
                 email: returnedUser.email
             });
-            alert(`Login successful. Welcome ${returnedUser.firstname}`);
-            setPage('EnterTimesheet');
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
+            returnedUser.firstname.toUpperCase()==="ADMIN"?setPage('Admin'):setPage('EnterTimesheet');
             // // set JWT cookie
             //     document.cookie = `JWT=${jwt}`
             // // display result window
@@ -91,36 +94,16 @@ function Login({setPage}) {
         } catch(e) {
             console.log('error', e.message)
             console.log(e.response)
-            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Email not found.") {
-                return alert('Email not found.')
-            }
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Email not found.')}, 200);
+            } 
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
-                return alert('Password does not match our records.')
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Password does not match our records.')},200);
             }
-            alert('Login not successful.')
-            // // email not found #1
-            // if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Cannot read property 'emailverified' of null") {
-            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
-            //     dispatchResultInfo({type: 'okTryAgain'});
-            // // email not verified
-            // } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('verified')) {
-            //     setNeedVerify(true);                
-            //     await setUserLogin({...userLogin, loginemail: e.response.data.useremail})
-            //     resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'Email not yet verified. Please see your inbox for verification email.'} Resend verification email?`;
-            //     dispatchResultInfo({type: 'okTryAgain'});
-            // // passwords don't match
-            // } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('incorrect')) {
-            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Password does not match our records.'} Login as guest?`;
-            //     dispatchResultInfo({type: 'okTryAgain'});
-            // // email not found #2
-            // } else if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message.includes('Email')) {
-            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Email not found.'} Login as guest?`;
-            //     dispatchResultInfo({type: 'okTryAgain'});
-            // // other error
-            // } else {
-            //     resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on login. Please check your network connection.'} Login as guest?`;
-            //     dispatchResultInfo({type: 'okTryAgain'});
-            // }
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
         }
     }
     // handle forgotPassword click
@@ -129,62 +112,30 @@ function Login({setPage}) {
         // shortcut no email entered
         if (!userLogin.loginemail) {
             alert('Please enter your account email.');
-            // resultText.innerText='Please enter your account email.';
-            // dispatchResultInfo({type: 'tryAgain'});
             return;
         }
         try {
             // send forgot password email
-            const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
-            // const res = await axios.get(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.email});
+            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
+            const res = await axios.get(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.email});
             // const res = await axios.get(`${process.env.backend}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
             // display results
             if (res.status===200) {
                 alert('Please check your inbox for an email with instructions to reset your password.');
-                // resultText.innerText=`Please check your inbox for an email with instructions to reset your password.`;
-                // dispatchResultInfo({type: 'OK'});
             }
         } catch (e) {
             // display error
             alert('Something went wrong with password reset. Please check your network connection.');
-            // resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong with password reset. Please check your netword connection.'} Log in as guest user?`
-            // dispatchResultInfo({type: 'okTryAgain'});
         }
     }
-    // async function loginGuest(evt) {
-    //     if (needVerify) {
-    //         // display loader
-    //         const resultText = document.querySelector('#loadingLoginText');
-    //         dispatchResultInfo({ type: 'loadingImage' });  
-    //         //create user object
-    //         const forgotPasswordUser = {
-    //             firstname: 'findaharp.com',
-    //             lastname: 'user',
-    //             email: userLogin.loginemail
-    //         }
-    //         try {
-    //             // this is a hack because program not returning for axios post, needs to be debugged and next three lines put below axios call
-    //             // display result
-    //             resultText.innerText=`Verify email sent.`;
-    //             dispatchResultInfo({type: 'OK'});
-    //             setNeedVerify(false);
-    //             // send forgot password email
-    //             await axios.post(`${process.env.backend}/api/v1/resendverify`, forgotPasswordUser);
-    //         } catch (e) {
-    //             // display error
-    //             resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong sending verification email. Please check your network connection.'} Log in as guest user?`;
-    //             dispatchResultInfo({type: 'okTryAgain'});
-    //         }
-    //     }
-    //     resetResults();
-    //     // go to main window
-    //     Router.push('/');
-    // }
-    
+    // set environment
+    useEffect(()=>{
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+    },[]);
     return ( 
        <>
         <div className='login-signup-container'>
-            {/* <Spinner /> */}
+            <Spinner />
             <PageTitle maintitle='Login' subtitle='' />
             <div style={{cursor: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Signup')}}>
                 <button type="button" className='link-btn' style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px',}}>Click Here to Signup</button>

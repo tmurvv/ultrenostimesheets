@@ -34,6 +34,9 @@ function Signup({setPage}) {
             case 'email': 
                 setSignupUser({...signupUser, email: evt.target.value, change: true});
                 break
+            case 'confirmemail': 
+                setSignupUser({...signupUser, confirmemail: evt.target.value, change: true});
+                break
             case 'password': 
                 setSignupUser({...signupUser, password: evt.target.value, change: true});
                 break
@@ -63,6 +66,13 @@ function Signup({setPage}) {
             alert('Passwords must be at least 8 characters.');
             return
         }
+        // shortcut - emails not matching
+        if (signupUser.email !== signupUser.confirmemail) {
+            // resultText.innerText=`Passwords do not match.`;
+            // dispatchResultInfo({type: 'tryAgain'});
+            alert('Emails do not match.');
+            return
+        } 
         // shortcut - passwords not matching
         if (signupUser.password !== signupUser.confirmpassword) {
             // resultText.innerText=`Passwords do not match.`;
@@ -102,18 +112,15 @@ function Signup({setPage}) {
             // duplicate email
             if (e.response&&e.response.data&&e.response.data.message.toUpperCase().includes('EXISTS')) {
                 alert("Email already in use.");
-                setSignupUser(USER_INIT);
-                setPage('login')
                 // resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'We already have that email in our records. Please try to login and/or select "forgot password" in the login box.'}`;
                 // dispatchResultInfo({type: 'okTryAgain'});
             // other error
             
             } else {
-                alert(`Something went wrong on signup.`)
+                alert(`Something went wrong on signup. Please check your network connection.`)
                 // resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on signup. Please check your network connection. Log in as guest user?'}`;
                 // dispatchResultInfo({type: 'okTryAgain'});
             }
-            setSignupUser(USER_INIT);
         }
         
     //     // set loading image
@@ -269,6 +276,18 @@ function Signup({setPage}) {
                             required
                         />
                         <div className="input-name input-margin">
+                            <h3>Confirm Email</h3>
+                        </div>
+                        <input 
+                            className="field-input"
+                            type='email'
+                            id={uuid()}
+                            value={signupUser.confirmemail}
+                            onChange={handleChange}
+                            name='confirmemail'
+                            required
+                        />
+                        <div className="input-name input-margin">
                             <h3>Password</h3>
                         </div>
                         <input 
@@ -293,9 +312,12 @@ function Signup({setPage}) {
                             required
                         />   
                     </div>
-                    <div style={{width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                        <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '150px', margin: 'auto'}}>
+                    <div style={{width: '100%', display: 'flex', justifyContent: 'space-evenly', marginTop: '20px auto'}}>
+                        <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '120px'}}>
                             Submit
+                        </button>
+                        <button type='button' className="submit-btn login-signup-title" onClick={()=>setPage('Homepage')} style={{width: '120px', backgroundColor: '#000', color: 'white'}}>
+                            Cancel
                         </button>
                     </div>
                 </form>

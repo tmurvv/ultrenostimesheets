@@ -36,7 +36,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
             console.error(e.message);
             console.error(e.response.data.error);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none"; 
-            setTimeout(()=>{alert(`Something went wrong, please try again.`)},200);
+            setTimeout(()=>{alert(`Something went wrong, please check network connection.`)},200);
         }
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
@@ -53,40 +53,49 @@ function ViewTimesheets({ maintitle, subtitle }) {
     useEffect(()=>{
         if (!user) return;
         async function getEntries() {
-            // get entries
-            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
-            // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
-            if (res.data.num_returned===0) setFound(false);
-            let entries = res.data.data;
+            let res;
+            try {
+                res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
             
-            entries.map(entry=>{
-                let startHours= (new Date(entry.starttime)).getHours();
-                if (startHours<10) startHours=`0${startHours}`;
-                let endHours= (new Date(entry.endtime)).getHours();
-                if (endHours<10) endHours=`0${endHours}`;
-                let startMinutes= (new Date(entry.starttime)).getMinutes();
-                if (startMinutes<10) startMinutes=`0${startMinutes}`;
-                let endMinutes= (new Date(entry.endtime)).getMinutes();
-                if (endMinutes<10) endMinutes=`0${endMinutes}`;
-                entry.dateofwork=getDateWorked(entry.starttime);
-                entry.starttimeview=`${startHours}:${startMinutes}`;
-                entry.endtimeview=`${endHours}:${endMinutes}`;
-                entry.lunchtimeview=`${entry.lunchtime} minutes`;
-                entry.hoursworked= minutesToText(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime));
-                entry.editable=entryEditable(entry.timesubmitted); // BREAKING
-            });
-            // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
-            entries.sort((a,b) => (a.starttime > b.starttime) ? 1 : ((b.starttime > a.starttime) ? -1 : 0));
-            // update state
-            setEntries(entries);
+                // get entries
+                
+                // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+                // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+                if (res.data.num_returned===0) setFound(false);
+                let entries = res.data.data;
+                
+                entries.map(entry=>{
+                    let startHours= (new Date(entry.starttime)).getHours();
+                    if (startHours<10) startHours=`0${startHours}`;
+                    let endHours= (new Date(entry.endtime)).getHours();
+                    if (endHours<10) endHours=`0${endHours}`;
+                    let startMinutes= (new Date(entry.starttime)).getMinutes();
+                    if (startMinutes<10) startMinutes=`0${startMinutes}`;
+                    let endMinutes= (new Date(entry.endtime)).getMinutes();
+                    if (endMinutes<10) endMinutes=`0${endMinutes}`;
+                    entry.dateofwork=getDateWorked(entry.starttime);
+                    entry.starttimeview=`${startHours}:${startMinutes}`;
+                    entry.endtimeview=`${endHours}:${endMinutes}`;
+                    entry.lunchtimeview=`${entry.lunchtime} minutes`;
+                    entry.hoursworked= minutesToText(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime));
+                    entry.editable=entryEditable(entry.timesubmitted); // BREAKING
+                });
+                // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
+                entries.sort((a,b) => (a.starttime > b.starttime) ? 1 : ((b.starttime > a.starttime) ? -1 : 0));
+                // update state
+                setEntries(entries);
+            } catch (e) {
+                console.log(e.message)
+                alert('There was a problem getting timesheet entries. Please check network connection.')
+                setPage('Homepage');
+            }
         }
         try {
             getEntries(user.email)
         } catch(e) {
-            console.log(e.message)
+            console.log(e.message);
         }      
-    },[user]);
+    },[user, setPage]);
     
     return (
         <div style={{marginTop: '50px', marginBottom: '50px'}}>

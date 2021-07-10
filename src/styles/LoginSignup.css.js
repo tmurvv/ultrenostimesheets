@@ -60,8 +60,7 @@ function LoginSignupCSS() {
             input.field-input,
             select.field-input,
             textarea.field-input {
-                width: calc(100% - 24px);
-                min-width: 95%;
+                min-width: 90%;
                 height: 40px;
                 background-color: rgba(2, 2, 2, 0.07);
                 border: 1px solid rgba(0, 0, 0, 0.02);

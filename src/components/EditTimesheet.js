@@ -128,7 +128,7 @@ function EditTimesheet(props) {
         setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
     } catch(e) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-        alert('Something went wrong, please try again');  
+        setTimeout(()=>{alert('Something went wrong, please check network connection.')},200);  
     }
             
     }
@@ -157,11 +157,14 @@ function EditTimesheet(props) {
     // get data
     useEffect(()=>{
         async function getSupportLists() {
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
+            try {
             // tasks
             const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
             // const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
             let incomingTasks = [];
             Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
+            if (incomingTasks.length<=0) alert('Problem getting task list. Please check network connection.');
             setTasks(incomingTasks);
             // lunch times
             const lunchTimes = [
@@ -173,30 +176,46 @@ function EditTimesheet(props) {
                 '90 minutes'
             ]
             setLunchTimes(lunchTimes);
-
-            // current jobs
-            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            
-            let incomingCurrentJobs = [];
-            Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
-            setCurrentJobs(incomingCurrentJobs);
-            setFullCurrentJobs(currentJobsArrays.data.data);
-
-            // // current jobs
-            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            // // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            // let incomingCurrentJobs = [];
-            // Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]} ${currentJobArray[1]}`]))
-            // setCurrentJobs(incomingCurrentJobs);
-            // setFullCurrentJobs(currentJobsArrays.data.data);
+        } catch (e) {
+            console.log(e.message)
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            alert('There is a problem editing timesheet. Please check your network connection.');
+            setPage('Homepage');
+        }
+            try {
+                // current jobs
+                const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                
+                let incomingCurrentJobs = [];
+                Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                console.log('length', incomingCurrentJobs.length);
+                if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
+                setCurrentJobs(incomingCurrentJobs);
+                setFullCurrentJobs(currentJobsArrays.data.data);
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // // current jobs
+                // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                // // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                // let incomingCurrentJobs = [];
+                // Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]} ${currentJobArray[1]}`]))
+                // setCurrentJobs(incomingCurrentJobs);
+                // setFullCurrentJobs(currentJobsArrays.data.data);
+            } catch (e) {
+                console.log(e.message)
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                alert('There is a problem editing timesheet. Please check your network connection.');
+                setPage('Homepage');
+            }
         }
         try {
-            getSupportLists()
-        } catch(e) {
-            console.log(e.message)
-        }      
-    },[]);
+            getSupportLists();
+        } catch (e) {
+            console.log(e.message);
+        }
+        
+             
+    },[setPage]);
     return ( 
     <>
     <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
@@ -329,9 +348,6 @@ function EditTimesheet(props) {
                             </button>
                         </div>
                     </div>
-                    {/* <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit}>
-                        Submit
-                    </button> */}
                 </form>
                 <LoginSignupCSS />
             </div>

@@ -120,7 +120,7 @@ function EnterTimesheet(props) {
         } catch(e) {
             console.error(e.message);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            alert('Something went wrong, please try again');
+            setTimeout(()=>{alert('Something went wrong, please check network connection.')}, 200);
         }
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
@@ -136,12 +136,20 @@ function EnterTimesheet(props) {
     // get support lists
     useEffect(()=>{
         async function getSupportLists() {
-            // tasks
-            const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-            // const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
-            let incomingTasks = [];
-            Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
-            setTasks(incomingTasks);
+            try {
+                // tasks
+                // const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
+                const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
+                let incomingTasks = [];
+                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
+                setTasks(incomingTasks);
+            } catch (e) {
+                console.log(e.message)
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                alert('There is a problem editing timesheet. Please check your network connection.');
+                props.setPage('Homepage');
+            }
+            
             // lunch times
             const lunchTimes = [
                 '0 minutes',
@@ -152,21 +160,29 @@ function EnterTimesheet(props) {
                 '90 minutes'
             ]
             setLunchTimes(lunchTimes);
-            // current jobs
-            // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-            const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+            try {
+                // current jobs
+                const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                
+                console.log(currentJobsArrays.data)
+                let incomingCurrentJobs = [];
+                Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                setCurrentJobs(incomingCurrentJobs);
+            } catch (e) {
+                console.log(e.message)
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                alert('There is a problem entering timesheet. Please check network connection.');
+                props.setPage('Homepage');
+            }
             
-            console.log(currentJobsArrays.data)
-            let incomingCurrentJobs = [];
-            Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
-            setCurrentJobs(incomingCurrentJobs);
         }
         try {
             getSupportLists()
         } catch(e) {
             console.log(e.message)
         }      
-    },[]);
+    },[props.setPage]);
     return ( 
        <>
        <div className='login-signup-container'>
@@ -179,7 +195,6 @@ function EnterTimesheet(props) {
                 resetResults={resetResults} 
             /> */}
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
-                
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     {/* {winWidth>750&&<div className="login-signup-title">
                         Timesheet Entry
@@ -287,7 +302,7 @@ function EnterTimesheet(props) {
                             </button>
                         </div>
                         <div style={{marginLeft: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                            <button type='reset' onClick={()=>setEntry(ENTRY_INIT)} className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
+                            <button type='reset' onClick={()=>{setEntry(ENTRY_INIT);props.setPage('Homepage');}} className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
                                 Cancel
                             </button>
                         </div>
