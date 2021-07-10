@@ -2,26 +2,26 @@
 
 ## [xx] local testing
 #### [ ] menu
-- [ ] check links
-- [ ] check resize
+- [x] check links
+- [x] check resize
 ### [ ] membership
 #### [ ] Login
-- [ ] bad email
-- [ ] bad password
+- [x] bad email
+- [x] bad password
 - [ ] no network
 - [ ] forgot Password
-- [ ] signup link
-- [ ] good login
+- [x] signup link
+- [x] good login
 #### [ ] signup
 - [ ] emails not match
 - [ ] email exists
 - [ ] bad password
 - [ ] passwords not match
 - [ ] no network
-- [ ] login link
+- [x] login link
 - [ ] good signup
 - [ ] cancel button
-#### [ ] logout
+#### [x] logout
 ### [ ]time sheets
 #### [ ] enter
 - [ ] empty fields
