@@ -117,7 +117,7 @@ function Login({setPage}) {
         try {
             // send forgot password email
             // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
-            const res = await axios.post(`https://take2tech.heroku.app/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
+            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
             // const res = await axios.get(`${process.env.backend}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
             // display results
             if (res.status===200) {
