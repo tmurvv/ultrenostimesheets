@@ -33,8 +33,6 @@ function ViewTimesheets({ maintitle, subtitle }) {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
         } catch(e) {
-            console.error(e.message);
-            console.error(e.response.data.error);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none"; 
             setTimeout(()=>{alert(`Something went wrong, please check network connection.`)},200);
         }
@@ -162,7 +160,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
             {!found&&<h4>No timesheets entries found.</h4>}
             {Array.isArray(entries)?entries.map(entry=>
             <tr key={entry._id} className='row'>
-                <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'flex-end'}} disable={entry.editable}>
+                <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'flex-end', minWidth: '259px'}} disable={entry.editable}>
                     <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} 
                     onClick={()=>{if (entry.editable) {setPage('EditTimesheet'); setEditEntry({
                         entryId: entry._id,

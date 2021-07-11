@@ -73,9 +73,9 @@ function EnterTimesheet(props) {
         if (!entry.lunchtime||entry.endtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
-        const startTimeDate = `${entry.dateofwork},${entry.starttime}`;
+        const startTimeDate = `${entry.dateofwork}T${entry.starttime}`;
         console.log('startTimeDate:', startTimeDate)
-        const endTimeDate = `${entry.dateofwork},${entry.endtime}`;
+        const endTimeDate = `${entry.dateofwork}T${entry.endtime}`;
         console.log('endTimeDate:', endTimeDate)
         // calculate hours
         const minutesWorked = getMinutesWorked(startTimeDate, endTimeDate, entry.lunchtime);

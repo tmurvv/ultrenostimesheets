@@ -337,13 +337,13 @@ function EditTimesheet(props) {
                     </div>
                     <div hidden>Entry Id: {editEntry.entryId}</div>
                     <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
-                        <div style={{marginRight: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                            <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '120px', margin: 'auto'}}>
+                        <div onClick={handleSubmit} style={{marginRight: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+                            <button type='button' className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto'}}>
                                 Submit
                             </button>
                         </div>
-                        <div style={{marginLeft: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                            <button type='button' className="submit-btn login-signup-title" onClick={()=>setPage('ViewTimesheets')} style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
+                        <div onClick={()=>setPage('ViewTimesheets')} style={{marginLeft: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+                            <button type='button' className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
                                 Cancel
                             </button>
                         </div>

@@ -1,15 +1,21 @@
 # Deploy Testing
 
 ## [xx] local testing
+## [xx]Desktop testing
+## [ ]Samsung phone testing
+## [ ]iPhone testing
+## [ ]iPad testing
+
 #### [ ] menu
 - [x] check links
 - [x] check resize
 ### [ ] membership
-#### [ ] Login
+#### [x] Login
 - [x] bad email
 - [x] bad password
-- [ ] no network
-- [ ] forgot Password
+- [x] no network
+- [x] forgot Password sends reset email
+- [x] reset password email works
 - [x] signup link
 - [x] good login
 #### [ ] signup
@@ -24,16 +30,15 @@
 #### [x] logout
 ### [ ]time sheets
 #### [ ] enter
-- [ ] empty fields
+- [x] empty fields
 - [ ] future date
 - [ ] end before start
 - [ ] lunchtime too long
 - [ ] no network
 - [ ] cancel button
 - [ ] good entry
-- [ ] no network
 #### [ ] View
-- [ ] no entries message
+- [x] no entries message
 - [ ] del/edit buttons disabled correctly
 - [ ] del/edit buttons work
 - [ ] no network on arrival
@@ -46,7 +51,3 @@
 - [ ] download timesheets works
 - [ ] upload WIPs works
 - [ ] no network
-## Desktop testing
-## Samsung phone testing
-## iPhone testing
-## iPad testing
