@@ -4,7 +4,7 @@
 ## [xx]Desktop testing
 ## [ ]Samsung phone testing
 ## [ ]iPhone testing
-## [ ]iPad testing
+## [xx]iPad testing
 
 #### [ ] menu
 - [x] check links
@@ -24,13 +24,13 @@
 - [ ] bad password
 - [ ] passwords not match
 - [ ] no network
-- [x] login link
+- [ ] login link
 - [ ] good signup
 - [ ] cancel button
-#### [x] logout
+#### [ ] logout
 ### [ ]time sheets
 #### [ ] enter
-- [x] empty fields
+- [ ] empty fields
 - [ ] future date
 - [ ] end before start
 - [ ] lunchtime too long
@@ -38,7 +38,8 @@
 - [ ] cancel button
 - [ ] good entry
 #### [ ] View
-- [x] no entries message
+- [ ] no entries message
+- [ ] entries in correct order
 - [ ] del/edit buttons disabled correctly
 - [ ] del/edit buttons work
 - [ ] no network on arrival

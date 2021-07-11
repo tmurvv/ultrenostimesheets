@@ -60,6 +60,20 @@ function Signup({setPage}) {
     const handleSubmit = async (evt) => {
     //     const resultText = document.querySelector('#loadingLoginText');
         // shortcut - password not long enough
+        if ((!signupUser.firstname)||signupUser.firstname.length<1) {
+            // resultText.innerText=`Passwords must be at least 8 characters long.`;
+            // dispatchResultInfo({type: 'tryAgain'});
+            alert('First name is required.');
+            return
+        }
+        // shortcut - password not long enough
+        if ((!signupUser.lastname)||signupUser.lastname.length<1) {
+            // resultText.innerText=`Passwords must be at least 8 characters long.`;
+            // dispatchResultInfo({type: 'tryAgain'});
+            alert('Last name is required.');
+            return
+        }
+        // shortcut - password not long enough
         if ((!signupUser.password)||signupUser.password.length<8) {
             // resultText.innerText=`Passwords must be at least 8 characters long.`;
             // dispatchResultInfo({type: 'tryAgain'});
@@ -242,7 +256,7 @@ function Signup({setPage}) {
                     </div> */}
                     <div className='login-form'>
                         <div className="input-name">
-                            <h3>First Name</h3>
+                            <h3>First Name<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"
@@ -253,7 +267,7 @@ function Signup({setPage}) {
                             required
                         />
                         <div className="input-name">
-                            <h3>Last Name</h3>
+                            <h3>Last Name<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"
@@ -264,7 +278,7 @@ function Signup({setPage}) {
                             required
                         />
                         <div className="input-name input-margin">
-                            <h3>Email</h3>
+                            <h3>Email<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"
@@ -276,7 +290,7 @@ function Signup({setPage}) {
                             required
                         />
                         <div className="input-name input-margin">
-                            <h3>Confirm Email</h3>
+                            <h3>Confirm Email<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"
@@ -288,7 +302,7 @@ function Signup({setPage}) {
                             required
                         />
                         <div className="input-name input-margin">
-                            <h3>Password</h3>
+                            <h3>Password<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"
@@ -300,7 +314,7 @@ function Signup({setPage}) {
                             required
                         />
                         <div className="input-name input-margin">
-                            <h3>Confirm Password</h3>
+                            <h3>Confirm Password<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"

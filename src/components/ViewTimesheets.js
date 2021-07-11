@@ -19,6 +19,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
     const {editEntry, setEditEntry} = useContext(EditEntryContext);
     const [found, setFound] = useState(true);
     
+    
     async function handleDelete(delId) {
         if (!window.confirm(`Delete this timesheet entry?`)) return;
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
@@ -79,7 +80,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
                     entry.editable=entryEditable(entry.timesubmitted); // BREAKING
                 });
                 // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
-                entries.sort((a,b) => (a.starttime > b.starttime) ? 1 : ((b.starttime > a.starttime) ? -1 : 0));
+                entries.sort((a,b) => (a.starttime > b.starttime) ? -1 : ((b.starttime > a.starttime) ? 1 : 0));
                 // update state
                 setEntries(entries);
             } catch (e) {
@@ -95,6 +96,15 @@ function ViewTimesheets({ maintitle, subtitle }) {
         }      
     },[user, setPage]);
     
+    // reset window width on window resize
+    useEffect(() => {
+        setWinWidth(window.innerWidth);
+        const handleResize = () => {
+            setWinWidth(window.innerWidth);
+        }
+        window.addEventListener('resize', handleResize);
+        return () => { window.removeEventListener('resize', handleResize) }
+    }, []);
     return (
         <div style={{marginTop: '50px', marginBottom: '50px'}}>
         <Spinner />

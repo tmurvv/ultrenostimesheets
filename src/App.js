@@ -25,15 +25,7 @@ function App() {
     const [editEntry, setEditEntry] = useState(USER_INIT);
     const [resetPasswordEmail, setResetPasswordEmail] = useState();
     const [winWidth, setWinWidth] = useState(0);
-    // reset window width on window resize
-    useEffect(() => {
-        setWinWidth(window.innerWidth);
-        const handleResize = () => {
-            setWinWidth(window.innerWidth);
-        }
-        window.addEventListener('resize', handleResize);
-        return () => { window.removeEventListener('resize', handleResize) }
-    }, []);
+    
     // param check for reset password
     useEffect(()=>{
         const params = new URLSearchParams(window.location.search) // id=123
@@ -51,6 +43,10 @@ function App() {
             alert('Your file has been uploaded.');
             setPage('Homepage')
         }
+    },[setPage]);
+    // check for file upload
+    useEffect(()=>{
+        window.addEventListener("resize", setPage('Homepage'));
     },[setPage]);
     return (
         <>
