@@ -125,6 +125,8 @@ function Login({setPage}) {
             }
         } catch (e) {
             // display error
+            console.log(e.response)
+            console.log(e.response.message)
             alert('Something went wrong with password reset. Please check your network connection.');
         }
     }
