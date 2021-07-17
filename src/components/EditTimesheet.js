@@ -189,8 +189,9 @@ function EditTimesheet(props) {
                 
                 let incomingCurrentJobs = [];
                 Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
-                console.log('length', incomingCurrentJobs.length);
+                console.log('incomingcurrentjobs', incomingCurrentJobs);
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
+                incomingCurrentJobs.push(['Other', '(please enter in notes)']);
                 setCurrentJobs(incomingCurrentJobs);
                 setFullCurrentJobs(currentJobsArrays.data.data);
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
@@ -290,8 +291,9 @@ function EditTimesheet(props) {
                             {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime}</option>)} 
                         </select>
                         <div className="input-name input-margin">
-                            <h3>Job Name</h3>
+                            <h3>Job Name {editEntry.jobname}, {editEntry.jobid}</h3>
                         </div>
+
                         <select 
                             className="field-input"
                             style={{width: '100%'}}
@@ -305,6 +307,7 @@ function EditTimesheet(props) {
                         >  
                             <option key='whichjobsite'>Which Job-site?</option>  
                             {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={`${currentJob[0]} ${currentJob[1]}`}>{currentJob[0]}&nbsp;{currentJob[1]}</option>)} 
+                            <option key='notfoundjobsite' value={['Other', '(please enter in notes)']}>Other (please enter in notes)</option>
                         </select>
                         <div className="input-name input-margin">
                             <h3>Specific Task</h3>

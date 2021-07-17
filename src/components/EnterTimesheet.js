@@ -224,6 +224,18 @@ function EnterTimesheet(props) {
                             name='starttime'
                             required
                         />
+                        <div className="input-name">
+                            <h3>testStart Time</h3>
+                        </div>
+                        <input 
+                            className="field-input"
+                            type='datetime-local'
+                            id={uuid()}
+                            value={entry.starttime}
+                            onChange={handleChange}
+                            name='starttime'
+                            required
+                        />
                         <div className="input-name input-margin">
                             <h3>End Time</h3>
                         </div>
@@ -265,8 +277,9 @@ function EnterTimesheet(props) {
                             name='jobname'
                             required
                         > 
-                            <option key='whichjobsite'>Which Job-site?</option>  
+                            <option key='whichjobsite'>Which Job-site?</option>
                             {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob[0]}&nbsp;&nbsp;{currentJob[1]}</option>)} 
+                            <option key='notfoundjobsite' value={['Other', '(please enter in notes)']}>Other (please enter in notes)</option>  
                         </select>
                         <div className="input-name input-margin">
                             <h3>Specific Task</h3>
@@ -281,8 +294,7 @@ function EnterTimesheet(props) {
                             required
                         > 
                             <option key='whattypeofwork'>What type of work?</option>
-                            {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)} 
-                            
+                            {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)}
                         </select>
                         <div className="input-name input-margin">
                             <h3>Notes</h3>

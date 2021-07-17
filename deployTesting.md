@@ -2,7 +2,7 @@
 
 ## [xx] local testing
 ## [xx]Desktop testing
-## [ ]Samsung phone testing
+## [xx]Samsung phone testing
 ## [ ]iPhone testing
 ## [xx]iPad testing
 
@@ -18,16 +18,16 @@
 - [x] reset password email works
 - [x] signup link
 - [x] good login
-#### [ ] signup
-- [ ] emails not match
-- [ ] email exists
-- [ ] bad password
-- [ ] passwords not match
-- [ ] no network
-- [ ] login link
-- [ ] good signup
-- [ ] cancel button
-#### [ ] logout
+#### [x] signup
+- [x] emails not match
+- [x] email exists
+- [x] bad password
+- [x] passwords not match
+- [x] no network
+- [x] login link
+- [x] good signup
+- [x] cancel button
+#### [x] logout
 ### [ ]time sheets
 #### [ ] enter
 - [ ] empty fields
