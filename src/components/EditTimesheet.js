@@ -101,7 +101,7 @@ function EditTimesheet(props) {
         
         //find job id
         let jobId=updateObject.jobname.split(' ')[0];
-        let jobName=updateObject.jobname.split(' ')[1];
+        let jobName=updateObject.jobname.split(/ (.+)/)[1];
     // create submit object
     const entryObject = {
         starttime: updateObject.starttime, 
@@ -119,9 +119,9 @@ function EditTimesheet(props) {
         if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         // Submit Entry
-        //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+           const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
         //    const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-        const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+        // const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
         setEditEntry(ENTRY_INIT);
         setPage('ViewTimesheets');
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";

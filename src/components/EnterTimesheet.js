@@ -39,12 +39,10 @@ function EnterTimesheet(props) {
     const [entry, setEntry]= useState(ENTRY_INIT);
     
     const handleChange = (evt) => {
+        console.log('evt:', evt.target.value)
         switch (evt.target.name) {
-            case 'dateofwork': 
-                setEntry({...entry, dateofwork: evt.target.value});
-                break
             case 'starttime': 
-                setEntry({...entry, starttime: evt.target.value});
+                setEntry({...entry, starttime: evt.target.value, endtime: `${evt.target.value.split('T')[0]}T00:00`});
                 break
             case 'endtime': 
                 setEntry({...entry, endtime: evt.target.value});
@@ -66,19 +64,15 @@ function EnterTimesheet(props) {
     }
     const handleSubmit = async (evt) => {
         // Validations
-        if (!entry.dateofwork||entry.dateofwork==='Date of Work?') return alert('Please enter date of work.');
-        if (isFutureDay(entry.dateofwork)) return alert("Timesheet may not be submitted for a future date.")
+        if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
         if (!entry.endtime||entry.endtime==='End Time?') return alert('Please enter end time.');
         if (!entry.lunchtime||entry.endtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
-        const startTimeDate = `${entry.dateofwork}T${entry.starttime}`;
-        console.log('startTimeDate:', startTimeDate)
-        const endTimeDate = `${entry.dateofwork}T${entry.endtime}`;
-        console.log('endTimeDate:', endTimeDate)
+        
         // calculate hours
-        const minutesWorked = getMinutesWorked(startTimeDate, endTimeDate, entry.lunchtime);
+        const minutesWorked = getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime);
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer than hours worked.');
         const responseText = minutesToText(minutesWorked);
@@ -87,19 +81,16 @@ function EnterTimesheet(props) {
         let jobId=entry.jobname.split(',')[0];
         const jobName=entry.jobname.split(',')[1];
 
-        // format start and endtime
-
-        const submitStart = `${entry.dateofwork}T${entry.starttime}`;
-        const submitEnd = `${entry.dateofwork}T${entry.endtime}`;
-
-        currentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
+        // not sure why next line was added. Removed 07/18/21, see if testing passes
+        // currentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
+        
         // create submit object
         const entryObject = {
             "userid": user.email,
             "firstname": user.firstname,
             "lastname": user.lastname,
-            "starttime": submitStart,
-            "endtime": submitEnd,
+            "starttime": entry.starttime,
+            "endtime": entry.endtime,
             "lunchtime": entry.lunchtime,
             "jobid": jobId,
             "jobname": jobName,
@@ -107,13 +98,13 @@ function EnterTimesheet(props) {
             "notes": entry.notes
         }
         console.log('entryObject:', entryObject)
-        if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.dateofwork}?`)) return;
+        if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.starttime.split('T')[0]}?`)) return;
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // Submit Entry
-            // await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
             // await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
-            await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            // await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
             setEntry(ENTRY_INIT);
@@ -175,7 +166,6 @@ function EnterTimesheet(props) {
                 alert('There is a problem entering timesheet. Please check network connection.');
                 props.setPage('Homepage');
             }
-            
         }
         try {
             getSupportLists()
@@ -201,31 +191,7 @@ function EnterTimesheet(props) {
                     </div>} */}
                     <div className='login-form'>
                         <div className="input-name">
-                            <h3>Date of Work</h3>
-                        </div>
-                        <input 
-                            className="field-input"
-                            type='date'
-                            id={uuid()}
-                            value={entry.dateofwork}
-                            onChange={handleChange}
-                            name='dateofwork'
-                            required
-                        />
-                        <div className="input-name">
                             <h3>Start Time</h3>
-                        </div>
-                        <input 
-                            className="field-input"
-                            type='time'
-                            id={uuid()}
-                            value={entry.starttime}
-                            onChange={handleChange}
-                            name='starttime'
-                            required
-                        />
-                        <div className="input-name">
-                            <h3>testStart Time</h3>
                         </div>
                         <input 
                             className="field-input"
@@ -241,7 +207,7 @@ function EnterTimesheet(props) {
                         </div>
                         <input 
                             className="field-input"
-                            type='time'
+                            type='datetime-local'
                             id={uuid()}
                             value={entry.endtime}
                             onChange={handleChange}
