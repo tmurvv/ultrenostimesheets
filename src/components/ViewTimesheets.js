@@ -28,8 +28,8 @@ function ViewTimesheets({ maintitle, subtitle }) {
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
             // Submit Entry
             // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
-            const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
-            // const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
+            // const res = await axios.post('http://localhost:3000/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
+            const res = await axios.post('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/deletetimesheet', {delid: delId});
             setPage('RefreshView');
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
@@ -54,10 +54,8 @@ function ViewTimesheets({ maintitle, subtitle }) {
         async function getEntries() {
             let res;
             try {
-                res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
-            
                 // get entries
-                
+                res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 // const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 if (res.data.num_returned===0) setFound(false);

@@ -24,8 +24,8 @@ function Admin({setPage}) {
     },[]);
     useEffect(()=>{
         const numSheets = async () => {
-            const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/admin/numtimesheets');
-            // const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/numtimesheets');
+            // const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/admin/numtimesheets');
+            const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/numtimesheets');
             console.log('numsheets',res.data)
             setNumSheets(res.data.numsheets);
         }

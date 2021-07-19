@@ -1,33 +1,33 @@
 # Deploy Testing
 
-## [xx] local testing
-## [xx]Desktop testing
-## [xx]Samsung phone testing
-## [ ]iPhone testing
-## [xx]iPad testing
+## [ ] local testing
+## [ ] Desktop testing
+## [ ] Samsung phone testing
+## [ ] iPhone testing
+## [ ] iPad testing
 
 #### [ ] menu
-- [x] check links
-- [x] check resize
+- [ ] check links
+- [ ] check resize
 ### [ ] membership
-#### [x] Login
-- [x] bad email
-- [x] bad password
-- [x] no network
-- [x] forgot Password sends reset email
-- [x] reset password email works
-- [x] signup link
-- [x] good login
-#### [x] signup
-- [x] emails not match
-- [x] email exists
-- [x] bad password
-- [x] passwords not match
-- [x] no network
-- [x] login link
-- [x] good signup
-- [x] cancel button
-#### [x] logout
+#### [ ] Login
+- [ ] bad email
+- [ ] bad password
+- [ ] no network
+- [ ] forgot Password sends reset email
+- [ ] reset password email works
+- [ ] signup link
+- [ ] good login
+#### [ ] signup
+- [ ] emails not match
+- [ ] email exists
+- [ ] bad password
+- [ ] passwords not match
+- [ ] no network
+- [ ] login link
+- [ ] good signup
+- [ ] cancel button
+#### [ ] logout
 ### [ ]time sheets
 #### [ ] enter
 - [ ] empty fields
