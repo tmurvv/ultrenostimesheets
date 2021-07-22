@@ -17,10 +17,11 @@ function HomePage() {
     },[]);
     
     return (
-        <div style={{backgroundColor: '#f1f1fa', padding: '70px 50px'}}>
+        // <div style={{backgroundColor: '#f1f1fa', padding: '70px 50px'}}>
+        <div style={{backgroundColor: '#fbf9ef', padding: '70px 50px'}}>
        
         {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
-        <PageTitle maintitle='Ultimate Renovations Timesheets' subtitle= {`Welcome ${user.firstname} ${user.lastname}.`}/>
+        <PageTitle maintitle='Ultimate Renovations Timesheets' subtitle= {`Welcome ${user.firstname} ${user.lastname}`}/>
         <h4 style={{textAlign: 'center', marginBottom: '40px'}}>Today is {todayDate}</h4>
         <div style={{width: '100%', height: '100vh', boxSizing: 'borderBox'}}>
         <div style={{width: '60%', paddingBottom: '50px', marginLeft: '20%', boxSizing: 'borderBox'}}>

@@ -24,9 +24,7 @@ function Admin({setPage}) {
     },[]);
     useEffect(()=>{
         const numSheets = async () => {
-            // const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/admin/numtimesheets');
-            const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/numtimesheets');
-            console.log('numsheets',res.data)
+            const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/numtimesheets`);
             setNumSheets(res.data.numsheets);
         }
         numSheets();
@@ -39,8 +37,7 @@ function Admin({setPage}) {
             <div className="form-container" style={{marginTop: '50px'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}} onClick={()=>{if (!window.navigator.onLine) {window.alert('No network connection.')}}}>
-                        {/* <a href='http://localhost:3000/api/v1/ultrenostimesheets/admin/downloadtimesheets' onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a> */}
-                        <a href='https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/downloadtimesheets' onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a>
+                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadtimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a>
                     </button>
                 </div>
             </div>
@@ -53,8 +50,7 @@ function Admin({setPage}) {
 
             <div className="form-container" style={{marginTop: '50px'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                    {/* <form action="http://localhost:3000/api/v1/ultrenostimesheets/admin/uploadjoblist" encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}> */}
-                    <form action="https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/uploadjoblist" encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                    <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                         <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
                         <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                             Upload WIPs List
@@ -78,16 +74,13 @@ function Admin({setPage}) {
 
             <div className="form-container" style={{marginTop: '50px'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                    {/* <form action="http://localhost:3000/api/v1/ultrenostimesheets/admin/uploadjoblist" encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}> */}
-                    <form action="https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/admin/uploadjoblist" encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                    <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                         <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                        {/* <button type='Submit' onClick={()=>window.confirm('This upload will replace all of the selections in the "task" select box. Continue?')} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}> */}
-                        <button type='Submit' onClick={(e)=>{e.preventDefault(); window.alert('This feature coming soon.');}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
-                            Upload Tasks List
+                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "specific task" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                            Upload Task List
                         </button>
                     </form>
                 </div>
-                
             </div>
             <h3 style={{textAlign: 'center'}}>Sample</h3>
             <p style={{textAlign: 'center'}}>Your file should look like this with as many rows as required:</p>

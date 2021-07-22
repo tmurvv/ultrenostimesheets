@@ -45,14 +45,11 @@ function EditTimesheet(props) {
     const [entry, setEntry]= useState(editEntry);
     const handleChange = (evt) => {
         switch (evt.target.name) {
-            case 'dateofwork': 
-                setEntry({...entry, dateofwork: evt.target.value});
-                break
             case 'starttime': 
-                setEntry({...entry, starttimeview: evt.target.value});
+                setEntry({...entry, starttime: evt.target.value});
                 break
             case 'endtime': 
-                setEntry({...entry, endtimeview: evt.target.value});
+                setEntry({...entry, endtime: evt.target.value});
                 break
             case 'lunchtime': 
                 setEntry({...entry, lunchtimeview: evt.target.value});
@@ -73,8 +70,10 @@ function EditTimesheet(props) {
         if (!window.confirm(`Make changes to this timesheet, are you sure?`)) return;
         // combine editEntry and entry objects into one update object
         const updateObject = {
-            starttime: updateStartEndTimeFromEdit(entry.dateofwork, entry.starttimeview),
-            endtime: updateStartEndTimeFromEdit(entry.dateofwork, entry.endtimeview),
+            // starttime: updateStartEndTimeFromEdit(entry.dateofwork, entry.starttimeview),
+            // endtime: updateStartEndTimeFromEdit(entry.dateofwork, entry.endtimeview),
+            starttime: entry.starttime,
+            endtime: entry.endtime,
             lunchtime: updateLunchTimeFromEdit(entry.lunchtimeview),
             jobname: entry.jobname,
             jobid: entry.jobid,
@@ -84,8 +83,7 @@ function EditTimesheet(props) {
             entryId: editEntry.entryId,
         }
         // shortcuts
-        if (!entry.dateofwork||entry.dateofwork==='Date of Work?') return alert('Please enter date of work.');
-        if (isFutureDay(entry.dateofwork)) return alert("Timesheet may not be submitted for a future date.")
+        if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!updateObject.starttime) return alert('Please enter start time.');
         if (!updateObject.endtime) return alert('Please enter end time.');
         if ((!updateObject.lunchtime||updateObject.lunchtime==='Lunch Time?')&&updateObject.lunchtime!==0) return alert('Please enter lunch time (0 minutes if no break taken).');
@@ -93,8 +91,7 @@ function EditTimesheet(props) {
         if (!updateObject.task||updateObject.task==='What type of work?') return alert('Please select type of work.');
         // calculate hours
         const minutesWorked = getMinutesWorked(updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
-        const submitHoursWorked = minutesToDigital(minutesWorked);
-        const responseText = minutesToText(minutesWorked);
+        
         
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
@@ -119,9 +116,7 @@ function EditTimesheet(props) {
         if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         // Submit Entry
-        //    const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-        //    const res = await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-        const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+        const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
         setEditEntry(ENTRY_INIT);
         setPage('ViewTimesheets');
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
@@ -160,8 +155,7 @@ function EditTimesheet(props) {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
             try {
             // tasks
-            const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-            // const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
+            const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
             let incomingTasks = [];
             Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
             if (incomingTasks.length<=0) alert('Problem getting task list. Please check network connection.');
@@ -184,24 +178,15 @@ function EditTimesheet(props) {
         }
             try {
                 // current jobs
-                const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 
                 let incomingCurrentJobs = [];
                 Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
-                console.log('incomingcurrentjobs', incomingCurrentJobs);
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
                 incomingCurrentJobs.push(['Other', '(please enter in notes)']);
                 setCurrentJobs(incomingCurrentJobs);
                 setFullCurrentJobs(currentJobsArrays.data.data);
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                // // current jobs
-                // const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                // // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                // let incomingCurrentJobs = [];
-                // Array.from(currentJobsArrays.data.data).map(currentJobArray=>incomingCurrentJobs.push([`${currentJobArray[0]} ${currentJobArray[1]}`]))
-                // setCurrentJobs(incomingCurrentJobs);
-                // setFullCurrentJobs(currentJobsArrays.data.data);
             } catch (e) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
@@ -235,28 +220,15 @@ function EditTimesheet(props) {
                     </div>} */}
                     <div className='login-form'>
                         <div className="input-name">
-                            <h3>Date of Work</h3>
-                        </div>
-                        <input 
-                            className="field-input"
-                            type='date'
-                            id={uuid()}
-                            value={entry.dateofwork}
-                            onChange={handleChange}
-                            name='dateofwork'
-                            placeholder={editEntry.dateofwork}
-                            required
-                        />
-                        <div className="input-name">
                             <h3>Start Time</h3>
                         </div>
                         <input 
                             className="field-input"
-                            type='time'
+                            type='datetime-local'
                             id={uuid()}
-                            value={entry.starttimeview}
+                            value={entry.starttime.substr(0,16)}
                             onChange={handleChange}
-                            placeholder={editEntry.starttimeview}
+                            placeholder={editEntry.starttime.substr(0,16)}
                             name='starttime'
                             required
                         />
@@ -265,11 +237,11 @@ function EditTimesheet(props) {
                         </div>
                         <input 
                             className="field-input"
-                            type='time'
+                            type='datetime-local'
                             id={uuid()}
-                            value={entry.endtimeview}
+                            value={entry.endtime.substr(0,16)}
                             onChange={handleChange}
-                            placeholder={editEntry.endtimeview}
+                            placeholder={editEntry.endtime.substr(0,16)}
                             name='endtime'
                             required
                         />
@@ -291,7 +263,7 @@ function EditTimesheet(props) {
                             {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime}</option>)} 
                         </select>
                         <div className="input-name input-margin">
-                            <h3>Job Name {editEntry.jobname}, {editEntry.jobid}</h3>
+                            <h3>Job Name</h3>
                         </div>
 
                         <select 

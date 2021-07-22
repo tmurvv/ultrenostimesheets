@@ -79,8 +79,7 @@ function ResetPassword(props) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             /* LOCAL */
-            // await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/resetpassword`, {useremail: props.useremail, newpassword: userLogin.newpassword});
-            await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/resetpassword`, {useremail: props.useremail, newpassword: userLogin.newpassword});
+            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/resetpassword`, {useremail: props.useremail, newpassword: userLogin.newpassword});
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert('Your password has been changed.')}, 200);
             props.setPage('Login');

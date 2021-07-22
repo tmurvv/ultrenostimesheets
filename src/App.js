@@ -29,9 +29,7 @@ function App() {
     // param check for reset password
     useEffect(()=>{
         const params = new URLSearchParams(window.location.search) // id=123
-        console.log('hereabv')
         if (!params.has('reset')) return // true
-        console.log('herebelow', params.get('reset'));
         setPage('ResetPassword');
         setResetPasswordEmail(atob(params.get('reset')));
     },[]);

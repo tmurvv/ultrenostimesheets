@@ -3,6 +3,7 @@ import React, { useState, useContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
+
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
@@ -70,10 +71,8 @@ function Login({setPage}) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
             // login user
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
-            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             
-            console.log(res.data);
             const returnedUser = res.data.data;
             // const jwt = res.data.token;
 
@@ -108,7 +107,6 @@ function Login({setPage}) {
     }
     // handle forgotPassword click
     async function handleForgot() {
-        console.log('in handle forg', userLogin.loginemail)
         // shortcut no email entered
         if (!userLogin.loginemail) {
             alert('Please enter your account email.');
@@ -116,9 +114,7 @@ function Login({setPage}) {
         }
         try {
             // send forgot password email
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
-            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
-            // const res = await axios.get(`${process.env.backend}/api/v1/ultrenostimesheets/sendresetemail/${userLogin.loginemail}`);
+            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
             // display results
             if (res.status===200) {
                 alert('Please check your inbox for an email with instructions to reset your password.');

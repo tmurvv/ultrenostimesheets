@@ -39,7 +39,6 @@ function EnterTimesheet(props) {
     const [entry, setEntry]= useState(ENTRY_INIT);
     
     const handleChange = (evt) => {
-        console.log('evt:', evt.target.value)
         switch (evt.target.name) {
             case 'starttime': 
                 setEntry({...entry, starttime: evt.target.value, endtime: `${evt.target.value.split('T')[0]}T00:00`});
@@ -89,7 +88,7 @@ function EnterTimesheet(props) {
             "userid": user.email,
             "firstname": user.firstname,
             "lastname": user.lastname,
-            "starttime": entry.starttime,
+            "starttime": entry.starttime, 
             "endtime": entry.endtime,
             "lunchtime": entry.lunchtime,
             "jobid": jobId,
@@ -97,14 +96,11 @@ function EnterTimesheet(props) {
             "task": entry.task,
             "notes": entry.notes
         }
-        console.log('entryObject:', entryObject)
         if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.starttime.split('T')[0]}?`)) return;
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // Submit Entry
-            // await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
-            // await axios.post(`https://ultrenostimesheets-testing-api.herokuapp.com/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
-            await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
             setEntry(ENTRY_INIT);
@@ -129,15 +125,14 @@ function EnterTimesheet(props) {
         async function getSupportLists() {
             try {
                 // tasks
-                const tasksArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/tasks`);
-                // const tasksArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/tasks`);
+                const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
-                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
+                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
                 setTasks(incomingTasks);
             } catch (e) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                alert('There is a problem entering timesheet. Please check your network connection.');
+                alert('There is a problem filling the select boxes on the timesheet. Please check your network connection.');
                 props.setPage('Homepage');
             }
             
@@ -153,10 +148,7 @@ function EnterTimesheet(props) {
             setLunchTimes(lunchTimes);
             try {
                 // current jobs
-                const currentJobsArrays = await axios.get(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                // const currentJobsArrays = await axios.get(`http://localhost:3000/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                
-                console.log(currentJobsArrays.data)
+                const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
                 Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
                 setCurrentJobs(incomingCurrentJobs);
@@ -172,23 +164,16 @@ function EnterTimesheet(props) {
         } catch(e) {
             console.log(e.message)
         }      
-    },[props.setPage]);
+    },[]);
     return ( 
        <>
        <div className='login-signup-container'>
             <Spinner />
             <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
-            {/* <Results 
-                resultInfo={resultInfo} 
-                loginGuest={loginGuest}
-                resetResults={resetResults} 
-            /> */}
+            
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
-                    {/* {winWidth>750&&<div className="login-signup-title">
-                        Timesheet Entry
-                    </div>} */}
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>Start Time</h3>
@@ -227,7 +212,7 @@ function EnterTimesheet(props) {
                             name='lunchtime'
                             required
                         >
-                            <option name='15' value='15' key='howlongforlunch'>How long for lunch?</option>
+                            <option name='howlongforlunch' value='howlongforlunch' key='howlongforlunch'>How long for lunch?</option>
                             {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime.substr(0,2)}>{lunchTime}</option>)} 
                         </select>
                         <div className="input-name input-margin">

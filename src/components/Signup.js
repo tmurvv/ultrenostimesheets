@@ -103,19 +103,17 @@ function Signup({setPage}) {
         };
         // signup user
         try {
-            // const res = await axios.post(`http://localhost:3000/api/v1/ultrenostimesheets/users/signup`, newUser);
-            const res = await axios.post(`https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/users/signup`, newUser);
+            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/signup`, newUser);
             if (res.status===201 || res.status===200) {                   
                 // set userContext to added user
                 const addeduser = res.data.newuser;
-                console.log('addeduser:', addeduser)
                 setUser({
                     firstname: addeduser.firstname, 
                     lastname: addeduser.lastname, 
                     email: addeduser.email,
             });
             alert('Signup Successful.');
-            setPage('Timesheet Entry');
+            setPage('EnterTimesheet');
                 // resultText.innerText=`Signup Successful. Please check your inbox to verify your email.`;
                 // dispatchResultInfo({type: 'OK'});  
         }

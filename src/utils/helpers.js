@@ -28,10 +28,11 @@ export function minutesToDigital(minutes) {
 export function minutesToText(minutes) {
     const minuteDisplay = minutes%60;
     const hoursDisplay = Math.floor(minutes/60);
-    return `${hoursDisplay} hour${minuteDisplay!==1?'s':''} and ${minuteDisplay} minute${minuteDisplay!==1?'s':''}`;
+    return `${hoursDisplay} hour${minuteDisplay!==1?'s':''} and ${minuteDisplay} min${minuteDisplay!==1?'s':''}`;
 }
-export function entryEditable(date) {
-    return ((new Date()).getTime()-(new Date(date)).getTime())<86400000;
+export function entryEditable(entry) {
+    if (entry.downloaded) return false;
+    return ((new Date()).getTime()-(new Date(entry.timesubmitted)).getTime())<86400000;
 }
 export function getDateWorked(entry) {
     const entryDate = new Date(entry);
@@ -55,4 +56,18 @@ export function updateLunchTimeFromEdit(newLunchtime) {
     !newLunchtime?newLunchtime='0':newLunchtime=String(newLunchtime);
     // return number of minutes
     return Number(newLunchtime.substr(0,2));
+}
+export function militaryToAMPM(time) {
+    let hours=time.split(':')[0];
+    let ampm;
+    if (hours<0) hours=hours+24;
+    if (hours==='00' || hours===0) {hours='12'; ampm='AM'};
+    if (hours>'12' || hours===12) {ampm='PM'};
+    if (hours<12) {hours=Number(hours); ampm='AM'};
+    if (hours>12) {hours=Number(hours)-12; ampm='PM'};
+    return `${hours}:${time.split(':')[1]} ${ampm}`;
+}
+export function addZero(item) {
+    if (item.length===1) return `0${item}`;
+    return item;
 }
