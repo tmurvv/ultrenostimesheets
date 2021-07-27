@@ -6,8 +6,7 @@ function LoginSignupCSS() {
             }        
             input,
             select,
-            textarea,
-            button {
+            textarea {
                 outline: 0;
             }
             .login-signup-container,

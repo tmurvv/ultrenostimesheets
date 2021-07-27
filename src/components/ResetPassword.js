@@ -107,7 +107,7 @@ function ResetPassword(props) {
                 <div className="login-signup-title">
                     Reset Password
                 </div>
-                <form onSubmit={handleSubmit}>
+                <form>
                     <div style={{padding: '25px'}}>   
                         <div className="input-name input-margin">
                             <h3>Account</h3>
@@ -115,7 +115,7 @@ function ResetPassword(props) {
                         <input 
                             className="field-input"
                             type='email'
-                            id={uuid()}
+                            id={()=>uuid()}
                             placeholder={props.useremail}
                             value={props.useremail}
                             name='email'
@@ -127,7 +127,7 @@ function ResetPassword(props) {
                         <input 
                             className="field-input"
                             type='password'
-                            id={uuid()}
+                            id={()=>uuid()}
                             value={userLogin.newpassword}
                             onChange={handleChange}
                             name='newpassword'
@@ -139,14 +139,14 @@ function ResetPassword(props) {
                         <input 
                             className="field-input"
                             type='password'
-                            id={uuid()}
+                            id={()=>uuid()}
                             value={userLogin.confirmpassword}
                             onChange={handleChange}
                             name='confirmpassword'
                             required={true}
                         />
                     </div>
-                    <button type='button' onClick={handleSubmit} className="submit-btn login-signup-title">
+                    <button type='button' onClick={()=>handleSubmit()} className="submit-btn login-signup-title">
                         Submit
                     </button>
                 </form>

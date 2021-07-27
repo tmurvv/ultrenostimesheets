@@ -30,7 +30,8 @@ export function minutesToText(minutes) {
     const hoursDisplay = Math.floor(minutes/60);
     return `${hoursDisplay} hour${minuteDisplay!==1?'s':''} and ${minuteDisplay} min${minuteDisplay!==1?'s':''}`;
 }
-export function entryEditable(entry) {
+export function entryEditable(entry,adminEditTimesheets) {
+    if (adminEditTimesheets) return true;
     if (entry.downloaded) return false;
     return ((new Date()).getTime()-(new Date(entry.timesubmitted)).getTime())<86400000;
 }

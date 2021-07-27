@@ -9,6 +9,7 @@ import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
 import Spinner from '../components/Spinner'
 import {UserContext} from '../contexts/UserContext';
+import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext';
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';
 // import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
@@ -25,6 +26,7 @@ import {UserContext} from '../contexts/UserContext';
 function Login({setPage}) {
     // declare variables
     const { setUser } = useContext(UserContext);
+    const { adminEditTimesheets, setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
     // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
     // const [needVerify, setNeedVerify] = useState(false);
@@ -84,7 +86,8 @@ function Login({setPage}) {
             });
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
-            returnedUser.firstname.toUpperCase()==="ADMIN"?setPage('Admin'):setPage('EnterTimesheet');
+            if (returnedUser.firstname.toUpperCase()==="ADMIN") setPage('Admin');
+            if (returnedUser.firstname.toUpperCase()!=="ADMIN") {setPage('EnterTimesheet'); setAdminEditTimesheets(false)}
             // // set JWT cookie
             //     document.cookie = `JWT=${jwt}`
             // // display result window

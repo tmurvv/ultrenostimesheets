@@ -1,23 +1,23 @@
 import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
-import uuid from 'react-uuid';
 import PageTitle from '../components/PageTitle';
 import Spinner from '../components/Spinner'
 import {UserContext} from '../contexts/UserContext';
+import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext';
 import {PageContext} from '../contexts/PageContext';
 import {EditEntryContext} from '../contexts/EditEntryContext';
 import {militaryToAMPM} from '../utils/helpers';
-
-import {getDateWorked, addZero, entryEditable, getMinutesWorked, minutesToDigital, minutesToText} from '../utils/helpers';
+import {entryEditable, getMinutesWorked, minutesToDigital} from '../utils/helpers';
 import ViewTimesheetsCss from '../styles/ViewTimesheets.css';
 
-function ViewTimesheets({ maintitle, subtitle }) {
+function ViewTimesheets() {
     const [winWidth, setWinWidth] = useState(2000);
     const [todayDate, setTodayDate] = useState(2000);
     const [entries, setEntries] = useState(2000);
     const {user} = useContext(UserContext);
-    const {page, setPage} = useContext(PageContext);
-    const {editEntry, setEditEntry} = useContext(EditEntryContext);
+    const {adminEditTimesheets} = useContext(AdminEditTimesheetsContext);
+    const {setPage} = useContext(PageContext);
+    const {setEditEntry} = useContext(EditEntryContext);
     const [found, setFound] = useState(true);
     
     
@@ -51,7 +51,6 @@ function ViewTimesheets({ maintitle, subtitle }) {
     useEffect(()=>{
         if (!user) return;
         async function getEntries() {
-            let res;
             try {
                 // get entries
                 const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
@@ -63,7 +62,7 @@ function ViewTimesheets({ maintitle, subtitle }) {
                     entry.endtime=`${entry.endtime}`;
                     entry.lunchtimeview=`${entry.lunchtime} minutes`;
                     entry.hoursworked=minutesToDigital(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime)).toFixed(2);
-                    entry.editable=entryEditable(entry); // BREAKING
+                    entry.editable=entryEditable(entry, adminEditTimesheets); // BREAKING
                 });
                 // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
                 entries.sort((a,b) => (a.starttime > b.starttime) ? -1 : ((b.starttime > a.starttime) ? 1 : 0));
@@ -124,9 +123,9 @@ function ViewTimesheets({ maintitle, subtitle }) {
                     }} alt='edit button' />
                     <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px 10px'}} onClick={()=>entry.editable&&handleDelete(entry._id)} alt='delete button' />
                 </td>
-                <td className='cell'><span className='header'>Date of Work:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px'}} disabled/></div></td>
-                <td className='cell'><span className='header'>Start Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px'}} disabled/></div></td>
-                <td className='cell'><span className='header'>End Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px'}} disabled/></div></td>
+                <td className='cell'><span className='header'>Date of Work:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                <td className='cell'><span className='header'>Start Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                <td className='cell'><span className='header'>End Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                 <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry.lunchtime} mins</td>
                 <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
                 <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{`${entry.jobid} `}{entry.jobname}</td>
@@ -179,9 +178,9 @@ function ViewTimesheets({ maintitle, subtitle }) {
                     }} alt='delete button'/>
                 </td>
                 
-                <td className='cell'><div style={{width: '90px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px'}} disabled/></div></td>
-                <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px'}} disabled/></div></td>
-                <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px'}} disabled/></div></td>
+                <td className='cell'><div style={{width: '90px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                 <td className='cell'>{entry.lunchtime} mins</td>
                 <td className='cell'><div style={{minWidth: '30px', maxHeight: '40px', overflowY:'auto', textAlign: 'center'}}>{entry.hoursworked}</div></td>
                 <td className='cell'><div style={{maxHeight: '40px', overflowY:'auto'}}>{`${entry.jobid} `}{entry.jobname}</div></td>

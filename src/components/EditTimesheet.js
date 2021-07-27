@@ -154,28 +154,27 @@ function EditTimesheet(props) {
         async function getSupportLists() {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
             try {
-            // tasks
-            const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
-            let incomingTasks = [];
-            Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray[0]))
-            if (incomingTasks.length<=0) alert('Problem getting task list. Please check network connection.');
-            setTasks(incomingTasks);
-            // lunch times
-            const lunchTimes = [
-                '0 minutes',
-                '15 minutes',
-                '30 minutes',
-                '45 minutes',
-                '60 minutes',
-                '90 minutes'
-            ]
-            setLunchTimes(lunchTimes);
-        } catch (e) {
-            console.log(e.message)
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-            alert('There is a problem editing timesheet. Please check your network connection.');
-            setPage('Homepage');
-        }
+                // tasks
+                const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
+                let incomingTasks = [];
+                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
+                setTasks(incomingTasks);
+                // lunch times
+                const lunchTimes = [
+                    '0 minutes',
+                    '15 minutes',
+                    '30 minutes',
+                    '45 minutes',
+                    '60 minutes',
+                    '90 minutes'
+                ]
+                setLunchTimes(lunchTimes);
+            } catch (e) {
+                console.log(e.message)
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                alert('There is a problem editing timesheet. Please check your network connection.');
+                setPage('Homepage');
+            }
             try {
                 // current jobs
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);

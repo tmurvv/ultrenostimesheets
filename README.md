@@ -1,70 +1,18 @@
-# Getting Started with Create React App
+# Mobile Timesheet Entry - FE
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This web app is targeted to construction workers for Ultimate Renovations, a Canadian company with multiple 'Best in Renovation' awards. The company needed a simple, fast way for their workers to enter hours at the end of the work-day while still at the construction job-site. 
 
-## Available Scripts
+## Additional Features 
+This level of customization would not be possible with off-the-shelf software:
+- Dynamically updates the job-site selection box on the timesheet entry to reflect a constantly changing list of clients 
+- Emails a reminder if a timesheet has not been entered by a worker for more than three business days. Implemented with a cron job.
+- An api provides end points to download timesheets.
+- At the request of the company, timesheets are available to be updated and deleted by the worker for 24 hours after being entered. Then the worker may view timesheets, but needs to contact the office to update.
 
-In the project directory, you can run:
+Website designed and developed by Tisha Murvihill, www.take2tech.ca
 
-### `npm start`
+July 2021
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Built with React, Nodejs, MongoDB. Backend hosted on a Digital Ocean Ubuntu server. Front-end hosted on take2tech.ca
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Dev files located at: https://github.com/tmurvv/

@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { PageContext } from '../contexts/PageContext.js';
 import { UserContext } from '../contexts/UserContext.js';
+import { AdminEditTimesheetsContext } from '../contexts/AdminEditTimesheetsContext.js';
 import {USER_INIT} from '../constants/inits';
 
 //internal
@@ -20,8 +21,9 @@ import NavBarCss from '../styles/NavBar.css.js';
 //     }
 // }
 export default function NavBar(props) {
-    const { page, setPage } = useContext(PageContext);
+    const { setPage } = useContext(PageContext);
     const { user, setUser } = useContext(UserContext);
+    const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     const [mobile, setMobile] = useState();
     const [open, setOpen] = useState(false);
     // const { user, setUser } = useContext(UserContext);
@@ -89,7 +91,7 @@ export default function NavBar(props) {
                             </li>                      
                         }
                         <li>
-                            {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/signup" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}
+                            {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT); setAdminEditTimesheets(false);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/signup" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}
                         </li>
                     </ul>
                 </nav>
