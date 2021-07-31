@@ -12,8 +12,7 @@ import {ENTRY_INIT} from "../constants/inits";
 import {
     getMinutesWorked, 
     minutesToDigital, 
-    minutesToText, 
-    getNowYYYYMMDDTHHMMSS, 
+    minutesToText,
     isFutureDay
 } from "../utils/helpers";
 // import Spinner from '../src/main/components/main/Spinner';

@@ -57,6 +57,7 @@ function ViewTimesheets() {
                 if (res.data.num_returned===0) setFound(false);
                 let entries = res.data.data;
                 
+                console.log('entries:', entries)
                 entries.map(entry=>{
                     entry.starttime=`${entry.starttime}`;
                     entry.endtime=`${entry.endtime}`;

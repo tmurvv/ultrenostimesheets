@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useReducer, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -12,12 +12,9 @@ import {PageContext} from "../contexts/PageContext";
 import {EditEntryContext} from "../contexts/EditEntryContext";
 import {ENTRY_INIT} from "../constants/inits";
 import {
-    updateStartEndTimeFromEdit,
     getMinutesWorked, 
-    minutesToDigital, 
-    minutesToText, 
     updateLunchTimeFromEdit, 
-    isFutureDay,
+    isFutureDay
 } from "../utils/helpers";
 // import Spinner from '../src/main/components/main/Spinner';
 // import Results from '../src/main/components/main/Results';

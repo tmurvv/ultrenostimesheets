@@ -1,5 +1,4 @@
 import React from 'react';
-import IndexCss from '../styles/index.css';
 
 function PageTitle({ maintitle, subtitle }) {
     return (
@@ -14,7 +13,7 @@ function PageTitle({ maintitle, subtitle }) {
                     top: '35%', 
                     left: '50%', 
                     transform: 'translate(-50%,-50%)',
-                    zIndex: '9999',
+                    zIndex: 9999
                 }}
             >
                 <img style={{
