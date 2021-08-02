@@ -211,7 +211,7 @@ function Signup({setPage}) {
     //         dispatchResultInfo({ type: 'loadingImage' });  
     //         //create user object
     //         const forgotPasswordUser = {
-    //             firstname: 'findaharp.com',
+    //             firstname: 'ultrenos.com',
     //             lastname: 'user',
     //             email: userLogin.loginemail
     //         }
