@@ -15,13 +15,13 @@ import {
     isFutureDay
 } from "../utils/helpers";
 
-function EnterTimesheet(props) {
+function EnterTimesheet({setPage}) {
     const { user } = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
     const [currentJobs, setCurrentJobs] = useState();
-    const [lunchTimes, setLunchTimes] = useState(LUNCH_TIMES_INIT);
+    const [lunchTimes] = useState(LUNCH_TIMES_INIT);
     const [entry, setEntry]= useState(ENTRY_INIT);
     
     const handleChange = (e) => {
@@ -91,7 +91,7 @@ function EnterTimesheet(props) {
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             // in-app message
-            setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
+            setTimeout(()=>{alert(`Your timesheet has been submitted.`); setPage('ViewTimesheets');},200);
             // reset environment
             setEntry(ENTRY_INIT);
         } catch(e) {
@@ -122,7 +122,7 @@ function EnterTimesheet(props) {
                 // For dynamic tasks
                 // const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 // let incomingTasks = [];
-                // Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
+                // Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task));
                 // setTasks(incomingTasks);
                 // For Static Portfolio Tasks
                 const portfolioTasks = [
@@ -148,14 +148,14 @@ function EnterTimesheet(props) {
                 // in-app message
                 alert('There is a problem filling the select boxes on the timesheet. Please check your network connection.');
                 // reset environment
-                props.setPage('Homepage');
+                setPage('Homepage');
             }
             try {
                 // *** CURRENT JOBS
                 // for dynamic jobs
                 // const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 // let incomingCurrentJobs = [];
-                // Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                // Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
                 // setCurrentJobs(incomingCurrentJobs);
                 
                 //for static portfolio jobs
@@ -185,7 +185,7 @@ function EnterTimesheet(props) {
                 // in-app message
                 alert('There is a problem entering timesheet. Please check network connection.');
                 // reset environment
-                props.setPage('Homepage');
+                setPage('Homepage');
             }
         }
         try {
@@ -194,7 +194,7 @@ function EnterTimesheet(props) {
             // log error
             console.log(e.message)
         }      
-    },[]);
+    },[setPage]);
     return ( 
        <>
        <div className='login-signup-container'>
@@ -295,7 +295,7 @@ function EnterTimesheet(props) {
                             </button>
                         </div>
                         <div style={{marginLeft: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                            <button type='reset' onClick={()=>{setEntry(ENTRY_INIT);props.setPage('Homepage');}} className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
+                            <button type='reset' onClick={()=>{setEntry(ENTRY_INIT);setPage('Homepage');}} className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
                                 Cancel
                             </button>
                         </div>

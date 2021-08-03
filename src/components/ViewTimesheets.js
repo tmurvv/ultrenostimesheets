@@ -66,7 +66,7 @@ function ViewTimesheets() {
                 const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 if (res.data.num_returned===0) setFound(false);
                 let entries = res.data.data;
-                entries.map(entry=>{
+                entries.forEach(entry=>{
                     // adjust entry fields for display object requirements
                     entry.starttime=`${entry.starttime}`;
                     entry.endtime=`${entry.endtime}`;

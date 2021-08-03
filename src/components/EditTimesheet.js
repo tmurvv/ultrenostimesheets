@@ -128,7 +128,7 @@ function EditTimesheet() {
                 // get task list
                 const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
-                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
+                Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task));
                 setTasks(incomingTasks);
             } catch (e) {
                 console.log(e.message)
@@ -141,7 +141,7 @@ function EditTimesheet() {
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
                 // morph incoming data into tuple
-                Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (
+                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (
                         currentJobArray.current===true
                         &&currentJobArray!==undefined
                         &&currentJobArray.jobname
@@ -176,7 +176,7 @@ function EditTimesheet() {
             // log message
             console.log(e.message);
         }
-    },[]);
+    },[setPage, setFullCurrentJobs]);
     return ( 
     <>
     <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
