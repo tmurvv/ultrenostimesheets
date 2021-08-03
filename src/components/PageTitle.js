@@ -4,7 +4,6 @@ import PageTitleCss from '../styles/PageTitle.css';
 function PageTitle({ maintitle, subtitle }) {
     const [winWidth, setWinWidth] = useState(2000);
     useEffect(()=>{setWinWidth(window.innerWidth)},[]);
-
     return (
         <>
         <div className='mainTitle'>

@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -8,32 +8,20 @@ import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
 import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
-import {ENTRY_INIT} from "../constants/inits";
+import {ENTRY_INIT, LUNCH_TIMES_INIT} from "../constants/inits";
 import {
     getMinutesWorked,
     minutesToText,
     isFutureDay
 } from "../utils/helpers";
-// import Spinner from '../src/main/components/main/Spinner';
-// import Results from '../src/main/components/main/Results';
-// import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
-// import { UserContext } from '../src/main/contexts/UserContext';
-// import { resultInfoReducer, activeWindowReducer } from '../src/main/reducers/reducers';
-// import { parseJwt } from '../src/main/utils/helpers';
 
-// // initialize reducer object
-// const activeWindowInitialState = {
-//     activeWindow: 'login',
-//     loginClasses: 'login-signup l-attop',
-//     signupClasses: 'login-signup s-atbottom'
-// }
 function EnterTimesheet(props) {
     const { user } = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
     const [currentJobs, setCurrentJobs] = useState();
-    const [lunchTimes, setLunchTimes] = useState();
+    const [lunchTimes, setLunchTimes] = useState(LUNCH_TIMES_INIT);
     const [entry, setEntry]= useState(ENTRY_INIT);
     
     const handleChange = (e) => {
@@ -59,7 +47,7 @@ function EnterTimesheet(props) {
             default :
         }
     }
-    const handleSubmit = async (e) => {
+    const handleSubmit = async () => {
         // Validations
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
@@ -93,19 +81,28 @@ function EnterTimesheet(props) {
             "task": entry.task,
             "notes": entry.notes
         }
+        // in-app confirm message
         if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.starttime.split('T')[0]}?`)) return;
+        // start spinner
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // Submit Entry
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
+            // reset environment
             setEntry(ENTRY_INIT);
         } catch(e) {
+            // log error
             console.error(e.message);
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert('Something went wrong, please check network connection.')}, 200);
         }
+        // stop spinner TODO test if necessary
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
     // set environment
@@ -121,12 +118,12 @@ function EnterTimesheet(props) {
     useEffect(()=>{
         async function getSupportLists() {
             try {
-                // ***TASKS
+                // *** TASKS
                 // For dynamic tasks
                 // const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 // let incomingTasks = [];
                 // Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
-                
+                // setTasks(incomingTasks);
                 // For Static Portfolio Tasks
                 const portfolioTasks = [
                     'Framing',
@@ -144,21 +141,15 @@ function EnterTimesheet(props) {
                 ]
                 setTasks(portfolioTasks);
             } catch (e) {
+                // log error
                 console.log(e.message)
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // in-app message
                 alert('There is a problem filling the select boxes on the timesheet. Please check your network connection.');
+                // reset environment
                 props.setPage('Homepage');
             }
-            // lunch times
-            const lunchTimes = [
-                '0 minutes',
-                '15 minutes',
-                '30 minutes',
-                '45 minutes',
-                '60 minutes',
-                '90 minutes'
-            ]
-            setLunchTimes(lunchTimes);
             try {
                 // *** CURRENT JOBS
                 // for dynamic jobs
@@ -187,15 +178,20 @@ function EnterTimesheet(props) {
                 ]
                 setCurrentJobs(portfolioJobs);
             } catch (e) {
+                // log error
                 console.log(e.message)
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // in-app message
                 alert('There is a problem entering timesheet. Please check network connection.');
+                // reset environment
                 props.setPage('Homepage');
             }
         }
         try {
             getSupportLists()
         } catch(e) {
+            // log error
             console.log(e.message)
         }      
     },[]);

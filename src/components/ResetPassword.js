@@ -1,71 +1,32 @@
 // packages
-import React, {useState, useContext, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
 // internal
 import PageTitle from './PageTitle';
 import Spinner from './Spinner';
-import { UserContext } from '../contexts/UserContext';
 import LoginSignupCSS from '../styles/LoginSignup.css';
 import IndexCss from '../styles/index.css';
 
 function ResetPassword(props) {
-    const { user, setUser} = useContext(UserContext);
-    const [userSignup, setUserSignup] = useState({
-        firstname: '',
-        lastname: '',
-        signupemail: '',
-        signuppassword: '',
-        confirmpassword: '',
-        distanceunit: '',
-        signupchange: false
-    });
     const [userLogin, setUserLogin] = useState({
-        oldpassword: '',
         newpassword: '',
         confirmpassword: '',
         loginchange: false
     });
-    const handleChange = (evt) => {
-        switch (evt.target.name) {
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'newpassword': 
-                setUserLogin({...userLogin, newpassword: evt.target.value, loginchange: true});
+                setUserLogin({...userLogin, newpassword: e.target.value, loginchange: true});
                 break
             case 'confirmpassword': 
-                setUserLogin({...userLogin, confirmpassword: evt.target.value, loginchange: true});
+                setUserLogin({...userLogin, confirmpassword: e.target.value, loginchange: true});
                 break
             default :
         }
     }
-    function resetSignupForm() {
-        setUserSignup({
-            firstname: '',
-            lastname: '',
-            signupemail: '',
-            signuppassword: '',
-            confirmpassword: '',
-            distanceUnit: 'miles',
-            signupchange: false
-        });
-    }
-    function resetLoginForm() { 
-        setUserLogin({
-            oldpassword: '',
-            newpassword: '',
-            confirmpassword: '',
-            loginchange: false
-        });
-    }
-    function resetResults() {
-        // document.querySelector('#loadingloginReset').style.display='none';
-        // document.querySelector('#loadingloginResetText').innerText='';
-        // document.querySelector('#loadingloginResetOk').style.display='none';
-        // document.querySelector('#loadingloginResetTryAgain').style.display='none';
-        // document.querySelector('#loadingloginResetImg').style.display='none';
-    }
-    
-    const handleSubmit = async (evt) => {
+    const handleSubmit = async () => {
         // check password length
         if (userLogin.newpassword.length<8) {
             alert(`Passwords must be at least 8 characters long.`);
@@ -76,22 +37,27 @@ function ResetPassword(props) {
             alert(`Passwords do not match.`);
             return
         }
+        // start spinner
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
-            /* LOCAL */
+            // reset password
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/resetpassword`, {useremail: props.useremail, newpassword: userLogin.newpassword});
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert('Your password has been changed.')}, 200);
+            // reset environment
             props.setPage('Login');
-        } catch(e) {    
+        } catch(e) {  
+            // log error
+            console.log(e.message);
+            // stop spinner  
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert('Something went wrong resetting password.')}, 200);    
         }
+        // stop spinner TODO test if necessary
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-    }
-    function loginGuest() {
-        resetResults();
-        // Router.push('/LoginSignup');
     }
     useEffect(() => {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
@@ -102,7 +68,6 @@ function ResetPassword(props) {
         <div style={{padding: '70px'}} className='loginReset-signupReset-container'>
             <PageTitle maintitle='Reset Password' subtitle='Passwords must be at least 8 characters' />
             <Spinner />
-            
             <div style={{transform: 'none', marginTop: '50px'}} className="login-signup l-attop" id="login">
                 <div className="login-signup-title">
                     Reset Password

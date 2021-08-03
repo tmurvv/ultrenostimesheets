@@ -11,7 +11,6 @@ function LoginSignupCSS() {
             }
             .login-signup-container,
             .loginVerify-signup-container {
-                // background-image: linear-gradient(to bottom, #fffedf, #ffffff 300px);
                 overflow: hidden;
                 position: relative;
                 padding: 50px;
@@ -45,8 +44,7 @@ function LoginSignupCSS() {
                 border-top-right-radius: 3px;
                 border-top-left-radius: 3px;
                 transform: translate(-1px, -1px);
-            }
-            
+            }          
             .input-name {
                 font-size: 14px;
             }
@@ -126,34 +124,6 @@ function LoginSignupCSS() {
             #signup .login-signup-content {
                 padding-bottom: 46px;
             }
-            .s-atbottom {
-                // transform: translate3d(100px, -506.5px, 0);
-                z-index: 0;
-                -webkit-filter: blur(1px);
-                filter: blur(1px);
-                opacity: 0.6;
-            }
-            .s-attop {
-                z-index: 1;
-                -webkit-filter: blur(0);
-                filter: blur(0);
-                box-shadow: -5px 6px 48px -13px rgba(0, 0, 0, 0.75);
-                opacity: 1;
-            }
-            .l-attop {
-                z-index: 1;
-                -webkit-filter: blur(0);
-                filter: blur(0);
-                box-shadow: -5px 6px 48px -13px rgba(0, 0, 0, 0.75);
-                opacity: 1;
-            }
-            .l-atbottom {
-                z-index: 0;
-                -webkit-filter: blur(1px);
-                filter: blur(1px);
-                opacity: 0.4;
-            }
-            
             .profileDivider {
                 margin: 20px auto 50px;
                 height: 2px;

@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useReducer, useEffect } from 'react';
+import {useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -14,63 +14,59 @@ function Admin({setPage}) {
     // declare variables
     const [numSheets, setNumSheets] = useState();
     const [newAllTimesheets, setNewAllTimesheets] = useState('new');
-    const { setUser } = useContext(UserContext);
-    const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
+    const {setUser} = useContext(UserContext);
+    const {setAdminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
         loginemail: 'portfolio@take2tech.ca',
-        loginpassword: 'bestinrenos*11YEARS!',
+        loginpassword: 'adminpassword',
         loginchange: false
     });
-    const handleChange = (evt) => {
-        switch (evt.target.name) {
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'loginemail': 
-                setUserLogin({...userLogin, loginemail: evt.target.value, loginchange: true});
+                setUserLogin({...userLogin, loginemail: e.target.value, loginchange: true});
                 break
             case 'loginpassword': 
-                setUserLogin({...userLogin, loginpassword: evt.target.value, loginchange: true});
+                setUserLogin({...userLogin, loginpassword: e.target.value, loginchange: true});
                 break
             default :
         }
     }
-    const handleSubmit = async (evt) => {
-        // const resultText = document.querySelector('#loadingLoginText');
-        // if (userLogin.loginpassword.length<8) {
-        //     resultText.innerText=`Passwords must be at least 8 characters long.`;
-        //     dispatchResultInfo({type: 'tryAgain'});
-        //     return
-        // }
-        // // set loading image
-        // dispatchResultInfo({type:'loadingImage'});  
+    const handleSubmit = async (e) => {
+        // start spinner
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
             // login user
             const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
-            
             const returnedUser = res.data.data;
-            // const jwt = res.data.token;
-
             // set user context to login user
             setUser({
                 firstname: returnedUser.firstname, 
                 lastname: returnedUser.lastname, 
                 email: returnedUser.email
             });
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-            // setTimeout(()=>{alert(`Admin logged in as ${returnedUser.email}`)},200);
+            // set new environment
             setPage('Homepage');
             setAdminEditTimesheets(true);
         } catch(e) {
+            // log error
             console.log('error', e.message)
             console.log(e.response)
+            // email not found
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 return setTimeout(()=>{alert('Email not found.')}, 200);
             } 
+            // password does not match
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 return setTimeout(()=>{alert('Password does not match our records.')},200);
             }
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            // stop spinner
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none"; 
+            // in-app message to user  
             setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
         }
     }
@@ -79,6 +75,7 @@ function Admin({setPage}) {
         window&&window.scrollTo(0,0);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
+    // get number of timesheets ready for download
     useEffect(()=>{
         const numSheets = async () => {
             const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/numtimesheets`);
@@ -89,6 +86,8 @@ function Admin({setPage}) {
     return ( 
     <>
         <Spinner />
+
+        {/* Download Timesheets */}
         <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '25pxpx'}}>
             <PageTitle maintitle='Download Timesheets' subtitle={`${numSheets} new timesheet${numSheets===1?'':'s'} ready for download`} />          
             <form onClick={e => setNewAllTimesheets(e.target.value)} className="form-container" style={{marginTop: '50px', display: 'flex', justifyContent: 'space-evenly'}}>
@@ -106,6 +105,8 @@ function Admin({setPage}) {
         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
             <img src="/img/tapered_line_blue.png" alt='tapered blue dividing line' style={{minWidth: '80%', height: '50px'}}/>
         </div>
+
+        {/* Upload current jobs list */}
         <div className='login-signup-container'>
             <PageTitle maintitle='Upload Works in Progress List' subtitle={`The listings uploaded here will replace all of the listings in the timesheet "job name" select box.`} />
             <div className="form-container" style={{marginTop: '50px'}}>
@@ -129,9 +130,10 @@ function Admin({setPage}) {
         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
             <img src="/img/tapered_line_blue.png" alt='tapered blue dividing line' style={{minWidth: '80%', height: '50px'}}/>
         </div>
+
+        {/* Upload tasks list */}
         <div className='login-signup-container'>
             <PageTitle maintitle='Upload Tasks List' subtitle={`The tasks uploaded here will replace all of the tasks in the timesheet "task" select box.`} />
-
             <div className="form-container" style={{marginTop: '50px'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
@@ -153,9 +155,10 @@ function Admin({setPage}) {
         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
             <img src="/img/tapered_line_blue.png" alt='tapered blue dividing line' style={{minWidth: '80%', height: '50px'}}/>
         </div>
+
+        {/* Update user timesheet */}
         <div className='login-signup-container'>
             <PageTitle maintitle='Change User Timesheet' subtitle={`Logs you into the user's account with permissions to make changes.`} />
-
             <div className="form-container" style={{marginTop: '0'}}>
                 <form>
                     <div style={{padding: '25px'}}>   
@@ -193,7 +196,6 @@ function Admin({setPage}) {
             </div>
             <LoginSignupCSS />
         </div>
-        
         </>
     )
 }

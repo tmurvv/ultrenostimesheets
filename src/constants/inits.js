@@ -15,3 +15,12 @@ export const USER_INIT = {
     password: '',
     confirmpassword: '',
 };
+
+export const LUNCH_TIMES_INIT = [
+    '0 minutes',
+    '15 minutes',
+    '30 minutes',
+    '45 minutes',
+    '60 minutes',
+    '90 minutes'
+];

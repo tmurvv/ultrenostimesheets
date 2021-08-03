@@ -1,10 +1,7 @@
-import React from 'react';
-
 function IndexCss() {
     return (
         <style jsx="true">{`
             .index {
-                // background-image: linear-gradient(to bottom, #fffedf, #ffffff 300px);
                 margin: 0;
                 padding-top: 70px;
                 height: fit-content;

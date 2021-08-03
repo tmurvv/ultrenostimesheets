@@ -4,7 +4,7 @@ import {UserContext} from '../contexts/UserContext';
 
 function HomePage() {
     const [todayDate, setTodayDate] = useState();
-    const [winWidth, setWinWidth] = useState();
+    const [setWinWidth] = useState();
     const {user} = useContext(UserContext);
     // set environment
     useEffect(()=>{
@@ -14,20 +14,17 @@ function HomePage() {
         setTodayDate(`${todayDateRaw.getFullYear()}/${month}/${day}`);
         setWinWidth(window.innerWidth);
         window&&window.scrollTo(0,0);
-    },[]);
+    },[setWinWidth]);
     
     return (
-        // <div style={{backgroundColor: '#f1f1fa', padding: '70px 50px'}}>
-        <div style={{backgroundColor: '#fbf9ef', padding: '70px 50px'}}>
-       
-        {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
-        <PageTitle maintitle='Ultimate Renovations Timesheets' subtitle= {`Welcome ${user.firstname} ${user.lastname}`}/>
-        <h4 style={{textAlign: 'center', marginBottom: '40px'}}>Today is {todayDate}</h4>
-        <div style={{width: '100%', height: '100vh', boxSizing: 'borderBox'}}>
-        <div style={{width: '60%', paddingBottom: '50px', marginLeft: '20%', boxSizing: 'borderBox'}}>
-            <img style={{width: '100%'}} src="/img/generic_gold_logo.png" alt="Ultimate Renovations large logo" />
-        </div>
-        </div>
+        <div style={{backgroundColor: '#fbf9ef', padding: '70px 50px'}}>     
+            <PageTitle maintitle='Able Construction Timesheets' subtitle= {`Welcome ${user.firstname} ${user.lastname}`}/>
+            <h4 style={{textAlign: 'center', marginBottom: '40px'}}>Today is {todayDate}</h4>
+            <div style={{width: '100%', height: '100vh', boxSizing: 'borderBox'}}>
+                <div style={{width: '60%', paddingBottom: '50px', marginLeft: '20%', boxSizing: 'borderBox'}}>
+                    <img style={{width: '100%'}} src="/img/generic_gold_logo.png" alt="Able Construction large logo. White and gold on black." />
+                </div>
+            </div>
         </div>
     )
 }
