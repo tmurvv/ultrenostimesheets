@@ -1,6 +1,6 @@
 # Mobile Timesheet Entry - FE
 
-This web app is targeted to construction workers for Ultimate Renovations, a Canadian company with multiple 'Best in Renovation' awards. The company needed a simple, fast way for their workers to enter hours at the end of the work-day while still at the construction job-site. 
+This is a generic version of a web app for the construction workers for Ultimate Renovations, a Canadian company with multiple 'Best in Renovation' awards. The company needed a simple, fast way for their workers to enter hours at the end of the work-day while still at the construction job-site. 
 
 ## Additional Features 
 This level of customization would not be possible with off-the-shelf software:

@@ -26,13 +26,13 @@ import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext
 function Login({setPage}) {
     // declare variables
     const { setUser } = useContext(UserContext);
-    const { adminEditTimesheets, setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
+    const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
     // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
     // const [needVerify, setNeedVerify] = useState(false);
     const [userLogin, setUserLogin] = useState({
-        loginemail: '',
-        loginpassword: '',
+        loginemail: 'portfolio@take2tech.ca',
+        loginpassword: 'password',
         loginchange: false
     });
     const handleChange = (evt) => {
@@ -199,11 +199,13 @@ function Login({setPage}) {
                             style={{cursor: 'pointer'}} 
                             onClick={handleForgot}
                         >
-                            <button type='button' className='link-btn' style={{fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
+                            <button type='button' className='link-btn' style={{cursor: 'pointer', fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
                         </div>
                     </>
-                    
                 </form>
+                <div style={{margin: 'auto', width: 'fit-content'}}>
+                    <p style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px', textAlign: 'center'}}>Login as admin to see more features: <br />Login: admin@ableadmin.com <br />Password: adminpassword</p>
+                </div>
             </div>
             <LoginSignupCSS />
         </div>

@@ -5,7 +5,7 @@ function Banner() {
     return (
         <>
             <div className="mainContainer">
-                <img className="logo" src="img/ultimate_renovations-white_logo.png" alt="Ultimate Renovations logo white on black"/>
+                <img className="logo" src="img/logo.png" alt="Ultimate Renovations logo white on black"/>
             </div>
             <BannerCss />
         </>

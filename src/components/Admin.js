@@ -17,8 +17,8 @@ function Admin({setPage}) {
     const { setUser } = useContext(UserContext);
     const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
-        loginemail: '',
-        loginpassword: '',
+        loginemail: 'portfolio@take2tech.ca',
+        loginpassword: 'bestinrenos*11YEARS!',
         loginchange: false
     });
     const handleChange = (evt) => {
@@ -112,7 +112,7 @@ function Admin({setPage}) {
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                         <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This featured disabled in portfolio version of this app.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                             Upload WIPs List
                         </button>
                     </form>
@@ -136,7 +136,7 @@ function Admin({setPage}) {
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                         <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "specific task" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This featured disabled in portfolio version of this app.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                             Upload Task List
                         </button>
                     </form>

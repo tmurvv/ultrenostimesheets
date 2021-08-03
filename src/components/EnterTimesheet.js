@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useReducer, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -10,8 +10,7 @@ import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
 import {ENTRY_INIT} from "../constants/inits";
 import {
-    getMinutesWorked, 
-    minutesToDigital, 
+    getMinutesWorked,
     minutesToText,
     isFutureDay
 } from "../utils/helpers";
@@ -37,30 +36,30 @@ function EnterTimesheet(props) {
     const [lunchTimes, setLunchTimes] = useState();
     const [entry, setEntry]= useState(ENTRY_INIT);
     
-    const handleChange = (evt) => {
-        switch (evt.target.name) {
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'starttime': 
-                setEntry({...entry, starttime: evt.target.value, endtime: `${evt.target.value.split('T')[0]}T00:00`});
+                setEntry({...entry, starttime: e.target.value, endtime: `${e.target.value.split('T')[0]}T00:00`});
                 break
             case 'endtime': 
-                setEntry({...entry, endtime: evt.target.value});
+                setEntry({...entry, endtime: e.target.value});
                 break
             case 'lunchtime': 
-                setEntry({...entry, lunchtime: evt.target.value});
+                setEntry({...entry, lunchtime: e.target.value});
                 break
             case 'jobname': 
-                setEntry({...entry, jobname: evt.target.value});
+                setEntry({...entry, jobname: e.target.value});
                 break
             case 'task': 
-                setEntry({...entry, task: evt.target.value});
+                setEntry({...entry, task: e.target.value});
                 break
             case 'notes': 
-                setEntry({...entry, notes: evt.target.value});
+                setEntry({...entry, notes: e.target.value});
                 break
             default :
         }
     }
-    const handleSubmit = async (evt) => {
+    const handleSubmit = async (e) => {
         // Validations
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
@@ -69,19 +68,18 @@ function EnterTimesheet(props) {
         if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
         
-        // calculate hours
+        // calculate hours & Validate date and times
         const minutesWorked = getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime);
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer than hours worked.');
+        
+        // for in-app message to user
         const responseText = minutesToText(minutesWorked);
         
         //find job id
         let jobId=entry.jobname.split(',')[0];
         const jobName=entry.jobname.split(',')[1];
 
-        // not sure why next line was added. Removed 07/18/21, see if testing passes
-        // currentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
-        
         // create submit object
         const entryObject = {
             "userid": user.email,
@@ -123,18 +121,34 @@ function EnterTimesheet(props) {
     useEffect(()=>{
         async function getSupportLists() {
             try {
-                // tasks
-                const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
-                let incomingTasks = [];
-                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
-                setTasks(incomingTasks);
+                // ***TASKS
+                // For dynamic tasks
+                // const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
+                // let incomingTasks = [];
+                // Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
+                
+                // For Static Portfolio Tasks
+                const portfolioTasks = [
+                    'Framing',
+                    'Windows or Doors',
+                    'Plumbing',
+                    'Electrical',
+                    'HVAC',
+                    'Exterior',
+                    'Cabinetry',
+                    'Painting',
+                    'Flooring',
+                    'Cleaning',
+                    'Driving',
+                    'Other (please enter in notes)'
+                ]
+                setTasks(portfolioTasks);
             } catch (e) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 alert('There is a problem filling the select boxes on the timesheet. Please check your network connection.');
                 props.setPage('Homepage');
             }
-            
             // lunch times
             const lunchTimes = [
                 '0 minutes',
@@ -146,11 +160,32 @@ function EnterTimesheet(props) {
             ]
             setLunchTimes(lunchTimes);
             try {
-                // current jobs
-                const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                let incomingCurrentJobs = [];
-                Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
-                setCurrentJobs(incomingCurrentJobs);
+                // *** CURRENT JOBS
+                // for dynamic jobs
+                // const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                // let incomingCurrentJobs = [];
+                // Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                // setCurrentJobs(incomingCurrentJobs);
+                
+                //for static portfolio jobs
+                const portfolioJobs = [
+                    'C48327 Reid',
+                    'C32853 Wong',
+                    'C43637 Moore',
+                    'C32896 Bouchard',
+                    'C38295 Morin',
+                    'C32367 Martin',
+                    'C43295 Tramblay',
+                    'C34523 Landry',
+                    'C68329 Chan',
+                    'C38296 Johnston',
+                    'C32862 Poirier',
+                    'C53263 Stayley',
+                    'C68926 Brown',
+                    'C32863 Stewart',
+                    'C32528 Park'
+                ]
+                setCurrentJobs(portfolioJobs);
             } catch (e) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
@@ -228,7 +263,7 @@ function EnterTimesheet(props) {
                             required
                         > 
                             <option key='whichjobsite'>Which Job-site?</option>
-                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob[0]}&nbsp;&nbsp;{currentJob[1]}</option>)} 
+                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob}</option>)} 
                             <option key='notfoundjobsite' value={['Other', '(please enter in notes)']}>Other (please enter in notes)</option>  
                         </select>
                         <div className="input-name input-margin">

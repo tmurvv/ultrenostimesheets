@@ -25,7 +25,7 @@ function HomePage() {
         <h4 style={{textAlign: 'center', marginBottom: '40px'}}>Today is {todayDate}</h4>
         <div style={{width: '100%', height: '100vh', boxSizing: 'borderBox'}}>
         <div style={{width: '60%', paddingBottom: '50px', marginLeft: '20%', boxSizing: 'borderBox'}}>
-            <img style={{width: '100%'}} src="/img/ultimate_renovations-white_logo.png" alt="Ultimate Renovations large logo" />
+            <img style={{width: '100%'}} src="/img/generic_gold_logo.png" alt="Ultimate Renovations large logo" />
         </div>
         </div>
         </div>
