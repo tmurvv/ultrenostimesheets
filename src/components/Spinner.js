@@ -1,6 +1,4 @@
-import React from 'react';
-
-function PageTitle({ maintitle, subtitle }) {
+function Spinner() {
     return (
         <>
             <div id='spinner'
@@ -28,4 +26,4 @@ function PageTitle({ maintitle, subtitle }) {
     )
 }
 
-export default PageTitle;
+export default Spinner;

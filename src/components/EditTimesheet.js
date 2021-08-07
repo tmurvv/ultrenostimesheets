@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useEffect } from 'react';
+import {useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -10,65 +10,52 @@ import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
 import {PageContext} from "../contexts/PageContext";
 import {EditEntryContext} from "../contexts/EditEntryContext";
-import {ENTRY_INIT} from "../constants/inits";
+import {ENTRY_INIT, LUNCH_TIMES_INIT} from "../constants/inits";
 import {
     getMinutesWorked, 
     updateLunchTimeFromEdit, 
     isFutureDay
 } from "../utils/helpers";
-// import Spinner from '../src/main/components/main/Spinner';
-// import Results from '../src/main/components/main/Results';
-// import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
-// import { UserContext } from '../src/main/contexts/UserContext';
-// import { resultInfoReducer, activeWindowReducer } from '../src/main/reducers/reducers';
-// import { parseJwt } from '../src/main/utils/helpers';
 
-// // initialize reducer object
-// const activeWindowInitialState = {
-//     activeWindow: 'login',
-//     loginClasses: 'login-signup l-attop',
-//     signupClasses: 'login-signup s-atbottom'
-// }
-function EditTimesheet(props) {
+function EditTimesheet() {
     const { user } = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
     const [currentJobs, setCurrentJobs] = useState();
-    const [fullCurrentJobs, setFullCurrentJobs] = useState();
-    const [lunchTimes, setLunchTimes] = useState();
+    const [setFullCurrentJobs] = useState();
+    const [lunchTimes] = useState(LUNCH_TIMES_INIT);
     const {editEntry, setEditEntry} = useContext(EditEntryContext);
-    const {page, setPage} = useContext(PageContext);
+    const {setPage} = useContext(PageContext);
     const [entry, setEntry]= useState(editEntry);
-    const handleChange = (evt) => {
-        switch (evt.target.name) {
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'starttime': 
-                setEntry({...entry, starttime: evt.target.value});
+                setEntry({...entry, starttime: e.target.value});
                 break
             case 'endtime': 
-                setEntry({...entry, endtime: evt.target.value});
+                setEntry({...entry, endtime: e.target.value});
                 break
             case 'lunchtime': 
-                setEntry({...entry, lunchtimeview: evt.target.value});
+                setEntry({...entry, lunchtimeview: e.target.value});
                 break
             case 'jobname': 
-                setEntry({...entry, jobname: evt.target.value});
+                setEntry({...entry, jobname: e.target.value});
                 break
             case 'task': 
-                setEntry({...entry, task: evt.target.value});
+                setEntry({...entry, task: e.target.value});
                 break
             case 'notes': 
-                setEntry({...entry, notes: evt.target.value});
+                setEntry({...entry, notes: e.target.value});
                 break
             default :
         }
     }
-    const handleSubmit = async (evt) => {
+    const handleSubmit = async (e) => {
+        // in-app message
         if (!window.confirm(`Make changes to this timesheet, are you sure?`)) return;
         // combine editEntry and entry objects into one update object
         const updateObject = {
-            // starttime: updateStartEndTimeFromEdit(entry.dateofwork, entry.starttimeview),
-            // endtime: updateStartEndTimeFromEdit(entry.dateofwork, entry.endtimeview),
             starttime: entry.starttime,
             endtime: entry.endtime,
             lunchtime: updateLunchTimeFromEdit(entry.lunchtimeview),
@@ -79,70 +66,57 @@ function EditTimesheet(props) {
             submitTime: editEntry.timesubmitted,
             entryId: editEntry.entryId,
         }
-        // shortcuts
+        // validations
+        if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // TODO need to test validation not working
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!updateObject.starttime) return alert('Please enter start time.');
         if (!updateObject.endtime) return alert('Please enter end time.');
         if ((!updateObject.lunchtime||updateObject.lunchtime==='Lunch Time?')&&updateObject.lunchtime!==0) return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!updateObject.jobname||updateObject.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!updateObject.task||updateObject.task==='What type of work?') return alert('Please select type of work.');
-        // calculate hours
+        // calculate minutes worked and validate
         const minutesWorked = getMinutesWorked(updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
-        
-        
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
-        
-        //find job id
+        // parse job id and job name
         let jobId=updateObject.jobname.split(' ')[0];
         let jobName=updateObject.jobname.split(/ (.+)/)[1];
-    // create submit object
-    const entryObject = {
-        starttime: updateObject.starttime, 
-        endtime: updateObject.endtime, 
-        lunchtime: updateObject.lunchtime, 
-        jobid: jobId, 
-        jobname: jobName, 
-        task: updateObject.task, 
-        notes: updateObject.notes, 
-        id: editEntry.entryId
+        // create submit object
+        const entryObject = {
+            starttime: updateObject.starttime, 
+            endtime: updateObject.endtime, 
+            lunchtime: updateObject.lunchtime, 
+            jobid: jobId, 
+            jobname: jobName, 
+            task: updateObject.task, 
+            notes: updateObject.notes, 
+            id: editEntry.entryId
+        }               
+        try {
+            // start spinner
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
+            // Submit Entry
+            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+            // Reset environment
+            setEditEntry(ENTRY_INIT);
+            setPage('ViewTimesheets');
+            // Stop spinner
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
+            setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
+        } catch(e) {
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            setTimeout(()=>{alert('Something went wrong, please check network connection.')},200);  
+        }         
     }
-            
-    try {
-        // shortcut entryId
-        if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
-        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
-        // Submit Entry
-        const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-        setEditEntry(ENTRY_INIT);
-        setPage('ViewTimesheets');
-        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-        setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
-    } catch(e) {
-        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-        setTimeout(()=>{alert('Something went wrong, please check network connection.')},200);  
-    }
-            
-    }
-    // function resetResults() {
-    //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();
-    //     document.querySelector('#loadingLoginText').innerText='';
-    //     dispatchResultInfo({type: 'initial'});
-    // }
-    // function resetLoginForm() { 
-    //     setUserLogin({
-    //         loginemail: '',
-    //         loginpassword: '',
-    //         loginchange: false
-    //     });
-    // }
-
-    // set environment
+    // set up environment
     useEffect(()=>{
+        // format today's date
         const todayDateRaw = new Date();
         const month=todayDateRaw.getMonth()+1<10?`0${todayDateRaw.getMonth()+1}`:todayDateRaw.getMonth()+1;
         const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
         setTodayDate(`${todayDateRaw.getFullYear()}/${month}/${day}`);
+        // get window width
         setWinWidth(window.innerWidth);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
     },[]);
@@ -151,21 +125,11 @@ function EditTimesheet(props) {
         async function getSupportLists() {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
             try {
-                // tasks
+                // get task list
                 const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
-                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
+                Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task));
                 setTasks(incomingTasks);
-                // lunch times
-                const lunchTimes = [
-                    '0 minutes',
-                    '15 minutes',
-                    '30 minutes',
-                    '45 minutes',
-                    '60 minutes',
-                    '90 minutes'
-                ]
-                setLunchTimes(lunchTimes);
             } catch (e) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
@@ -175,45 +139,52 @@ function EditTimesheet(props) {
             try {
                 // current jobs
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                
                 let incomingCurrentJobs = [];
-                Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                // morph incoming data into tuple
+                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (
+                        currentJobArray.current===true
+                        &&currentJobArray!==undefined
+                        &&currentJobArray.jobname
+                        &&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB'
+                    ) 
+                        incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`]);
+                });
+                // validate
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
+                // add choice for other
                 incomingCurrentJobs.push(['Other', '(please enter in notes)']);
+                // reset environment
                 setCurrentJobs(incomingCurrentJobs);
                 setFullCurrentJobs(currentJobsArrays.data.data);
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             } catch (e) {
+                // log error
                 console.log(e.message)
-                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // stop spinner
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";  
+                // in-app message 
                 alert('There is a problem editing timesheet. Please check your network connection.');
+                // reset environment
                 setPage('Homepage');
             }
         }
         try {
+            // call support list function
             getSupportLists();
         } catch (e) {
+            // log message
             console.log(e.message);
         }
-        
-             
-    },[setPage]);
+    },[setPage, setFullCurrentJobs]);
     return ( 
     <>
     <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
             <Spinner />
             <PageTitle maintitle='Edit Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
-            {/* <Results 
-                resultInfo={resultInfo} 
-                loginGuest={loginGuest}
-                resetResults={resetResults} 
-            /> */}
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
-                    {/* {winWidth>750&&<div className="login-signup-title">
-                        Timesheet Entry
-                    </div>} */}
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>Start Time</h3>

@@ -1,8 +1,7 @@
 
-import React, {useContext} from 'react';
+import {useContext} from 'react';
 import {UserContext} from '../contexts/UserContext'
 import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext'
-// import BannerCss from '../styles/Banner.css';
  
 function AdminWarningBox() {
     const {user} = useContext(UserContext);
@@ -18,7 +17,6 @@ function AdminWarningBox() {
                     </div>
                 </>
             }
-            {/* <BannerCss /> */}
         </>
     )
 }

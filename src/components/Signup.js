@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useReducer, useEffect } from 'react';
+import {useState, useContext} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -8,101 +8,51 @@ import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
 import {USER_INIT} from '../constants/inits';
 import {UserContext} from '../contexts/UserContext';
-// import Spinner from '../src/main/components/main/Spinner';
-// import Results from '../src/main/components/main/Results';
-// import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
-// import { UserContext } from '../src/main/contexts/UserContext';
-// import { resultInfoReducer, activeWindowReducer } from '../src/main/reducers/reducers';
-// import { parseJwt } from '../src/main/utils/helpers';
 
 function Signup({setPage}) {
     // declare variables
-    // const { setUser } = useContext(UserContext);
-    // const [resultInfo, dispatchResultInfo] = useReducer(resultInfoReducer, RESULTS_INITIAL_STATE);
-    // const [activeWindow, dispatchActiveWindow] = useReducer(activeWindowReducer, activeWindowInitialState);
-    // const [needVerify, setNeedVerify] = useState(false);
-    const {user, setUser} = useContext(UserContext);
+    const {setUser} = useContext(UserContext);
     const [signupUser, setSignupUser] = useState(USER_INIT);
-    const handleChange = (evt) => {
-        switch (evt.target.name) {
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'firstname': 
-                setSignupUser({...signupUser, firstname: evt.target.value, change: true});
+                setSignupUser({...signupUser, firstname: e.target.value, change: true});
                 break
             case 'lastname': 
-                setSignupUser({...signupUser, lastname: evt.target.value, change: true});
+                setSignupUser({...signupUser, lastname: e.target.value, change: true});
                 break
             case 'email': 
-                setSignupUser({...signupUser, email: evt.target.value, change: true});
+                setSignupUser({...signupUser, email: e.target.value, change: true});
                 break
             case 'confirmemail': 
-                setSignupUser({...signupUser, confirmemail: evt.target.value, change: true});
+                setSignupUser({...signupUser, confirmemail: e.target.value, change: true});
                 break
             case 'password': 
-                setSignupUser({...signupUser, password: evt.target.value, change: true});
+                setSignupUser({...signupUser, password: e.target.value, change: true});
                 break
             case 'confirmpassword': 
-                setSignupUser({...signupUser, confirmpassword: evt.target.value, change: true});
+                setSignupUser({...signupUser, confirmpassword: e.target.value, change: true});
                 break
             default :
         }
     }
-    // function resetResults() {
-    //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();
-    //     document.querySelector('#loadingLoginText').innerText='';
-    //     dispatchResultInfo({type: 'initial'});
-    // }
-    function resetSignupForm() { 
-        setSignupUser(USER_INIT);
-    }
-    // function handleLoginClick(evt) {
-    //     dispatchActiveWindow({type: 'login'});
-    // }
-    const handleSubmit = async (evt) => {
-    //     const resultText = document.querySelector('#loadingLoginText');
-        // shortcut - password not long enough
-        if ((!signupUser.firstname)||signupUser.firstname.length<1) {
-            // resultText.innerText=`Passwords must be at least 8 characters long.`;
-            // dispatchResultInfo({type: 'tryAgain'});
-            alert('First name is required.');
-            return
-        }
-        // shortcut - password not long enough
-        if ((!signupUser.lastname)||signupUser.lastname.length<1) {
-            // resultText.innerText=`Passwords must be at least 8 characters long.`;
-            // dispatchResultInfo({type: 'tryAgain'});
-            alert('Last name is required.');
-            return
-        }
-        // shortcut - password not long enough
-        if ((!signupUser.password)||signupUser.password.length<8) {
-            // resultText.innerText=`Passwords must be at least 8 characters long.`;
-            // dispatchResultInfo({type: 'tryAgain'});
-            alert('Passwords must be at least 8 characters.');
-            return
-        }
-        // shortcut - emails not matching
-        if (signupUser.email !== signupUser.confirmemail) {
-            // resultText.innerText=`Passwords do not match.`;
-            // dispatchResultInfo({type: 'tryAgain'});
-            alert('Emails do not match.');
-            return
-        } 
-        // shortcut - passwords not matching
-        if (signupUser.password !== signupUser.confirmpassword) {
-            // resultText.innerText=`Passwords do not match.`;
-            // dispatchResultInfo({type: 'tryAgain'});
-            alert('Passwords do not match.');
-            return
-        } 
+    
+    const handleSubmit = async () => {
+        // validations
+        if ((!signupUser.firstname)||signupUser.firstname.length<1) alert('First name is required.');
+        if ((!signupUser.lastname)||signupUser.lastname.length<1) alert('Last name is required.');
+        if ((!signupUser.password)||signupUser.password.length<8) alert('Passwords must be at least 8 characters.');
+        if (signupUser.email !== signupUser.confirmemail) alert('Emails do not match.');
+        if (signupUser.password !== signupUser.confirmpassword) alert('Passwords do not match.');
         // create signup user object
         const newUser = {
             firstname: signupUser.firstname,
             lastname: signupUser.lastname,
             email: signupUser.email,
             password: signupUser.password,
-        };
-        // signup user
+        };     
         try {
+            // signup user
             const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/signup`, newUser);
             if (res.status===201 || res.status===200) {                   
                 // set userContext to added user
@@ -112,26 +62,22 @@ function Signup({setPage}) {
                     lastname: addeduser.lastname, 
                     email: addeduser.email,
             });
+            // in-app message
             alert('Signup Successful.');
-            setPage('EnterTimesheet');
-                // resultText.innerText=`Signup Successful. Please check your inbox to verify your email.`;
-                // dispatchResultInfo({type: 'OK'});  
-        }
-        // Error on signup
+            // set environment
+            setPage('EnterTimesheet');  
+            }
         } catch (e) {
+            // log error
             console.log('error');
             console.log(e.response)
-            // duplicate email
+            // in-app message
             if (e.response&&e.response.data&&e.response.data.message.toUpperCase().includes('EXISTS')) {
+                // email in use
                 alert("Email already in use.");
-                // resultText.innerText=`${process.env.next_env==='development'?e.response.data.data.message:'We already have that email in our records. Please try to login and/or select "forgot password" in the login box.'}`;
-                // dispatchResultInfo({type: 'okTryAgain'});
-            // other error
-            
             } else {
+                // all other errors
                 alert(`Something went wrong on signup. Please check your network connection.`)
-                // resultText.innerText=`${process.env.next_env==='development'?e.message:'Something went wrong on signup. Please check your network connection. Log in as guest user?'}`;
-                // dispatchResultInfo({type: 'okTryAgain'});
             }
         }
         
@@ -237,21 +183,12 @@ function Signup({setPage}) {
     return ( 
        <>
        <div className='login-signup-container'>
-            {/* <Spinner /> */}
             <PageTitle maintitle='Signup' subtitle='' />
             <div style={{cursor: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Login')}}>
                 <button type="button" className='link-btn' style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px',}}>Click Here to Login</button>
             </div>
-            {/* <Results 
-                resultInfo={resultInfo} 
-                loginGuest={loginGuest}
-                resetResults={resetResults} 
-            /> */}
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
                 <form onSubmit={()=>handleSubmit()}>
-                    {/* <div className="login-signup-title">
-                        SIGN UP
-                    </div> */}
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>First Name<span style={{color: 'orangered'}}>*</span></h3>
