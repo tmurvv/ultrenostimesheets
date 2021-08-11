@@ -1,25 +1,32 @@
+// packages
 import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
+// components
 import PageTitle from '../components/PageTitle';
-import Spinner from '../components/Spinner'
+import Spinner from '../components/Spinner';
+// contexts
 import {UserContext} from '../contexts/UserContext';
 import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext';
 import {PageContext} from '../contexts/PageContext';
 import {EditEntryContext} from '../contexts/EditEntryContext';
-import {militaryToAMPM} from '../utils/helpers';
-import {entryEditable, getMinutesWorked, minutesToDigital} from '../utils/helpers';
+// other
+import {
+    entryEditable, 
+    getMinutesWorked, 
+    minutesToDigital, 
+    militaryToAMPM
+} from '../utils/helpers';
 import ViewTimesheetsCss from '../styles/ViewTimesheets.css';
 
 function ViewTimesheets() {
     const [winWidth, setWinWidth] = useState(2000);
     const [todayDate, setTodayDate] = useState(2000);
     const [entries, setEntries] = useState(2000);
+    const [found, setFound] = useState(true);
     const {user} = useContext(UserContext);
     const {adminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const {setPage} = useContext(PageContext);
     const {setEditEntry} = useContext(EditEntryContext);
-    const [found, setFound] = useState(true);
-    
     
     async function handleDelete(delId) {
         if (!window.confirm(`Delete this timesheet entry?`)) return;
@@ -28,7 +35,7 @@ function ViewTimesheets() {
             // shortcut entryId
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
             // Submit Entry
-            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
+            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
             setPage('RefreshView');
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setTimeout(()=>{alert(`Your timesheet entry has been deleted.`)},200);
@@ -56,9 +63,7 @@ function ViewTimesheets() {
                 const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 if (res.data.num_returned===0) setFound(false);
                 let entries = res.data.data;
-                
-                console.log('entries:', entries)
-                entries.map(entry=>{
+                entries.forEach(entry=>{
                     entry.starttime=`${entry.starttime}`;
                     entry.endtime=`${entry.endtime}`;
                     entry.lunchtimeview=`${entry.lunchtime} minutes`;
@@ -80,7 +85,7 @@ function ViewTimesheets() {
         } catch(e) {
             console.log(e.message);
         }      
-    },[user, setPage]);
+    },[user, setPage, adminEditTimesheets]);
     
     // reset window width on window resize
     useEffect(() => {
@@ -94,8 +99,7 @@ function ViewTimesheets() {
     return (
         <div style={{marginTop: '50px', marginBottom: '50px'}}>
         <Spinner />
-        {/* <PageTitle maintitle='Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} /> */}
-        <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname}. Usually entries may be edited within 24 hours of submission.`}/>
+        <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname}. If edit not available, please contact the office to make changes.`}/>
         <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
         {winWidth<950?
         <table className='table' style={{boxShadow: 'none'}}>
@@ -132,7 +136,7 @@ function ViewTimesheets() {
                 <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{`${entry.jobid} `}{entry.jobname}</td>
                 <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
                 <td className='cell'><div style={{maxHeight: '70px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
-            </tr>):<p>No entries found.</p>}
+            </tr>):<tr>No entries found.</tr>}
             </tbody>
         </table>:''
         }
@@ -159,8 +163,7 @@ function ViewTimesheets() {
                         entryId: entry._id,
                         starttime: entry.starttime,
                         endtime: entry.endtime,
-                        lunchtime: entry.lunchtime,
-                        lunchtimeview: entry.lunchtimeview,
+                        lunchtime: `${entry.lunchtime} minutes`,
                         jobname: `${entry.jobid} ${entry.jobname}`,
                         task: entry.task,
                         notes: entry.notes,
@@ -182,7 +185,7 @@ function ViewTimesheets() {
                 <td className='cell'><div style={{width: '90px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                 <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                 <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
-                <td className='cell'>{entry.lunchtime} mins</td>
+                <td className='cell'>{entry.lunchtime} minutes</td>
                 <td className='cell'><div style={{minWidth: '30px', maxHeight: '40px', overflowY:'auto', textAlign: 'center'}}>{entry.hoursworked}</div></td>
                 <td className='cell'><div style={{maxHeight: '40px', overflowY:'auto'}}>{`${entry.jobid} `}{entry.jobname}</div></td>
                 <td className='cell'><div style={{maxHeight: '40px', overflowY:'auto'}}>{entry.task}</div></td>

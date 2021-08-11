@@ -37,11 +37,14 @@ function App() {
     },[]);
     // check for file upload
     useEffect(()=>{
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        if (params.success==='true') {
-            alert('Your file has been uploaded.');
-            setPage('Homepage')
+        if (process.env.NODE_ENV!=='test') {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+        
+            const params = Object.fromEntries(urlSearchParams.entries());
+            if (params.success==='true') {
+                alert('Your file has been uploaded.');
+                setPage('Homepage')
+            }
         }
     },[setPage]);
     // // check for file upload

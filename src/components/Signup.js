@@ -24,27 +24,7 @@ function Signup({setPage}) {
     const {user, setUser} = useContext(UserContext);
     const [signupUser, setSignupUser] = useState(USER_INIT);
     const handleChange = (evt) => {
-        switch (evt.target.name) {
-            case 'firstname': 
-                setSignupUser({...signupUser, firstname: evt.target.value, change: true});
-                break
-            case 'lastname': 
-                setSignupUser({...signupUser, lastname: evt.target.value, change: true});
-                break
-            case 'email': 
-                setSignupUser({...signupUser, email: evt.target.value, change: true});
-                break
-            case 'confirmemail': 
-                setSignupUser({...signupUser, confirmemail: evt.target.value, change: true});
-                break
-            case 'password': 
-                setSignupUser({...signupUser, password: evt.target.value, change: true});
-                break
-            case 'confirmpassword': 
-                setSignupUser({...signupUser, confirmpassword: evt.target.value, change: true});
-                break
-            default :
-        }
+        setSignupUser({...signupUser, [evt.target.name]: evt.target.value, change: true});
     }
     // function resetResults() {
     //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();

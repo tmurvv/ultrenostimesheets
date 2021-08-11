@@ -36,15 +36,7 @@ function Login({setPage}) {
         loginchange: false
     });
     const handleChange = (evt) => {
-        switch (evt.target.name) {
-            case 'loginemail': 
-                setUserLogin({...userLogin, loginemail: evt.target.value, loginchange: true});
-                break
-            case 'loginpassword': 
-                setUserLogin({...userLogin, loginpassword: evt.target.value, loginchange: true});
-                break
-            default :
-        }
+        setUserLogin({...userLogin, [evt.target.name]: evt.target.value, loginchange: true});
     }
     // function resetResults() {
     //     if (document.querySelector('#loadingLoginText').innerText.includes('records')) resetSignupForm();

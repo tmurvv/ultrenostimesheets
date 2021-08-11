@@ -38,26 +38,10 @@ function EnterTimesheet(props) {
     const [entry, setEntry]= useState(ENTRY_INIT);
     
     const handleChange = (evt) => {
-        switch (evt.target.name) {
-            case 'starttime': 
-                setEntry({...entry, starttime: evt.target.value, endtime: `${evt.target.value.split('T')[0]}T00:00`});
-                break
-            case 'endtime': 
-                setEntry({...entry, endtime: evt.target.value});
-                break
-            case 'lunchtime': 
-                setEntry({...entry, lunchtime: evt.target.value});
-                break
-            case 'jobname': 
-                setEntry({...entry, jobname: evt.target.value});
-                break
-            case 'task': 
-                setEntry({...entry, task: evt.target.value});
-                break
-            case 'notes': 
-                setEntry({...entry, notes: evt.target.value});
-                break
-            default :
+        if (evt.target.name==='starttime') {
+            setEntry({...entry, starttime: evt.target.value, endtime: `${evt.target.value.split('T')[0]}T00:00`});
+        } else {
+            setEntry({...entry, [evt.target.name]: evt.target.value});
         }
     }
     const handleSubmit = async (evt) => {

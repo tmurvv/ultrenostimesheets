@@ -13,6 +13,7 @@ import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext
 function Admin({setPage}) {
     // declare variables
     const [numSheets, setNumSheets] = useState();
+    const [totSheets, setTotSheets] = useState('Coming Soon,');
     const [newAllTimesheets, setNewAllTimesheets] = useState('new');
     const { setUser } = useContext(UserContext);
     const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
@@ -55,8 +56,7 @@ function Admin({setPage}) {
                 lastname: returnedUser.lastname, 
                 email: returnedUser.email
             });
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-            // setTimeout(()=>{alert(`Admin logged in as ${returnedUser.email}`)},200);
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             setPage('Homepage');
             setAdminEditTimesheets(true);
         } catch(e) {
@@ -83,14 +83,16 @@ function Admin({setPage}) {
         const numSheets = async () => {
             const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/numtimesheets`);
             setNumSheets(res.data.numsheets);
+            // setTotSheets(res.data.totsheet); // TODO
+            setTotSheets(totSheets);
         }
         numSheets();
-    },[]);
+    },[totSheets]);
     return ( 
     <>
         <Spinner />
         <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '25pxpx'}}>
-            <PageTitle maintitle='Download Timesheets' subtitle={`${numSheets} new timesheet${numSheets===1?'':'s'} ready for download`} />          
+            <PageTitle maintitle='Download Timesheets' subtitle={`${numSheets} new timesheet${numSheets===1?'':'s'} ready for download. ${totSheets} total sheets in database.`} />          
             <form onClick={e => setNewAllTimesheets(e.target.value)} className="form-container" style={{marginTop: '50px', display: 'flex', justifyContent: 'space-evenly'}}>
                 <input type="radio" id="new" name="whichtimesheets" value="new" defaultChecked />
                 <label for="html">New Timesheets</label><br></br>
