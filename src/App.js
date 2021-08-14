@@ -24,7 +24,7 @@ import {USER_INIT} from './constants/inits';
 function App() {
     const [user, setUser] = useState(USER_INIT);
     const [adminEditTimesheets, setAdminEditTimesheets] = useState(false);
-    const [page, setPage] = useState("Login"); // BREAKING ['Homepage', 'Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'Admin']
+    const [page, setPage] = useState("Admin"); // BREAKING ['Homepage', 'Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'Admin']
     const [editEntry, setEditEntry] = useState(USER_INIT);
     const [resetPasswordEmail, setResetPasswordEmail] = useState();
     
@@ -61,14 +61,15 @@ function App() {
                                 <Banner />
                                 <NavBar />
                                 <AdminWarningBox />
-                                {page.toUpperCase()==='HOMEPAGE'&&<HomePage setPage={setPage}/>}
+
+                                {/* {page.toUpperCase()==='HOMEPAGE'&&<HomePage setPage={setPage}/>}
                                 {page.toUpperCase()==='LOGIN'&&<Login setPage={setPage}/>}
                                 {page.toUpperCase()==='SIGNUP'&&<Signup setPage={setPage}/>}
                                 {page.toUpperCase()==='EDITTIMESHEET'&&<EditTimesheet />}
                                 {page.toUpperCase()==='ENTERTIMESHEET'&&<EnterTimesheet setPage={setPage} />}
                                 {page.toUpperCase()==='VIEWTIMESHEETS'&&<ViewTimesheets setPage={setPage}/>}
                                 {page.toUpperCase()==='RESETPASSWORD'&&<ResetPassword useremail={resetPasswordEmail} setPage={setPage}/>}
-                                {page.toUpperCase()==='REFRESHVIEW'&&<ViewTimesheets setPage={setPage}/>} {/* a hack to get viewtimesheets page to refresh after delete */}
+                                {page.toUpperCase()==='REFRESHVIEW'&&<ViewTimesheets setPage={setPage}/>} a hack to get viewtimesheets page to refresh after delete */}
                                 {page.toUpperCase()==='ADMIN'&&<Admin setPage={setPage}/>}
                             </EditEntryContext.Provider>
                         </AdminEditTimesheetsContext.Provider>

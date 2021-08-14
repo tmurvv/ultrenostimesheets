@@ -6,27 +6,27 @@
 ## [ ] iPhone testing
 ## [ ] iPad testing
 
-#### [ ] menu
-- [ ] check links
-- [ ] check resize
+#### [x] menu
+- [x] check links
+- [x] check resize
 ### [ ] membership
-#### [ ] Login
+#### [x] Login
 - [x] bad email
 - [x] bad password
 - [x] no network
 - [x] forgot Password sends reset email
-- [ ] reset password email works
+- [x] reset password email works
 - [x] signup link
 - [x] good login
-#### [x] signup
-- [x] emails not match
-- [x] email exists
-- [x] bad password
-- [x] passwords not match
-- [x] no network
+#### [ ] signup
+- [ ] emails not match
+- [ ] email exists
+- [ ] bad password
+- [ ] passwords not match
+- [ ] no network
 - [x] login link
 - [x] good signup
-- [x] cancel button
+- [ ] cancel button
 #### [x] logout
 ### [ ]time sheets
 #### [ ] enter

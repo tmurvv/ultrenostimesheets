@@ -3,6 +3,9 @@ import React from "react";
 function NavBarCss() {
     return (
         <style>{`
+            body {
+                box-sizing: border-box;
+            }
             .navBarOuter {
                 background-image: linear-gradient(340deg, #f9bf1e 50%, #fffbb5 58%, #ffe58a 74%, #f9bf1e 87%);
                 height: 40px;
@@ -47,6 +50,7 @@ function NavBarCss() {
                 list-style: none;
                 font-size: 14px;
                 margin-block:0;
+                padding-inline-start:0;
             }
             @media only screen and (max-width: 550px) {
                 .navLinks {

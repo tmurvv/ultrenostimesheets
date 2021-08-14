@@ -10,11 +10,12 @@ import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
 import {PageContext} from "../contexts/PageContext";
 import {EditEntryContext} from "../contexts/EditEntryContext";
-import {ENTRY_INIT} from "../constants/inits";
+import {ENTRY_INIT, LUNCHTIMES} from "../constants/inits";
 import {
     getMinutesWorked, 
     updateLunchTimeFromEdit, 
-    isFutureDay
+    isFutureDay,
+    checkJobsite
 } from "../utils/helpers";
 
 function EditTimesheet(props) {
@@ -23,25 +24,22 @@ function EditTimesheet(props) {
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
     const [currentJobs, setCurrentJobs] = useState();
-    const [fullCurrentJobs, setFullCurrentJobs] = useState();
-    const [lunchTimes, setLunchTimes] = useState();
     const {editEntry, setEditEntry} = useContext(EditEntryContext);
-    const {page, setPage} = useContext(PageContext);
+    const {setPage} = useContext(PageContext);
     const [entry, setEntry]= useState(editEntry);
 
     const handleChange = (evt) => {
-        console.log(evt.target.name);
-        console.log(evt.target.value);
         setEntry({...entry, [evt.target.name]: evt.target.value});
     }
 
     const handleSubmit = async (evt) => {
+        // in-app message
         if (!window.confirm(`Make changes to this timesheet, are you sure?`)) return;
         // combine editEntry and entry objects into one update object
         const updateObject = {
             starttime: entry.starttime,
             endtime: entry.endtime,
-            lunchtime: updateLunchTimeFromEdit(entry.lunchtime),
+            lunchtime: entry.lunchtime,
             jobname: entry.jobname,
             jobid: entry.jobid,
             task: entry.task,
@@ -49,8 +47,7 @@ function EditTimesheet(props) {
             submitTime: editEntry.timesubmitted,
             entryId: editEntry.entryId,
         }
-        console.log('updateObject.lunchtime:', updateObject.lunchtime)
-        // shortcuts
+        // validations
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!updateObject.starttime) return alert('Please enter start time.');
         if (!updateObject.endtime) return alert('Please enter end time.');
@@ -76,17 +73,25 @@ function EditTimesheet(props) {
             id: editEntry.entryId
         };    
         try {
-            // shortcut entryId
-            if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // BREAKING need to test validation not working
+            // validate entryId
+            if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated');
+            // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
             // Submit Entry
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+            // set environment
             setEditEntry(ENTRY_INIT);
             setPage('ViewTimesheets');
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
         } catch(e) {
+            // log error 
+            console.log('error from edit timesheet:', e.message);
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert('Something went wrong, please check network connection.')},200);  
         }        
     }
@@ -102,44 +107,41 @@ function EditTimesheet(props) {
     // get data
     useEffect(()=>{
         async function getSupportLists() {
+            // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
-            try {
-                // tasks
+            // get tasks
+            try {  
                 const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
                 Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
                 setTasks(incomingTasks);
-                // lunch times
-                const lunchTimes = [
-                    '0 minutes',
-                    '15 minutes',
-                    '30 minutes',
-                    '45 minutes',
-                    '60 minutes',
-                    '90 minutes'
-                ]
-                setLunchTimes(lunchTimes);
             } catch (e) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 alert('There is a problem editing timesheet. Please check your network connection.');
                 setPage('Homepage');
             }
+            // get current job-site list
             try {
-                // current jobs
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
-                
                 let incomingCurrentJobs = [];
-                Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
                 incomingCurrentJobs.push(['Other', '(please enter in notes)']);
+                // check that job-site on timesheet has not been removed from job-list and add it if necessary
+                if (!checkJobsite(incomingCurrentJobs, editEntry)) incomingCurrentJobs.unshift([`${editEntry.jobname.split(' ')[0]}`, `${editEntry.jobname.split(' ')[1]}`]);
+                // set environment
                 setCurrentJobs(incomingCurrentJobs);
-                setFullCurrentJobs(currentJobsArrays.data.data);
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             } catch (e) {
+                // log error
                 console.log(e.message)
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // in-app message
                 alert('There is a problem editing timesheet. Please check your network connection.');
+                // set environment
                 setPage('Homepage');
             }
         }
@@ -148,7 +150,7 @@ function EditTimesheet(props) {
         } catch (e) {
             console.log(e.message);
         }            
-    },[setPage]);
+    },[setPage, editEntry]);
     return ( 
     <>
     <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
@@ -199,7 +201,7 @@ function EditTimesheet(props) {
                             required
                         >  
                             <option key='whichjobsite'>Lunch Time?</option>  
-                            {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime}</option>)} 
+                            {LUNCHTIMES&&LUNCHTIMES.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime} minutes</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Job Name</h3>

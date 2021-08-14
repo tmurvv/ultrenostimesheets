@@ -1,5 +1,5 @@
 // packages
-import React, { useState, useContext, useReducer, useEffect } from 'react';
+import {useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -8,33 +8,19 @@ import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from '../components/PageTitle';
 import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
-import {ENTRY_INIT} from "../constants/inits";
+import {ENTRY_INIT, LUNCHTIMES} from "../constants/inits";
 import {
-    getMinutesWorked, 
-    minutesToDigital, 
+    getMinutesWorked,
     minutesToText,
     isFutureDay
 } from "../utils/helpers";
-// import Spinner from '../src/main/components/main/Spinner';
-// import Results from '../src/main/components/main/Results';
-// import { RESULTS_INITIAL_STATE } from '../src/main/constants/constants';
-// import { UserContext } from '../src/main/contexts/UserContext';
-// import { resultInfoReducer, activeWindowReducer } from '../src/main/reducers/reducers';
-// import { parseJwt } from '../src/main/utils/helpers';
 
-// // initialize reducer object
-// const activeWindowInitialState = {
-//     activeWindow: 'login',
-//     loginClasses: 'login-signup l-attop',
-//     signupClasses: 'login-signup s-atbottom'
-// }
-function EnterTimesheet(props) {
-    const { user } = useContext(UserContext);
+function EnterTimesheet({setPage}) {
+    const {user} = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
     const [tasks, setTasks] = useState();
     const [currentJobs, setCurrentJobs] = useState();
-    const [lunchTimes, setLunchTimes] = useState();
     const [entry, setEntry]= useState(ENTRY_INIT);
     
     const handleChange = (evt) => {
@@ -49,23 +35,21 @@ function EnterTimesheet(props) {
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
         if (!entry.endtime||entry.endtime==='End Time?') return alert('Please enter end time.');
-        if (!entry.lunchtime||entry.endtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
+        if (!entry.lunchtime||entry.lunchtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
-        
         // calculate hours
         const minutesWorked = getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime);
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer than hours worked.');
         const responseText = minutesToText(minutesWorked);
-        
+        // confirm submission with user
+        if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.starttime.split('T')[0]}?`)) return;
+        // start spinner
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         //find job id
         let jobId=entry.jobname.split(',')[0];
         const jobName=entry.jobname.split(',')[1];
-
-        // not sure why next line was added. Removed 07/18/21, see if testing passes
-        // currentJobs.map(job=>job[1].toUpperCase()===entry.jobname.toUpperCase()?jobId=job[0]:'');
-        
         // create submit object
         const entryObject = {
             "userid": user.email,
@@ -79,20 +63,23 @@ function EnterTimesheet(props) {
             "task": entry.task,
             "notes": entry.notes
         }
-        if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.starttime.split('T')[0]}?`)) return;
-        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
+        // submit entry
         try {
-            // Submit Entry
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            setTimeout(()=>{alert(`Your timesheet has been submitted.`); props.setPage('ViewTimesheets');},200);
+            // in-app message
+            setTimeout(()=>{alert(`Your timesheet has been submitted.`); setPage('ViewTimesheets');},200);
+            // set environment
             setEntry(ENTRY_INIT);
         } catch(e) {
+            // log error
             console.error(e.message);
+            // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // in-app message
             setTimeout(()=>{alert('Something went wrong, please check network connection.')}, 200);
         }
-        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     }
     // set environment
     useEffect(()=>{
@@ -106,8 +93,8 @@ function EnterTimesheet(props) {
     // get support lists
     useEffect(()=>{
         async function getSupportLists() {
+            // tasks
             try {
-                // tasks
                 const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
                 Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
@@ -116,21 +103,10 @@ function EnterTimesheet(props) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 alert('There is a problem filling the select boxes on the timesheet. Please check your network connection.');
-                props.setPage('Homepage');
+                setPage('Homepage');
             }
-            
-            // lunch times
-            const lunchTimes = [
-                '0 minutes',
-                '15 minutes',
-                '30 minutes',
-                '45 minutes',
-                '60 minutes',
-                '90 minutes'
-            ]
-            setLunchTimes(lunchTimes);
+            // current jobs
             try {
-                // current jobs
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
                 Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
@@ -139,7 +115,7 @@ function EnterTimesheet(props) {
                 console.log(e.message)
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 alert('There is a problem entering timesheet. Please check network connection.');
-                props.setPage('Homepage');
+                setPage('Homepage');
             }
         }
         try {
@@ -147,7 +123,7 @@ function EnterTimesheet(props) {
         } catch(e) {
             console.log(e.message)
         }      
-    },[]);
+    },[setPage]);
     return ( 
        <>
        <div className='login-signup-container'>
@@ -196,7 +172,7 @@ function EnterTimesheet(props) {
                             required
                         >
                             <option name='howlongforlunch' value='howlongforlunch' key='howlongforlunch'>How long for lunch?</option>
-                            {lunchTimes&&lunchTimes.map(lunchTime=><option key={lunchTime} value={lunchTime.substr(0,2)}>{lunchTime}</option>)} 
+                            {LUNCHTIMES&&LUNCHTIMES.map(lunchTime=><option key={lunchTime} value={lunchTime}>{lunchTime} minutes</option>)} 
                         </select>
                         <div className="input-name input-margin">
                             <h3>Job Name</h3>
@@ -248,12 +224,11 @@ function EnterTimesheet(props) {
                             </button>
                         </div>
                         <div style={{marginLeft: '5px', width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-                            <button type='reset' onClick={()=>{setEntry(ENTRY_INIT);props.setPage('Homepage');}} className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
+                            <button type='reset' onClick={()=>{setEntry(ENTRY_INIT);setPage('Homepage');}} className="submit-btn login-signup-title" style={{width: '120px', margin: 'auto', backgroundColor: '#000', color: 'white'}}>
                                 Cancel
                             </button>
                         </div>
-                    </div>
-                   
+                    </div>                  
                 </form>
                 <LoginSignupCSS />
             </div>

@@ -41,15 +41,10 @@ test("minutesToText()- Changes time format to '3 hours and 7 mins'", () => {
     expect(helpers.minutesToText('-4')).toBe('(could not find number of minutes worked)');
 });
 test('entryEditable() - Is entry editable', () => {
-    expect(helpers.entryEditable({downloaded: true, timesubmitted: '2021-08-09T16:21:47.485Z'}, true)).toBe(true);
-    expect(helpers.entryEditable({downloaded: false, timesubmitted: '2021-08-09T16:21:47.485Z'}, true)).toBe(true);
-    expect(helpers.entryEditable({downloaded: false, timesubmitted: '2021-08-09T13:50:24.917Z'}, false)).toBe(true);
-    expect(helpers.entryEditable({downloaded: false, timesubmitted: '2021-08-07T16:21:47.485Z'}, false)).toBe(false);
-    expect(helpers.entryEditable({downloaded: true, timesubmitted: '2020-08-09T16:21:47.485Z'}, true)).toBe(true);
-    expect(helpers.entryEditable({downloaded: true, timesubmitted: '2020-0dfwfd8-09T16:21:47.485Z'}, true)).toBe(true);
-    expect(helpers.entryEditable({downloaded: true, timesubmitted: '2020-0dfwfd8-09T16:21:47.485Z'}, false)).toBe(false);
-    expect(helpers.entryEditable({downloaded: null, timesubmitted: '2020-0dfwfd8-09T16:21:47.485Z'}, false)).toBe(false);
-    expect(helpers.entryEditable({})).toBe(false);
+    expect(helpers.entryEditable({downloaded: true}, true)).toBe(true);
+    expect(helpers.entryEditable({downloaded: true}, false)).toBe(false);
+    expect(helpers.entryEditable({downloaded: false}, true)).toBe(true);
+    expect(helpers.entryEditable({downloaded: false}, false)).toBe(true);
     expect(helpers.entryEditable()).toBe(false);
 });
 //function updateLunchTimeFromEdit
@@ -81,7 +76,6 @@ test('Military Time to Standard Time (AM/PM)', () => {
     expect(helpers.militaryToAMPM('-13:51')).toBe('--:--');
     expect(helpers.militaryToAMPM('13:-51')).toBe('--:--');
 });
-
 // function addZero
 test('Insert 0 at front of item of length 1.', () => {
     expect(helpers.addZero(1)).toBe('01');
@@ -92,6 +86,17 @@ test('Insert 0 at front of item of length 1.', () => {
     expect(helpers.addZero('1500')).toBe('1500');
     expect(helpers.addZero('#')).toBe('0#');
     expect(helpers.addZero('random_string')).toBe('random_string');
+});
+// function checkJobsite()
+test('Checks that jobsite is in joblist', () => {
+    expect(helpers.checkJobsite([['13525', 'Bert'], ['C3253d', 'Ernie'], ['32563', 'Big Bird']], {jobname: 'C3253d Ernie'})).toBe(true);
+    expect(helpers.checkJobsite([['13525', 'Bert'], ['C3253d', 'Ernie'], ['32563', 'Big Bird']], {jobname: '32563 Big Bird'})).toBe(true);
+    expect(helpers.checkJobsite([['13525', 'Bert'], ['C3253d', 'Ernie'], ['32563', 'Big Bird']], {jobname: '325ds63 Big Bird'})).toBe(false);
+    expect(helpers.checkJobsite([['13525', 'Bert'], ['C3253d', 'Ernie'], ['32563', 'Big Bird']], {jobname: 'jekcs Oscar'})).toBe(false);
+    expect(helpers.checkJobsite([], {jobname: 'jekcs Oscar'})).toBe(false);
+    expect(helpers.checkJobsite([])).toBe(false);
+    expect(helpers.checkJobsite([], '')).toBe(false);
+    expect(helpers.checkJobsite()).toBe(false);
 });
 
 export {}

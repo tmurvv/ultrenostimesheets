@@ -1,7 +1,5 @@
 export function getMinutesWorked(starttime: string, endtime: string, lunchtime: number) {
-    console.log('starttime:', starttime)
-    console.log('endtime:', endtime)
-    console.log('lunchtime:', lunchtime)
+    // validate for lunchtime
     if ((!lunchtime && lunchtime !== 0) || lunchtime<0 || isNaN(Number(lunchtime))) return -3;
     // validate if endtime before starttime
     if ((new Date(endtime)).getTime()-(new Date(starttime)).getTime()<=0) return -1;
@@ -12,7 +10,6 @@ export function getMinutesWorked(starttime: string, endtime: string, lunchtime: 
     if (milliesWorked<=0) return -2;
     if (isNaN(Math.round((milliesWorked/60)/1000))) return -3;
     //return minutes worked
-    console.log(Math.round((milliesWorked/60)/1000))
     return Math.round((milliesWorked/60)/1000);
 }
 export function minutesToDigital(minutes: any) {
@@ -35,13 +32,10 @@ export function minutesToText(minutes: any) {
     return `${hoursDisplay} hour${hoursDisplay!==1?'s':''} and ${minuteDisplay} min${minuteDisplay!==1?'s':''}`;
 }
 export function entryEditable(entry: any, adminEditTimesheets: any) {
-    // validate
-    if (!entry&&!adminEditTimesheets) return false;
     if (adminEditTimesheets) return true;
-    if (entry.downloaded) return false;
-    if (typeof new Date(entry.timesubmitted)!=='object') return false;
-    // manipulate and return
-    return ((new Date()).getTime()-(new Date(entry.timesubmitted)).getTime())<86400000;
+    if (!adminEditTimesheets && entry&&!entry.downloaded) return true;
+    if (entry&&entry.downloaded) return false;
+    return false;
 }
 export function isFutureDay(idate: any) {
     // not tested
@@ -63,7 +57,8 @@ export function updateLunchTimeFromEdit(newLunchtime: any) {
 export function militaryToAMPM(time: any) {
     // error function
     function error() {
-        console.log('Invalid time entered.');
+        // log error
+        console.log('From miltiartToAMPM: Invalid time entered.');
         return '--:--';
     }
     // validate
@@ -86,4 +81,13 @@ export function addZero(item: any) {
     // return
     if (item.length===1) return `0${item}`;
     return item;
+}
+export function checkJobsite(joblist: string[], editEntry: any) {
+    // validate
+    if (!editEntry) return false;
+    // manipulate
+    const fullJobName: string[] = [];
+    joblist.forEach(job=>fullJobName.push(`${job[0]} ${job[1]}`));
+    // check for jobsite in list
+    return fullJobName.includes(editEntry.jobname);
 }
