@@ -8,7 +8,7 @@ import PageTitle from '../PageTitle';
 import Spinner from '../Spinner';
 import {UserContext} from '../../contexts/UserContext';
 import {AdminEditTimesheetsContext} from '../../contexts/AdminEditTimesheetsContext';
-function WhichAccount({ title, subtitle, accountHeading, actionType, setDashboardPage, setAccountToChange }) {
+function WhichAccount({ title, subtitle, accountHeading, setPage}) {
     const [winWidth, setWinWidth] = useState(2000);
     const { setUser } = useContext(UserContext);
     const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
@@ -21,53 +21,40 @@ function WhichAccount({ title, subtitle, accountHeading, actionType, setDashboar
         setUserLogin({...userLogin, [evt.target.name]: evt.target.value, loginchange: true});
     }
     const handleSubmit = async (evt) => {
-        console.log('actionType:', actionType)
-        switch(actionType) {
-            case 'login':
-            try {
-                // login user
-                const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});  
-                const returnedUser = res.data.data;
-                // const jwt = res.data.token; // TODO
-                // set user context to login user
-                setUser({
-                    firstname: returnedUser.firstname, 
-                    lastname: returnedUser.lastname, 
-                    email: returnedUser.email
-                });
-                // remove spinner
-                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-                // reset environment
-                setDashboardPage('Homepage');
-                setAdminEditTimesheets(true);
-            } catch(e) {
-                // log error
-                console.log('error', e.message)
-                // in-app message to user
-                if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
-                    if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                    return setTimeout(()=>{alert('Email not found.')}, 200);
-                } 
-                if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
-                    if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                    return setTimeout(()=>{alert('Password does not match our records.')},200);
-                }
-                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
-            }
-            break;
-            case 'manageusers':
-                setDashboardPage('changeuser');
-                setAccountToChange(userLogin.loginemail);
-            break;
-            default: 
-        }
-
         // show spinner
-        // if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
-        
-    }
-    // set environment
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
+        try {
+            // login user
+            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});  
+            const returnedUser = res.data.data;
+            // const jwt = res.data.token; // TODO
+            // set user context to login user
+            setUser({
+                firstname: returnedUser.firstname, 
+                lastname: returnedUser.lastname, 
+                email: returnedUser.email
+            });
+            // remove spinner
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+            // reset environment
+            setPage('Homepage');
+            setAdminEditTimesheets(true);
+        } catch(e) {
+            // log error
+            console.log('error', e.message)
+            // in-app message to user
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Email not found.')}, 200);
+            } 
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Password does not match our records.')},200);
+            }
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
+        }
+    }    // set environment
     useEffect(()=>{
         window&&window.scrollTo(0,0);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
@@ -80,7 +67,6 @@ function WhichAccount({ title, subtitle, accountHeading, actionType, setDashboar
     //         // if (res.data.totsheets&&res.data.totsheets!==0) setTotSheets(res.data.totsheets);
     //         // if (res.data.totusers&&res.data.totusers!==0) setTotUsers(res.data.totusers);
     //         // const jobArray = [];
-    //         // console.log(res.data)
     //         // res.data.jobs.forEach(job => {if (job.current) jobArray.push(`${job.jobid} ${job.jobname}`)});
     //         // setJobs(jobArray);
     //         // const taskArray = [];

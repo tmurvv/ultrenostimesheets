@@ -7,6 +7,7 @@ import LoginSignupCSS from '../styles/LoginSignup.css';
 import PageTitle from './PageTitle';
 import WhichAccount from './admin/WhichAccount';
 import Spinner from '../components/Spinner';
+import {USER_INIT} from '../constants/inits';
 import {UserContext} from '../contexts/UserContext';
 import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext';
 
@@ -19,17 +20,94 @@ function Dashboard({setPage}) {
     const [tasks, setTasks] = useState([]);
     const [dashboardPage, setDashboardPage] = useState('home');
     const [accountToChange, setAccountToChange] = useState();
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
         loginemail: '',
         loginpassword: '',
-        loginchange: false
+        loginchange: false,
+        role: 'select privileges'
     });
     const handleChange = (evt) => {
         setUserLogin({...userLogin, [evt.target.name]: evt.target.value, loginchange: true});
     }
-    const handleSubmit = async (evt) => {
+    const handleSubmitPrivileges = async (e) => {
+        const updateObject = {
+            email: document.querySelector('#updateroleemail').value, 
+            role: userLogin.role,
+            adminemail: user.email,
+            password: userLogin.loginpassword
+        };
+        try {
+            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/updateuser`, updateObject)
+            alert(`Privileges updated for user ${updateObject.email}.`);
+            setUserLogin({
+                loginemail: '',
+                loginpassword: '',
+                loginchange: false,
+                role: 'select privileges'
+            });
+            if (document.querySelector('#selectuserrole')) document.querySelector('#selectuserrole').value='select privileges';
+        } catch(e) {
+            // log error
+            console.log('error', e.message);
+            // in-app message to user
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('User email not found.')}, 200);
+            } 
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Admin not found.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Admin email not found.')}, 200);
+            } 
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Admin password does not match our records.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Admin password does not match our records.')},200);
+            }
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            setTimeout(()=>{alert('Update not successful. Please check network connection.')}, 200);
+        }
+    }
+    const handleSubmitDelete = async (e) => {
+        const validate= prompt(`Are you sure you want to delete user ${document.querySelector('#updateroleemail').value}? Please re-enter user email to delete.`);
+        if (validate!==document.querySelector('#updateroleemail').value) return alert('Email does not matech.');
+        const deleteObject = {
+            email: document.querySelector('#updateroleemail').value, 
+            role: userLogin.role,
+            adminemail: user.email,
+            password: userLogin.loginpassword
+        };
+        try {
+            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/deleteuser`, deleteObject)
+            alert(`User ${deleteObject.email} deleted.`);
+            setUserLogin({
+                loginemail: '',
+                loginpassword: '',
+                loginchange: false,
+                role: 'select privileges'
+            });
+        } catch(e) {
+            // log error
+            console.log('error', e.message)
+            // in-app message to user
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('User email not found.')}, 200);
+            } 
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Admin not found.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Admin email not found.')}, 200);
+            } 
+            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Admin password does not match our records.") {
+                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                return setTimeout(()=>{alert('Admin password does not match our records.')},200);
+            }
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            setTimeout(()=>{alert('Delete not successful. Please check network connection.')}, 200);
+        }
+    }
+    const handleTimesheetsSubmit = async (evt) => {
+        <Dashboard />
         // show spinner
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
@@ -64,10 +142,6 @@ function Dashboard({setPage}) {
             setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
         }
     }
-    function handleDeleteAccount() {
-        prompt('Delete User Account, are you sure? Please re-enter the account email to delete.');
-        alert('Under Construction');
-    }
     // set environment
     useEffect(()=>{
         window&&window.scrollTo(0,0);
@@ -82,7 +156,6 @@ function Dashboard({setPage}) {
             if (res.data.totsheets&&res.data.totsheets!==0) setTotSheets(res.data.totsheets);
             if (res.data.totusers&&res.data.totusers!==0) setTotUsers(res.data.totusers);
             const jobArray = [];
-            console.log(res.data)
             res.data.jobs.forEach(job => {if (job.current) jobArray.push(`${job.jobid} ${job.jobname}`)});
             setJobs(jobArray);
             const taskArray = [];
@@ -104,9 +177,9 @@ function Dashboard({setPage}) {
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('home')}>Dashboard Home</button></li>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('download')}>Download Timesheets</button></li>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('upload')}>Upload Lists</button></li>
-                        <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('manageusers')}>Manage Users</button></li>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('timesheets')}>Change Timesheets</button></li>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('admin')}>Admin Privileges</button></li>
+                        <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('manageusers')}>Delete User Account</button></li>
                     </ul>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'column', width: '100%', flex: '8', backgroundColor: 'white',}}>
@@ -165,7 +238,7 @@ function Dashboard({setPage}) {
                     </>
                     }
                     {dashboardPage&&dashboardPage==='download'&&
-                     <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '25px', marginTop: '70px'}}>
+                        <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '25px', marginTop: '70px'}}>
                         <PageTitle maintitle='Download Timesheets' />          
                         <div style={{display: 'flex',  justifyContent: 'space-evenly', width: '100%'}}>
                             <div style={{padding: '30px', display: 'flex', flexDirection: 'column', flex: '3', alignItems: 'center', justifyContent: 'center', textAlign: 'center'}}>
@@ -258,16 +331,98 @@ function Dashboard({setPage}) {
                     {dashboardPage&&dashboardPage==='manageusers'
                     &&
                     <>
-                        <WhichAccount title='Manage Users' accountHeading="Email of account to change" actionType='manageusers' setDashboardPage={setDashboardPage} setAccountToChange={setAccountToChange}/>
+                        <div className='login-signup-container'>
+                            <div className="form-container" style={{marginTop: '0px'}}>
+                                <PageTitle maintitle='Delete User Account' />
+                                <form>
+                                    <div style={{display: 'flex', flexDirection: 'column', padding: '25px', maxWidth: '250px', margin: 'auto'}}>   
+                                        <div>
+                                            <h4>Which User Account?</h4>
+                                        </div>
+                                        <input
+                                            style={{padding: '5px 7px', backgroundColor: 'rgb(232, 240, 254)'}}
+                                            className="field-input"
+                                            type='email'
+                                            id='updateroleemail'
+                                            value={userLogin.loginemail}
+                                            onChange={handleChange}
+                                            placeholder='Enter email'
+                                            name='loginemail'
+                                            required
+                                        />
+                                        <h4>Please Re-enter <i>your</i> Admin Password</h4>
+                                        <input
+                                            style={{padding: '5px 7px', backgroundColor: 'rgb(232, 240, 254)'}}
+                                            className="field-input"
+                                            type='password'
+                                            id={uuid()}
+                                            value={userLogin.loginpassword}
+                                            onChange={handleChange}
+                                            name='loginpassword'
+                                            required
+                                        />
+                                        <div style={{display: 'flex', width: '100%', justifyContent: 'center', marginTop: '50px'}}>
+                                            <button type='button' className="btn submit-btn login-signup-title" style={{textAlign: 'center', backgroundColor: 'tomato', color: 'white'}} onClick={()=>{handleSubmitDelete()}}>Delete Account</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <LoginSignupCSS />
                     </>         
                     }
                     {dashboardPage&&dashboardPage==='admin'
                     &&
                     <>
-                        <WhichAccount title='Admin Privileges' accountHeading="Email of admin account to change" setDashboardPage={setDashboardPage}/>
+                        {/* <WhichAccount title='Admin Privileges' accountHeading="Email of admin account to change" setDashboardPage={setDashboardPage}/> */}
+                        <div className='login-signup-container'>
+                            <div className="form-container" style={{marginTop: '0px'}}>
+                                <PageTitle maintitle='Change Admin Privileges' />
+                                <form>
+                                    <div style={{display: 'flex', flexDirection: 'column', padding: '25px', maxWidth: '250px', margin: 'auto'}}>   
+                                        <div>
+                                            <h4>Whose privileges are being changed?</h4>
+                                        </div>
+                                        <input
+                                            style={{padding: '5px 7px', backgroundColor: 'rgb(232, 240, 254)'}}
+                                            className="field-input"
+                                            type='email'
+                                            id='updateroleemail'
+                                            value={userLogin.loginemail}
+                                            onChange={handleChange}
+                                            placeholder='Enter email'
+                                            name='loginemail'
+                                            required
+                                        />
+                                        <select style={{marginTop: '20px', padding: '5px 7px'}}id='selectuserrole' onChange={(e)=>handleChange(e)} name='role'>
+                                            <option value='select privileges'>Select Privileges</option>
+                                            <option value='user'>User</option>
+                                            <option value='admin'>Admin</option>
+                                        </select>
+                                        <h4>Please Re-enter <i>your</i> Admin Password</h4>
+                                        <input
+                                            style={{padding: '5px 7px', backgroundColor: 'rgb(232, 240, 254)'}}
+                                            className="field-input"
+                                            type='password'
+                                            id={uuid()}
+                                            value={userLogin.loginpassword}
+                                            onChange={handleChange}
+                                            name='loginpassword'
+                                            required
+                                        />
+                                    </div>
+                                    <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+                                        <button type='button' className="btn submit-btn login-signup-title" onClick={handleSubmitPrivileges} style={{width: '150px', margin: 'auto'}}>
+                                            Submit
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <LoginSignupCSS />
                     </>         
                     }
-                    {dashboardPage&&dashboardPage==='changeuser'
+                    {/* {dashboardPage&&dashboardPage==='changeuser'
                     &&
                     <>
                         <div style={{margin: '70px auto 50px'}}>
@@ -281,7 +436,7 @@ function Dashboard({setPage}) {
                             <button style={{textAlign: 'center', backgroundColor: 'tomato', fontSize: '20px', color: 'white', padding: '5px 7px'}} onClick={()=>{handleDeleteAccount()}}>Delete Account</button>
                         </div>
                     </>         
-                    }
+                    } */}
                     </div>
                 </div>
             </div>

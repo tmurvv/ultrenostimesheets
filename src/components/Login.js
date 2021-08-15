@@ -15,8 +15,8 @@ function Login({setPage}) {
     const {setUser} = useContext(UserContext);
     const {setAdminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
-        loginemail: '',
-        loginpassword: '',
+        loginemail: 'admin@admin.com',
+        loginpassword: 'bestinrenos*11YEARS!',
         loginchange: false
     });
     // handle change
@@ -39,12 +39,17 @@ function Login({setPage}) {
             });
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-            // in-app message
-            setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
-            // set admin environment
-            if (returnedUser.firstname.toUpperCase()==="ADMIN") setPage('Admin');
-            // set user environment
-            if (returnedUser.firstname.toUpperCase()!=="ADMIN") {setPage('EnterTimesheet'); setAdminEditTimesheets(false)};
+            
+            // set environment
+            if (returnedUser.role.toUpperCase()==="ADMIN") {
+                setPage('Admin');              
+                setAdminEditTimesheets(false); // gets set to true when admin selects that option
+            } else {
+                setPage('EnterTimesheet');
+                setAdminEditTimesheets(false);
+                // in-app message
+                setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
+            }
         } catch(e) {
             console.log('error', e.message)
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
