@@ -31,7 +31,14 @@ export function minutesToText(minutes: any) {
     // return
     return `${hoursDisplay} hour${hoursDisplay!==1?'s':''} and ${minuteDisplay} min${minuteDisplay!==1?'s':''}`;
 }
-export function entryEditable(entry: any, adminEditTimesheets: any) {
+/**
+ * Determines if entry was made less than 24 hours ago and is therefore still editable by the user
+ * 
+ * @param {object} entry
+ * @param {boolean} adminEditTimesheets - if administrator is editing all entries are editable
+ * @returns {boolean}
+ */
+export function entryEditable(entry: any, adminEditTimesheets: any): boolean {
     if (adminEditTimesheets) return true;
     if (!adminEditTimesheets && entry&&!entry.downloaded) return true;
     if (entry&&entry.downloaded) return false;
@@ -54,6 +61,12 @@ export function updateLunchTimeFromEdit(newLunchtime: any) {
     // manipulate and return
     return Number(String(newLunchtime).substr(0,2));
 }
+/**
+ * Changes military time to AM and PM i.e. 17:20 returns 5:20pm
+ * 
+ * @param {string} time - expects 17:20 or 03:13
+ * @returns {string}
+ */
 export function militaryToAMPM(time: any) {
     // error function
     function error() {
@@ -75,6 +88,12 @@ export function militaryToAMPM(time: any) {
     // return
     return `${hours}:${time.split(':')[1]} ${ampm}`;
 }
+/**
+ * inserts zero at the front of an item where length = 1, Used to convert months from 1 to 01
+ * 
+ * @param {any} item
+ * @returns {string}
+ */
 export function addZero(item: any) {
     // manipulate
     item = String(item);

@@ -1,5 +1,3 @@
-import React from "react";
-
 function NavBarCss() {
     return (
         <style>{`
@@ -22,23 +20,6 @@ function NavBarCss() {
                     justify-content: flex-end;
                 }
             }
-            
-            .mirrorATagFont {
-                color: #000;
-                font-size: 16px;
-            }
-            // @media only screen and (max-width: 950px) {
-            //     a,
-            //     aclass {
-            //         font-size: 14px;
-            //     }
-            // }
-            // @media only screen and (max-width: 700px) {
-            //     a,
-            //     aclass {
-            //         font-size: 12px;
-            //     }
-            // }
             .navLinks {
                 height: 100%;
                 display: flex;
@@ -77,22 +58,6 @@ function NavBarCss() {
             a:hover {
                 opacity: 1;
             }
-            // @media only screen and (max-width: 950px) {
-            //     a {
-            //         font-size: 14px;
-            //     }
-            //     .mirrorATagFont {
-            //         font-size: 14px;
-            //     }
-            // }
-            // @media only screen and (max-width: 700px) {
-            //     a {
-            //         font-size: 12px;
-            //     }
-            //     .mirrorATagFont {
-            //         font-size: 12px;
-            //     }
-            // }
             .hamburgerMenu img {
                 height: 35px;
             }

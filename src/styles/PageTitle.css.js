@@ -1,5 +1,3 @@
-import React from 'react';
-
 function PageTitleCss() {
     return (
         <style jsx="true">{`
@@ -31,3 +29,4 @@ function PageTitleCss() {
         }
         
         export default PageTitleCss;
+        

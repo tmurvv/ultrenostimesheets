@@ -30,7 +30,7 @@ function EnterTimesheet({setPage}) {
             setEntry({...entry, [evt.target.name]: evt.target.value});
         }
     }
-    const handleSubmit = async (evt) => {
+    const handleSubmit = async () => {
         // Validations
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!entry.starttime||entry.starttime==='Start Time?') return alert('Please enter start time.');
@@ -42,6 +42,8 @@ function EnterTimesheet({setPage}) {
         const minutesWorked = getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime);
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer than hours worked.');
+        
+        // for in-app message to user
         const responseText = minutesToText(minutesWorked);
         // confirm submission with user
         if (!window.confirm(`Submit timesheet entry for ${responseText} on ${entry.starttime.split('T')[0]}?`)) return;
@@ -100,8 +102,11 @@ function EnterTimesheet({setPage}) {
                 Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
                 setTasks(incomingTasks);
             } catch (e) {
+                // log error
                 console.log(e.message)
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // in-app message
                 alert('There is a problem filling the select boxes on the timesheet. Please check your network connection.');
                 setPage('Homepage');
             }
@@ -112,8 +117,11 @@ function EnterTimesheet({setPage}) {
                 Array.from(currentJobsArrays.data.data).map(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
                 setCurrentJobs(incomingCurrentJobs);
             } catch (e) {
+                // log error
                 console.log(e.message)
+                // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+                // in-app message
                 alert('There is a problem entering timesheet. Please check network connection.');
                 setPage('Homepage');
             }
@@ -121,6 +129,7 @@ function EnterTimesheet({setPage}) {
         try {
             getSupportLists()
         } catch(e) {
+            // log error
             console.log(e.message)
         }      
     },[setPage]);
@@ -188,7 +197,7 @@ function EnterTimesheet({setPage}) {
                             required
                         > 
                             <option key='whichjobsite'>Which Job-site?</option>
-                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob[0]}&nbsp;&nbsp;{currentJob[1]}</option>)} 
+                            {currentJobs&&currentJobs.map(currentJob=><option key={currentJob} value={currentJob}>{currentJob}</option>)} 
                             <option key='notfoundjobsite' value={['Other', '(please enter in notes)']}>Other (please enter in notes)</option>  
                         </select>
                         <div className="input-name input-margin">

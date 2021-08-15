@@ -1,45 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
-import { PageContext } from '../contexts/PageContext.js';
-import { UserContext } from '../contexts/UserContext.js';
-import { AdminEditTimesheetsContext } from '../contexts/AdminEditTimesheetsContext.js';
-import {USER_INIT} from '../constants/inits';
-
+// packages
+import {useContext, useEffect, useState} from 'react';
+import {BrowserRouter as Router, Link} from "react-router-dom";
 //internal
-import NavBarCss from '../styles/NavBar.css.js';
-// import { UserContext } from '../../contexts/UserContext';
+import {PageContext} from '../contexts/PageContext.js';
+import {UserContext} from '../contexts/UserContext.js';
+import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext.js';
+import {USER_INIT} from '../constants/inits';
+import NavBarCss from '../styles/NavBar.css.js'
 
-// function handleSubMenuClick() {
-//     const subMenu= document.querySelector('#partnerSubMenu');
-//     if (subMenu) {
-//         subMenu.style.display=subMenu.style.display==='flex'?'none':'flex';
-//     }
-// }
-export default function NavBar(props) {
-    const { setPage } = useContext(PageContext);
-    const { user, setUser } = useContext(UserContext);
-    const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
+export default function NavBar() {
+    const {setPage} = useContext(PageContext);
+    const {user, setUser} = useContext(UserContext);
+    const {setAdminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const [mobile, setMobile] = useState();
     const [open, setOpen] = useState(false);
-    // const { user, setUser } = useContext(UserContext);
-    // useEffect(()=> {
-    //     if (!user.firstname) setUser({
-    //         ...user,
-    //         firstname: 'login',
-    //         lastname: '',
-    //         email: '',
-    //         newsletter: false,
-    //         distanceunit: 'miles',
-    //         currency: 'USD',
-    //         _id: '',
-    //         role: 'not set'
-    //     });
-    // },[]);
+    // set mobile environment
     useEffect(()=>window.innerWidth<550&&setMobile(true),[]);
     // reset window width on window resize
     useEffect(() => {
@@ -61,6 +36,7 @@ export default function NavBar(props) {
                     <img id='hamburger' src='/img/hamburger.png' alt="open mobile menu icon"/>
                 </div>:''
             }
+            {/* if not mobile or if mobile menu open. show the menu */}
             {(!mobile||open)&&
                 <>
                 <Router>
@@ -95,35 +71,9 @@ export default function NavBar(props) {
                         </li>
                     </ul>
                 </nav>
-                
-            
             </Router>
         </>}
         </div>
-            {/* show mobile menu icon */}
-            {/* {props.mobile&&(!props.open||props.open===undefined)?
-                <div className='hamburgerMenu' onClick={(e) => props.handleNavOpen(e)}>
-                    <img id='hamburger' src='/img/hamburger.png' alt="open mobile menu icon"/>
-                </div>:''
-            } */}
-            {/* show menu */}
-            {/* <div className='navLinks' id='navLinks'>
-                {mobile&&open?
-                    <div className='closeIcon' onClick={(e)=>props.handleNavOpen(e)}>
-                        <img src='/img/clear_search.png' alt="close mobile menu icon"/>
-                    </div>:''
-                }
-                <Link href='/timesheet'>
-                    <a>Timesheet Entry</a>
-                </Link>
-                <Link href='/login'>
-                    <a>Login</a>
-                </Link>
-                <Link href='/signup'>
-                    <a>Signup</a>
-                </Link>        
-            </div> */}
-        {/* </div> */}
         <NavBarCss />    
         </>
     )

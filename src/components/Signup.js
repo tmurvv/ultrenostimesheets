@@ -32,9 +32,9 @@ function Signup({setPage}) {
             lastname: signupUser.lastname,
             email: signupUser.email,
             password: signupUser.password,
-        };
-        // signup user
+        };     
         try {
+            // signup user
             const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/signup`, newUser);
             if (res.status===201 || res.status===200) {                   
                 // set userContext to added user
@@ -56,8 +56,10 @@ function Signup({setPage}) {
             console.log('Error on signup', e.response)
             // in-app message
             if (e.response&&e.response.data&&e.response.data.message.toUpperCase().includes('EXISTS')) {
+                // email in use
                 alert("Email already in use.");
             } else {
+                // all other errors
                 alert(`Something went wrong on signup. Please check your network connection.`)
             }
             // stop spinner

@@ -1,5 +1,4 @@
 import {useState,useEffect} from 'react';
-import axios from 'axios';
 import atob from 'atob';
 // components
 import Banner from './components/Banner';

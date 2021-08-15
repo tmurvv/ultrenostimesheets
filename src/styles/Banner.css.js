@@ -1,5 +1,3 @@
-import React from "react";
-
 function BannerCss() {
     return (
         <style jsx="true">{`
@@ -18,20 +16,6 @@ function BannerCss() {
                   padding: 0 75px;
                 }
             }
-            // @media only screen and (max-width: 850px) {
-            //     .mainContainer {
-            //       height: 78px;
-            //       padding: 0 150px 0 100px;
-            //     }
-            // }
-            // @media only screen and (max-width:550px) {
-            //     .mainContainer {
-            //         height: 150px;
-            //         padding: 15px;
-            //         flex-direction: column-reverse;
-            //         align-items: center;
-            //     }
-            // }
             .logo {
                 height: 70%;
             }

@@ -31,6 +31,7 @@ function Login({setPage}) {
             // login user
             const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             const returnedUser = res.data.data;
+            
             // set user context to login user
             setUser({
                 firstname: returnedUser.firstname, 
@@ -39,34 +40,32 @@ function Login({setPage}) {
             });
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-            
-            // set environment
-            if (returnedUser.role.toUpperCase()==="ADMIN") {
-                setPage('Admin');              
-                setAdminEditTimesheets(false); // gets set to true when admin selects that option
-            } else {
-                setPage('EnterTimesheet');
-                setAdminEditTimesheets(false);
-                // in-app message
-                setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
-            }
+            // in-app message
+            setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
+            // if admin, go to admin page
+            if (returnedUser.firstname.toUpperCase()==="ADMIN") setPage('Admin');
+            // if not admin, set environment
+            if (returnedUser.firstname.toUpperCase()!=="ADMIN") {setPage('EnterTimesheet'); setAdminEditTimesheets(false)}
         } catch(e) {
+            // log error
             console.log('error', e.message)
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 return setTimeout(()=>{alert('Email not found.')}, 200);
             } 
+            // Password does not match
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 return setTimeout(()=>{alert('Password does not match our records.')},200);
             }
+            // All other errors
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
         }
     }
     // handle forgotPassword
     async function handleForgot() {
-        // validation
+        // validate email entered
         if (!userLogin.loginemail) {
             alert('Please enter your account email.');
             return;
@@ -139,11 +138,13 @@ function Login({setPage}) {
                             style={{cursor: 'pointer'}} 
                             onClick={handleForgot}
                         >
-                            <button type='button' className='link-btn' style={{fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
+                            <button type='button' className='link-btn' style={{cursor: 'pointer', fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
                         </div>
                     </>
-                    
                 </form>
+                <div style={{margin: 'auto', width: 'fit-content'}}>
+                    <p style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px', textAlign: 'center'}}>Login as admin to see more features: <br />Login: admin@ableadmin.com <br />Password: adminpassword</p>
+                </div>
             </div>
             <LoginSignupCSS />
         </div>

@@ -16,11 +16,11 @@ function Admin({setPage}) {
     const [numSheets, setNumSheets] = useState(35);
     const [totSheets, setTotSheets] = useState(1905);
     const [newAllTimesheets, setNewAllTimesheets] = useState('new');
-    const { setUser } = useContext(UserContext);
-    const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
+    const {setUser} = useContext(UserContext);
+    const {setAdminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
-        loginemail: '',
-        loginpassword: '',
+        loginemail: 'portfolio@take2tech.ca',
+        loginpassword: 'adminpassword',
         loginchange: false
     });
     const handleChange = (evt) => {
@@ -41,9 +41,9 @@ function Admin({setPage}) {
                 lastname: returnedUser.lastname, 
                 email: returnedUser.email
             });
-            // remove spinner
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            // reset environment
+            // stop spinner
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            // set new environment
             setPage('Homepage');
             setAdminEditTimesheets(true);
         } catch(e) {
@@ -54,11 +54,14 @@ function Admin({setPage}) {
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 return setTimeout(()=>{alert('Email not found.')}, 200);
             } 
+            // password does not match
             if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 return setTimeout(()=>{alert('Password does not match our records.')},200);
             }
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+            // stop spinner
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none"; 
+            // in-app message to user  
             setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
         }
     }
@@ -67,6 +70,7 @@ function Admin({setPage}) {
         window&&window.scrollTo(0,0);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
+    // get number of timesheets ready for download
     useEffect(()=>{
         // get data
         const numSheets = async () => {
@@ -106,7 +110,7 @@ function Admin({setPage}) {
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                         <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This featured disabled in portfolio version of this app.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                             Upload WIPs List
                         </button>
                     </form>
@@ -130,7 +134,7 @@ function Admin({setPage}) {
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                         <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "specific task" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                        <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This featured disabled in portfolio version of this app.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                             Upload Task List
                         </button>
                     </form>
