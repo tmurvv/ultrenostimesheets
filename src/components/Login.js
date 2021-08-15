@@ -15,8 +15,8 @@ function Login({setPage}) {
     const {setUser} = useContext(UserContext);
     const {setAdminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
-        loginemail: 'admin@admin.com',
-        loginpassword: 'bestinrenos*11YEARS!',
+        loginemail: '',
+        loginpassword: '',
         loginchange: false
     });
     // handle change
