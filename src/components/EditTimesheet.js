@@ -10,11 +10,7 @@ import Spinner from '../components/Spinner';
 import {UserContext} from "../contexts/UserContext";
 import {PageContext} from "../contexts/PageContext";
 import {EditEntryContext} from "../contexts/EditEntryContext";
-<<<<<<< HEAD
 import {ENTRY_INIT, LUNCHTIMES} from "../constants/inits";
-=======
-import {ENTRY_INIT, LUNCH_TIMES_INIT} from "../constants/inits";
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
 import {
     getMinutesWorked, 
     updateLunchTimeFromEdit, 
@@ -22,11 +18,7 @@ import {
     checkJobsite
 } from "../utils/helpers";
 
-<<<<<<< HEAD
 function EditTimesheet(props) {
-=======
-function EditTimesheet() {
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
     const { user } = useContext(UserContext);
     const [todayDate, setTodayDate] = useState();
     const [winWidth, setWinWidth] = useState(2000);
@@ -56,29 +48,17 @@ function EditTimesheet() {
             entryId: editEntry.entryId,
         }
         // validations
-<<<<<<< HEAD
-=======
-        if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated'); // TODO need to test validation not working
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!updateObject.starttime) return alert('Please enter start time.');
         if (!updateObject.endtime) return alert('Please enter end time.');
         if ((!(updateObject.lunchtime)&&updateObject.lunchtime!==0)||(String(updateObject.lunchtime).toUpperCase()==='LUNCH TIME?')) return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!updateObject.jobname||updateObject.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!updateObject.task||updateObject.task==='What type of work?') return alert('Please select type of work.');
-<<<<<<< HEAD
         // calculate hours && validate
         const minutesWorked = getMinutesWorked(updateObject.starttime, updateObject.endtime, updateObject.lunchtime);       
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
         if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
         //find job id
-=======
-        // calculate minutes worked and validate
-        const minutesWorked = getMinutesWorked(updateObject.starttime, updateObject.endtime, updateObject.lunchtime);
-        if (minutesWorked===-1) return alert('End Time must be after Start Time.');
-        if (minutesWorked===-2) return alert('Lunch Time is longer that hours worked.');
-        // parse job id and job name
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
         let jobId=updateObject.jobname.split(' ')[0];
         let jobName=updateObject.jobname.split(/ (.+)/)[1];
         // create submit object
@@ -91,35 +71,22 @@ function EditTimesheet() {
             task: updateObject.task, 
             notes: updateObject.notes, 
             id: editEntry.entryId
-<<<<<<< HEAD
         };    
         try {
             // validate entryId
             if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated');
-=======
-        }               
-        try {
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
             // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
             // Submit Entry
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
-<<<<<<< HEAD
             // set environment
             setEditEntry(ENTRY_INIT);
             setPage('ViewTimesheets');
             // stop spinner
-=======
-            // Reset environment
-            setEditEntry(ENTRY_INIT);
-            setPage('ViewTimesheets');
-            // Stop spinner
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             // in-app message
             setTimeout(()=>{alert(`Your timesheet has been updated.`)},200);
         } catch(e) {
-<<<<<<< HEAD
             // log error 
             console.log('error from edit timesheet:', e.message);
             // stop spinner
@@ -129,13 +96,6 @@ function EditTimesheet() {
         }        
     }
     // set environment
-=======
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            setTimeout(()=>{alert('Something went wrong, please check network connection.')},200);  
-        }         
-    }
-    // set up environment
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
     useEffect(()=>{
         // format today's date
         const todayDateRaw = new Date();
@@ -151,13 +111,8 @@ function EditTimesheet() {
         async function getSupportLists() {
             // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
-<<<<<<< HEAD
             // get tasks
             try {  
-=======
-            try {
-                // get task list
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
                 const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
                 Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task));
@@ -172,50 +127,24 @@ function EditTimesheet() {
             try {
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
-<<<<<<< HEAD
                 Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
-=======
-                // morph incoming data into tuple
-                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (
-                        currentJobArray.current===true
-                        &&currentJobArray!==undefined
-                        &&currentJobArray.jobname
-                        &&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB'
-                    ) 
-                        incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`]);
-                });
-                // validate
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
                 // add choice for other
                 incomingCurrentJobs.push(['Other', '(please enter in notes)']);
-<<<<<<< HEAD
                 // check that job-site on timesheet has not been removed from job-list and add it if necessary
                 if (!checkJobsite(incomingCurrentJobs, editEntry)) incomingCurrentJobs.unshift([`${editEntry.jobname.split(' ')[0]}`, `${editEntry.jobname.split(' ')[1]}`]);
                 // set environment
                 setCurrentJobs(incomingCurrentJobs);
-=======
-                // reset environment
-                setCurrentJobs(incomingCurrentJobs);
-                setFullCurrentJobs(currentJobsArrays.data.data);
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
                 // stop spinner
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             } catch (e) {
                 // log error
                 console.log(e.message)
                 // stop spinner
-<<<<<<< HEAD
                 if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
                 // in-app message
                 alert('There is a problem editing timesheet. Please check your network connection.');
                 // set environment
-=======
-                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";  
-                // in-app message 
-                alert('There is a problem editing timesheet. Please check your network connection.');
-                // reset environment
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
                 setPage('Homepage');
             }
         }
@@ -225,23 +154,14 @@ function EditTimesheet() {
         } catch (e) {
             // log message
             console.log(e.message);
-<<<<<<< HEAD
         }            
     },[setPage, editEntry]);
-=======
-        }
-    },[setPage, setFullCurrentJobs]);
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
     return ( 
     <>
     <div className='login-signup-container' style={{backgroundColor: 'palegolderod'}}>
             <Spinner />
             <PageTitle maintitle='Edit Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
-<<<<<<< HEAD
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>           
-=======
-            <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
->>>>>>> 42b729038b892cb0451d14b62700d740524b3b5c
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     <div className='login-form'>
