@@ -12,6 +12,7 @@ import EditTimesheet from './components/EditTimesheet';
 import ResetPassword from './components/ResetPassword';
 import AdminWarningBox from './components/AdminWarningBox';
 import Admin from './components/Admin';
+import Profile from './components/Profile';
 // other internal
 import {UserContext} from "./contexts/UserContext";
 import {AdminEditTimesheetsContext} from "./contexts/AdminEditTimesheetsContext";
@@ -69,6 +70,7 @@ function App() {
                                 {page.toUpperCase()==='RESETPASSWORD'&&<ResetPassword useremail={resetPasswordEmail} setPage={setPage}/>}
                                 {page.toUpperCase()==='REFRESHVIEW'&&<ViewTimesheets setPage={setPage}/>} {/* a hack to get viewtimesheets page to refresh after delete */}
                                 {page.toUpperCase()==='ADMIN'&&<Admin setPage={setPage}/>}
+                                {page.toUpperCase()==='PROFILE'&&<Profile setPage={setPage}/>}
                             </EditEntryContext.Provider>
                         </AdminEditTimesheetsContext.Provider>
                     </UserContext.Provider>

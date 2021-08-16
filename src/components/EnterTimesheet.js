@@ -99,7 +99,7 @@ function EnterTimesheet({setPage}) {
             try {
                 const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
-                Array.from(tasksArrays.data.data).map((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
+                Array.isArray(Array.from(tasksArrays.data.data))&&Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
                 setTasks(incomingTasks);
             } catch (e) {
                 // log error
@@ -114,7 +114,7 @@ function EnterTimesheet({setPage}) {
             try {
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
-                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid} ${currentJobArray.jobname}`])})
+                Array.isArray(Array.from(currentJobsArrays.data.data))&&Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid} ${currentJobArray.jobname}`])})
                 setCurrentJobs(incomingCurrentJobs);
             } catch (e) {
                 // log error

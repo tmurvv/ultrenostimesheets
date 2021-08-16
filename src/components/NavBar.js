@@ -66,6 +66,11 @@ export default function NavBar() {
                                 <Link to="/" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>
                             </li>                      
                         }
+                        {user.email&&
+                        <li>
+                            <Link to="/" onClick={()=>{setPage('profile'); setOpen(false);}}>Profile</Link>
+                        </li>
+                        }
                         <li>
                             {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT); setAdminEditTimesheets(false);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}
                         </li>

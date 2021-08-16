@@ -36,7 +36,7 @@ function NavBarCss() {
             @media only screen and (max-width: 550px) {
                 .navLinks {
                     flex-direction: column;
-                    height: 140px;
+                    height: 162px;
                     padding: 10px;
                     border-radius: 3px;
                     background-image: linear-gradient(340deg, #f9bf1e 50%, #fffbb5 58%, #ffe58a 74%, #f9bf1e 87%);

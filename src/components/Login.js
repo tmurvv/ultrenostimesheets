@@ -144,7 +144,7 @@ function Login({setPage}) {
                             style={{cursor: 'pointer'}} 
                             onClick={handleForgot}
                         >
-                            <button type='button' className='link-btn' style={{cursor: 'pointer', fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
+                            <button type='button' className='link-btn' style={{cursor: 'pointer', fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Change/Forgot Password</button>
                         </div>
                     </>
                 </form>     

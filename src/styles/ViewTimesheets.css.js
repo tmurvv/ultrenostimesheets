@@ -68,6 +68,15 @@ function ViewTimesheetsCss() {
                     padding: 2px 12px;
                     display: flex;
                     align-items: center;
+                    max-height: unset;
+                }
+            }
+            @media screen and (max-width: 950px) {
+                .cell {
+                    padding: 2px 12px;
+                    display: flex;
+                    align-items: center;
+                    max-height: unset;
                 }
             }
         `}</style>

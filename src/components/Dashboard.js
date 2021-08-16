@@ -4,6 +4,7 @@ import uuid from 'react-uuid';
 
 // internal
 import LoginSignupCSS from '../styles/LoginSignup.css';
+import DashboardCss from '../styles/Dashboard.css';
 import PageTitle from './PageTitle';
 import WhichAccount from './admin/WhichAccount';
 import Spinner from '../components/Spinner';
@@ -125,10 +126,10 @@ function Dashboard({setPage}) {
             if (res.data.totsheets&&res.data.totsheets!==0) setTotSheets(res.data.totsheets);
             if (res.data.totusers&&res.data.totusers!==0) setTotUsers(res.data.totusers);
             const jobArray = [];
-            res.data.jobs.forEach(job => {if (job.current) jobArray.push(`${job.jobid} ${job.jobname}`)});
+            Array.isArray(res.data.jobs)&&res.data.jobs.forEach(job => {if (job.current) jobArray.push(`${job.jobid} ${job.jobname}`)});
             setJobs(jobArray);
             const taskArray = [];
-            res.data.tasks.forEach(task => {if (task.current) taskArray.push(task.task)});
+            Array.isArray(res.data.jobs)&&res.data.tasks.forEach(task => {if (task.current) taskArray.push(task.task)});
             setTasks(taskArray);
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         }
@@ -137,12 +138,12 @@ function Dashboard({setPage}) {
     return (
         <>  
             <Spinner />
-            <div className='OuterContainer' style={{fontFamily: 'avenir, sans-serif', letterSpacing: '1.6px', lineSpacing: '1.5', display: 'flex', width: '100%'}}>
-                <div style={{flex: '2', backgroundColor: '#004976', color: 'white'}}> 
-                    <div style={{width: '100%'}}>
+            <div className='OuterContainer' style={{fontFamily: 'avenir, sans-serif', letterSpacing: '1.6px', lineSpacing: '1.5', width: '100%'}}>
+                <div className='MenuContainer' style={{flex: '2', backgroundColor: '#004976', color: 'white'}}> 
+                    <div className='MenuContainerImg' style={{width: '100%'}}>
                         <img src='img/ultimate_renovations-white_logo.png' alt='Ultimate Renovations logo' style={{width: '100%'}}/>
                     </div> 
-                    <ul style={{marginTop: '35px'}}>
+                    <ul>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('home')}>Dashboard Home</button></li>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('download')}>Download Timesheets</button></li>
                         <li><button style={{fontSize: '16px', width: '100%', cursor: 'pointer'}} onClick={()=>setDashboardPage('upload')}>Upload Lists</button></li>
@@ -194,7 +195,7 @@ function Dashboard({setPage}) {
                             <img src="/img/tapered_line_blue.png" alt='tapered blue dividing line' style={{minWidth: '80%', height: '50px'}}/>
                         </div>
                         <h2 style={{textAlign: 'center', marginBottom: '50px'}}>Current Lists</h2>
-                        <div style={{backgroundColor: 'transparent', boxSizing: 'border-box', display: 'flex', width: '80%', margin: 'auto', flex: '8', justifyContent: 'space-evenly', textAlign: 'left'}}>
+                        <div className= 'lists' style={{backgroundColor: 'transparent', boxSizing: 'border-box', display: 'flex', width: '80%', margin: 'auto', flex: '8', justifyContent: 'space-evenly', textAlign: 'left'}}>
                             <ul style={{marginRight: '17px', flex: '1', boxSizing: 'border-box', textAlign: 'center'}}>
                                 <li style={{padding: '10px 10px 7px', fontWeight: 'bold', backgroundColor: 'lightgrey', width: '100%'}}>Works in Progress</li>
                                 {jobs&&jobs.map(job => <li style={{textAlign: 'left', borderBottom: '1px solid lightgrey', padding: '5px 10px', backgroundColor: 'white', width: '100%'}}>{job}</li>)}
@@ -408,6 +409,7 @@ function Dashboard({setPage}) {
                     } */}
                     </div>
                 </div>
+                <DashboardCss />
             </div>
         </>
     )

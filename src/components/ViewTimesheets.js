@@ -151,7 +151,7 @@ function ViewTimesheets() {
                     <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
                     <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{`${entry.jobid} `}{entry.jobname}</td>
                     <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
-                    <td className='cell'><div style={{maxHeight: '70px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
+                    <td className='cell'><div style={{maxHeight: '120px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
                 </tr>):<tr>No entries found.</tr>}
                 </tbody>
             </table>:''
