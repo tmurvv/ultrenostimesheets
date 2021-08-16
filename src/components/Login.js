@@ -102,7 +102,7 @@ function Login({setPage}) {
        <>
         <div className='login-signup-container'>
             <Spinner />
-            <PageTitle maintitle='Login' subtitle='' />
+            <PageTitle maintitle='Timesheet Login' subtitle='' />
             <div style={{cursor: 'pointer', margin: 'auto', width: 'fit-content'}} onClick={()=>{setPage('Signup')}}>
                 <button type="button" className='link-btn' style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px',}}>Click Here to Signup</button>
             </div>

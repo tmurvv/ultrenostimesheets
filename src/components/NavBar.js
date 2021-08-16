@@ -47,7 +47,7 @@ export default function NavBar() {
                         </div>
                         {user.email&&
                             <li style={{fontSize: '16px'}}>
-                                {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
+                                {user.email?`Welcome ${user.firstname}`:<Link to="/" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
                             </li>
                         }
                         {user&&user.role&&user.role.toUpperCase()==='ADMIN'&&
@@ -63,11 +63,11 @@ export default function NavBar() {
                         </li>
                         {!user.email&&
                             <li style={{fontSize: '16px'}}>
-                                <Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>
+                                <Link to="/" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>
                             </li>                      
                         }
                         <li>
-                            {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT); setAdminEditTimesheets(false);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/signup" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}
+                            {user.email?<Link to="/" onClick={()=>{setUser(USER_INIT); setAdminEditTimesheets(false);setPage('login'); setOpen(false);}}>Logout</Link>:<Link to="/" onClick={()=>{setOpen(false);setPage('signup')}}>Signup</Link>}
                         </li>
                     </ul>
                 </nav>
