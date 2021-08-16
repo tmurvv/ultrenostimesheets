@@ -50,7 +50,7 @@ export default function NavBar() {
                                 {user.email?`Welcome ${user.firstname}`:<Link to="/login" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
                             </li>
                         }
-                        {user.firstname.toUpperCase()==='ADMIN'&&
+                        {user&&user.role&&user.role.toUpperCase()==='ADMIN'&&
                             <li>
                                 <Link to="/" onClick={()=>{setOpen(false);setPage('Admin');}}>Admin</Link>
                             </li>

@@ -83,7 +83,7 @@ function Admin({setPage}) {
     return ( 
     <>
         <Dashboard setPage={setPage}/>
-        <Spinner />
+        <Spinner style={{display: 'none'}} />
         
         {/* download timesheets */}
         {/* <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '25pxpx'}}>

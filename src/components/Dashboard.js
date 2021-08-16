@@ -39,6 +39,7 @@ function Dashboard({setPage}) {
             password: userLogin.loginpassword
         };
         try {
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/updateuser`, updateObject)
             alert(`Privileges updated for user ${updateObject.email}.`);
             setUserLogin({
@@ -48,6 +49,7 @@ function Dashboard({setPage}) {
                 role: 'select privileges'
             });
             if (document.querySelector('#selectuserrole')) document.querySelector('#selectuserrole').value='select privileges';
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         } catch(e) {
             // log error
             console.log('error', e.message);
@@ -66,6 +68,7 @@ function Dashboard({setPage}) {
             }
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             setTimeout(()=>{alert('Update not successful. Please check network connection.')}, 200);
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         }
     }
     const handleSubmitDelete = async (e) => {
@@ -78,6 +81,7 @@ function Dashboard({setPage}) {
             password: userLogin.loginpassword
         };
         try {
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/deleteuser`, deleteObject)
             alert(`User ${deleteObject.email} deleted.`);
             setUserLogin({
@@ -86,6 +90,7 @@ function Dashboard({setPage}) {
                 loginchange: false,
                 role: 'select privileges'
             });
+            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         } catch(e) {
             // log error
             console.log('error', e.message)
@@ -104,42 +109,6 @@ function Dashboard({setPage}) {
             }
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             setTimeout(()=>{alert('Delete not successful. Please check network connection.')}, 200);
-        }
-    }
-    const handleTimesheetsSubmit = async (evt) => {
-        <Dashboard />
-        // show spinner
-        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
-        try {
-            // login user
-            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});  
-            const returnedUser = res.data.data;
-            // const jwt = res.data.token; // TODO
-            // set user context to login user
-            setUser({
-                firstname: returnedUser.firstname, 
-                lastname: returnedUser.lastname, 
-                email: returnedUser.email
-            });
-            // remove spinner
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
-            // reset environment
-            setPage('Homepage');
-            setAdminEditTimesheets(true);
-        } catch(e) {
-            // log error
-            console.log('error', e.message)
-            // in-app message to user
-            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="User not found.") {
-                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                return setTimeout(()=>{alert('Email not found.')}, 200);
-            } 
-            if (e.response&&e.response.data&&e.response.data.message&&e.response.data.message==="Password does not match our records.") {
-                if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-                return setTimeout(()=>{alert('Password does not match our records.')},200);
-            }
-            if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
-            setTimeout(()=>{alert('Login not successful. Please check network connection.')}, 200);
         }
     }
     // set environment
@@ -167,7 +136,7 @@ function Dashboard({setPage}) {
     },[totSheets]);
     return (
         <>  
-            {/* <Spinner style={{display: 'none'}} /> */}
+            <Spinner />
             <div className='OuterContainer' style={{fontFamily: 'avenir, sans-serif', letterSpacing: '1.6px', lineSpacing: '1.5', display: 'flex', width: '100%'}}>
                 <div style={{flex: '2', backgroundColor: '#004976', color: 'white'}}> 
                     <div style={{width: '100%'}}>
@@ -252,7 +221,7 @@ function Dashboard({setPage}) {
                                 </div>
                                 <div style={{marginTop: '25px', width: '100%', display: 'flex', justifyContent: 'center'}}>
                                     <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto', backgroundColor: '#004976'}} onClick={()=>{if (!window.navigator.onLine) {window.alert('No network connection.')}}}>
-                                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadnewtimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
+                                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadnewtimesheets`} onClick={()=>setPage('admin')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
                                     </button>
                                 </div>
                             </div>

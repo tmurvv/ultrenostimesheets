@@ -1,5 +1,5 @@
 // packages
-import {useState, useContext} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
@@ -65,7 +65,11 @@ function Signup({setPage}) {
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         }
-    } 
+    }
+    // set environment
+    useEffect(()=>{
+        if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
+    },[]);
     return ( 
        <>
        <div className='login-signup-container'>

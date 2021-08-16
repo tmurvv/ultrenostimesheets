@@ -36,16 +36,22 @@ function Login({setPage}) {
             setUser({
                 firstname: returnedUser.firstname, 
                 lastname: returnedUser.lastname, 
-                email: returnedUser.email
+                email: returnedUser.email,
+                role: returnedUser.role
             });
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
             // in-app message
-            setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
-            // if admin, go to admin page
-            if (returnedUser.firstname.toUpperCase()==="ADMIN") setPage('Admin');
-            // if not admin, set environment
-            if (returnedUser.firstname.toUpperCase()!=="ADMIN") {setPage('EnterTimesheet'); setAdminEditTimesheets(false)}
+            
+            // set admin or user environment
+            if (returnedUser&&returnedUser.role&&returnedUser.role.toUpperCase()==="ADMIN") {
+                setPage('Admin'); 
+                setAdminEditTimesheets(false);
+            } else {
+                setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);
+                setPage('EnterTimesheet'); 
+                setAdminEditTimesheets(false);
+            }
         } catch(e) {
             // log error
             console.log('error', e.message)
@@ -141,10 +147,7 @@ function Login({setPage}) {
                             <button type='button' className='link-btn' style={{cursor: 'pointer', fontStyle: 'italic', fontSize: '16px', marginTop: '15px'}}>Forgot Password?</button>
                         </div>
                     </>
-                </form>
-                <div style={{margin: 'auto', width: 'fit-content'}}>
-                    <p style={{width: 'fit-content', fontStyle: 'italic', fontSize: '16px', textAlign: 'center'}}>Login as admin to see more features: <br />Login: admin@ableadmin.com <br />Password: adminpassword</p>
-                </div>
+                </form>     
             </div>
             <LoginSignupCSS />
         </div>

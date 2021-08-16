@@ -3,7 +3,7 @@ function Spinner() {
         <>
             <div id='spinner'
                 style={{
-                    display: 'flex',
+                    display: 'none',
                     justifyContent: 'center',
                     alignItems: 'center',
                     width: 'fit-content',

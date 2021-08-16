@@ -1,33 +1,33 @@
 # Deploy Testing
 
-## [ ] local testing
+## [XX] local testing
 ## [ ] Desktop testing
 ## [ ] Samsung phone testing
 ## [ ] iPhone testing
 ## [ ] iPad testing
 
-#### [x] menu
-- [x] check links
-- [x] check resize
+#### [ ] menu
+- [ ] check links
+- [ ] check resize
 ### [ ] membership
-#### [x] Login
-- [x] bad email
-- [x] bad password
-- [x] no network
-- [x] forgot Password sends reset email
-- [x] reset password email works
-- [x] signup link
-- [x] good login
+#### [ ] Login
+- [ ] bad email
+- [ ] bad password
+- [ ] no network
+- [ ] forgot Password sends reset email
+- [ ] reset password email works
+- [ ] signup link
+- [ ] good login
 #### [ ] signup
 - [ ] emails not match
 - [ ] email exists
 - [ ] bad password
 - [ ] passwords not match
 - [ ] no network
-- [x] login link
-- [x] good signup
+- [ ] login link
+- [ ] good signup
 - [ ] cancel button
-#### [x] logout
+#### [ ] logout
 ### [ ]time sheets
 #### [ ] enter
 - [ ] empty fields
@@ -49,6 +49,9 @@
 - [ ] data updates correctly
 - [ ] no network
 ### [ ] Admin
+- [ ] admin menu links work
+- [ ] manage users works (currently only deletes)
+- [ ] admin privleges works
 - [ ] download timesheets works
 - [ ] upload WIPs works
-- [ ] no network
+- [ ] change timesheets
