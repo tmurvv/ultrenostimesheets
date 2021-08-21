@@ -32,6 +32,7 @@ function Signup({setPage}) {
             lastname: signupUser.lastname,
             email: signupUser.email,
             password: signupUser.password,
+            id: signupUser._id
         };     
         try {
             // signup user

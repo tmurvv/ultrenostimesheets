@@ -1,3 +1,5 @@
+import 'core-js';
+import 'es5-shim';
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import './index.css';

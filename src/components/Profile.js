@@ -18,7 +18,12 @@ function Profile({setPage}) {
         setSignupUser({...signupUser, [evt.target.name]: evt.target.value, change: true});
     }
     const handleSubmit = async (evt) => {
+        if (signupUser.email&&signupUser.email!==signupUser.confirmemail) return alert("Emails do not match.");
+        console.log('email:', user.email)
+        console.log('email:', signupUser.email)
         // validations
+        const emailChange = user.email !== signupUser.email;
+        console.log('emailChange:', emailChange)
         // if ((!signupUser.password)||signupUser.password.length<8) {return alert('Passwords must be at least 8 characters.');}
         // if (signupUser.email !== signupUser.confirmemail) {return alert('Emails do not match.');}
         // if (signupUser.password !== signupUser.confirmpassword) {return alert('Passwords do not match.');}
@@ -28,7 +33,10 @@ function Profile({setPage}) {
         const updatedUser = {
             firstname: signupUser.firstname || user.firstname,
             lastname: signupUser.lastname || user.lastname,
-            email: signupUser.email || user.email
+            email: signupUser.email || user.email,
+            oldemail: user.email,
+            id: user.id,
+            emailChange
         };     
         try {
             // signup user
@@ -40,6 +48,7 @@ function Profile({setPage}) {
                     firstname: updateduser.firstname, 
                     lastname: updateduser.lastname, 
                     email: updateduser.email,
+                    id: updateduser._id
                 });
                 // in-app message
                 alert('Update Successful.');
@@ -77,7 +86,7 @@ function Profile({setPage}) {
                 <form onSubmit={()=>handleSubmit()}>
                     <div className='login-form'>
                         <div className="input-name">
-                            <h3>New First Name<span style={{color: 'orangered'}}>*</span></h3>
+                            <h3>New First Name</h3>
                         </div>
                         <input 
                             className="field-input"
@@ -88,7 +97,7 @@ function Profile({setPage}) {
                             placeholder={user&&user.firstname}
                         />
                         <div className="input-name">
-                            <h3>New Last Name<span style={{color: 'orangered'}}>*</span></h3>
+                            <h3>New Last Name</h3>
                         </div>
                         <input 
                             className="field-input"
@@ -106,17 +115,12 @@ function Profile({setPage}) {
                             className="field-input"
                             type='email'
                             id={uuid()}
-                            // value={signupUser.email}
-                            // onChange={handleChange}
+                            value={signupUser.email}
+                            onChange={handleChange}
                             name='email'
-                            placeholder='Edit email coming soon.'
-                            disabled
+                            placeholder={user.email}
                         />
                         <div className="input-name input-margin">
-                            <h3>Password</h3>
-                        </div>
-                        <div>"Change Password" is located on the login page.</div>               
-                        {/* <div className="input-name input-margin">
                             <h3>Confirm Email<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
@@ -126,9 +130,12 @@ function Profile({setPage}) {
                             value={signupUser.confirmemail}
                             onChange={handleChange}
                             name='confirmemail'
-                            required
                         />
-                        <input 
+                        <div className="input-name input-margin">
+                            <h3>Password</h3>
+                        </div>
+                        <div>"Change Password" is located on the login page.</div>               
+                        {/* <input 
                             className="field-input"
                             type='password'
                             id={uuid()}

@@ -31,13 +31,14 @@ function Login({setPage}) {
             // login user
             const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             const returnedUser = res.data.data;
-            
+            console.log('returnedUser:', returnedUser)
             // set user context to login user
             setUser({
                 firstname: returnedUser.firstname, 
                 lastname: returnedUser.lastname, 
                 email: returnedUser.email,
-                role: returnedUser.role
+                role: returnedUser.role,
+                id: returnedUser._id
             });
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   

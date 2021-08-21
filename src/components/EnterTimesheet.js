@@ -141,6 +141,7 @@ function EnterTimesheet({setPage}) {
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
             
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
+                {user.id} {user.firstname}
                 <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     <div className='login-form'>
                         <div className="input-name">

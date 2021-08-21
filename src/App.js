@@ -30,21 +30,32 @@ function App() {
     
     // param check for reset password
     useEffect(()=>{
-        const params = new URLSearchParams(window.location.search) // id=123
-        if (!params.has('reset')) return;
+        // const params = new URLSearchParams(window.location.search) // id=123
+        const params = window.location.search.substr(1).split('&').reduce(function (q, query) {
+            var chunks = query.split('=');
+            var key = chunks[0];
+            var value = decodeURIComponent(chunks[1]);
+            value = isNaN(Number(value))? value : Number(value);
+            return (q[key] = value, q);
+        }, {});
+        window&&console.log('url:', window.location.search.substr(1).split('&'))
+        if (!params || !params.reset) return;
         setPage('ResetPassword');
-        setResetPasswordEmail(atob(params.get('reset')));
+        params.reset&&setResetPasswordEmail(atob(params.reset));
     },[]);
     // check for file upload
     useEffect(()=>{
         if (process.env.NODE_ENV!=='test') {
-            const urlSearchParams = new URLSearchParams(window.location.search);
-        
-            const params = Object.fromEntries(urlSearchParams.entries());
-            if (params.success==='true') {
-                alert('Your file has been uploaded.');
-                setPage('Homepage')
-            }
+            const params = window.location.search.substr(1).split('&').reduce(function (q, query) {
+                var chunks = query.split('=');
+                var key = chunks[0];
+                var value = decodeURIComponent(chunks[1]);
+                value = isNaN(Number(value))? value : Number(value);
+                return (q[key] = value, q);
+            }, {});
+            if (!params || !params.success) return;
+            alert('Your file has been uploaded.');
+            setPage('Homepage');
         }
     },[setPage]);
     // // check for file upload
