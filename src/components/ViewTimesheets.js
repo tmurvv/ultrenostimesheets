@@ -120,7 +120,7 @@ function ViewTimesheets() {
             {winWidth<=950?
             <table className='table' style={{boxShadow: 'none'}}>    
                 <tbody>
-                {!found&&<tr><h4 style={{textAlign: 'center'}}>No timesheets entries found.</h4></tr>}    
+                {!found&&<tr><td><h4 style={{textAlign: 'center'}}>No timesheets entries found.</h4></td></tr>}    
                 {Array.isArray(entries)?entries.map(entry=>
                 <tr key={entry._id} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                     <td className='cell' style={{opacity: `${entry.editable?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
@@ -133,7 +133,7 @@ function ViewTimesheets() {
                                 endtime: entry.endtime,
                                 lunchtime: entry.lunchtime,
                                 lunchtimeview: entry.lunchtimeview,
-                                jobname: `${entry.jobid} ${entry.jobname}`,
+                                jobname: (`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim(),
                                 task: entry.task,
                                 notes: entry.notes,
                                 timesubmitted: entry.timesubmitted,
@@ -148,7 +148,7 @@ function ViewTimesheets() {
                     <td className='cell'><span className='header'>End Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                     <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry.lunchtime} mins</td>
                     <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
-                    <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{`${entry.jobid} `}{entry.jobname}</td>
+                    <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{(`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim()}</td>
                     <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
                     <td className='cell'><div style={{maxHeight: '120px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
                 </tr>):<tr>No entries found.</tr>}
@@ -170,7 +170,7 @@ function ViewTimesheets() {
                     <th className='header'>Task</th>
                     <th className='header'>Notes</th>
                 </tr>
-                {!found&&<tr><h4>No timesheet entries found.</h4></tr>}
+                {!found&&<tr><td><h4>No timesheet entries found.</h4></td></tr>}
                 {Array.isArray(entries)?entries.map(entry=>
                 <tr key={entry._id} className='row'>
                     <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'space-between', minWidth: '60px'}} disable={entry.editable}>
@@ -181,7 +181,7 @@ function ViewTimesheets() {
                             endtime: entry.endtime,
                             lunchtime: entry.lunchtime,
                             lunchtimeview: entry.lunchtimeview,
-                            jobname: `${entry.jobid} ${entry.jobname}`,
+                            jobname: (`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim(),
                             task: entry.task,
                             notes: entry.notes,
                             timesubmitted: entry.timesubmitted
@@ -203,7 +203,7 @@ function ViewTimesheets() {
                     <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                     <td className='cell'>{entry.lunchtime} mins</td>
                     <td className='cell'><div style={{minWidth: '30px', maxHeight: '40px', overflowY:'auto', textAlign: 'center'}}>{entry.hoursworked}</div></td>
-                    <td className='cell'><div style={{maxHeight: '40px', overflowY:'auto'}}>{`${entry.jobid} `}{entry.jobname}</div></td>
+                    <td className='cell'><div style={{maxHeight: '40px', overflowY:'auto'}}>{(`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim()}</div></td>
                     <td className='cell'><div style={{maxHeight: '40px', overflowY:'auto'}}>{entry.task}</div></td>
                     <td className='cell'><div style={{maxHeight: '40px', maxWidth: '200px', overflowY: 'auto'}}>{entry.notes}</div></td>
                 </tr>

@@ -57,10 +57,6 @@ function App() {
             setPage('Homepage');
         }
     },[setPage]);
-    // // check for file upload
-    // useEffect(()=>{
-    //     window.addEventListener("resize", setPage(page));
-    // },[setPage, page]);
     return (
         <>
             <header>            

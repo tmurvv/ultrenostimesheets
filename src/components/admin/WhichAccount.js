@@ -1,15 +1,15 @@
-import {useState, useEffect, useContext, useLayoutEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import uuid from 'react-uuid';
 
 // internal
 import LoginSignupCSS from '../../styles/LoginSignup.css';
 import PageTitle from '../PageTitle';
-import Spinner from '../Spinner';
+// import Spinner from '../Spinner';
 import {UserContext} from '../../contexts/UserContext';
 import {AdminEditTimesheetsContext} from '../../contexts/AdminEditTimesheetsContext';
 function WhichAccount({ title, subtitle, accountHeading, setPage}) {
-    const [winWidth, setWinWidth] = useState(2000);
+    // const [setWinWidth] = useState(2000);
     const { setUser } = useContext(UserContext);
     const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
@@ -76,7 +76,7 @@ function WhichAccount({ title, subtitle, accountHeading, setPage}) {
     //     }
     //     // numSheets();
     // },[totSheets]);
-    useEffect(()=>{setWinWidth(window.innerWidth)},[]);
+    // useEffect(()=>{setWinWidth(window.innerWidth)},[]);
 
     return (
         <>

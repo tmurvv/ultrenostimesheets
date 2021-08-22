@@ -107,6 +107,7 @@ function EditTimesheet(props) {
     },[]);
     // get data
     useEffect(()=>{
+        console.log('editEntry:', editEntry)
         async function getSupportLists() {
             // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
@@ -126,7 +127,7 @@ function EditTimesheet(props) {
             try {
                 const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
-                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid}`, `${currentJobArray.jobname}`])})
+                Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobname&&currentJobArray.jobid}`, `${currentJobArray.jobname&&currentJobArray.jobname}`])})
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');
                 // add choice for other
                 incomingCurrentJobs.push(['Other', '(please enter in notes)']);
@@ -210,13 +211,12 @@ function EditTimesheet(props) {
                         <div className="input-name input-margin">
                             <h3>Job Name</h3>
                         </div>
-
                         <select 
                             className="field-input"
                             style={{width: '100%'}}
                             type='text'
                             id={uuid()}
-                            value={entry.jobname}
+                            value={entry.jobname.replace('undefined', '').trim()}
                             onChange={handleChange}
                             name='jobname'
                             placeholder={editEntry.jobname}
