@@ -18,17 +18,13 @@ function Profile({setPage}) {
         setSignupUser({...signupUser, [evt.target.name]: evt.target.value, change: true});
     }
     const handleSubmit = async (evt) => {
-        if (signupUser.email&&signupUser.email!==signupUser.confirmemail) return alert("Emails do not match.");
-        console.log('email:', user.email)
-        console.log('email:', signupUser.email)
         // validations
-        const emailChange = user.email !== signupUser.email;
-        console.log('emailChange:', emailChange)
-        // if ((!signupUser.password)||signupUser.password.length<8) {return alert('Passwords must be at least 8 characters.');}
-        // if (signupUser.email !== signupUser.confirmemail) {return alert('Emails do not match.');}
-        // if (signupUser.password !== signupUser.confirmpassword) {return alert('Passwords do not match.');}
+        if (signupUser.email&&signupUser.email!==signupUser.confirmemail) return alert("Emails do not match.");
+        
         // start spinner
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
+        // is it an email change (backend needs to know)
+        const emailChange = signupUser.email&&signupUser.confirmemail&&(user.email !== signupUser.email);
         // create signup user object
         const updatedUser = {
             firstname: signupUser.firstname || user.firstname,
@@ -66,7 +62,7 @@ function Profile({setPage}) {
                 alert("Email already in use.");
             } else {
                 // all other errors
-                alert(`Something went wrong on signup. Please check your network connection.`)
+                alert(`Something went wrong while changing profile. Please check your network connection.`)
             }
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
@@ -74,7 +70,6 @@ function Profile({setPage}) {
     }
     // set environment
     useEffect(()=>{
-        user&&console.log('user:', user)
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";   
     },[]);
     return ( 
@@ -135,15 +130,6 @@ function Profile({setPage}) {
                             <h3>Password</h3>
                         </div>
                         <div>"Change Password" is located on the login page.</div>               
-                        {/* <input 
-                            className="field-input"
-                            type='password'
-                            id={uuid()}
-                            value={signupUser.confirmpassword}
-                            onChange={handleChange}
-                            name='confirmpassword'
-                            required
-                        />    */}
                     </div>
                     <div style={{width: '100%', display: 'flex', justifyContent: 'space-evenly', marginTop: '20px auto'}}>
                         <button type='button' className="submit-btn login-signup-title" onClick={handleSubmit} style={{width: '120px'}}>

@@ -7,7 +7,7 @@ function PageTitle({ maintitle, subtitle }) {
     return (
         <>
         <div className='mainTitle'>
-            <h2 style={{fontSize: `${winWidth<550?'30px':''}`}}>{maintitle}</h2>
+            <h2 style={{fontSize: `${winWidth<=550?'30px':''}`}}>{maintitle}</h2>
             <h3 className="subTitle">{subtitle}</h3>
         </div>
         <PageTitleCss />

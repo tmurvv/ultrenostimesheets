@@ -62,7 +62,6 @@ function ResetPassword(props) {
     useEffect(() => {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     })
-    
     return (
        <>
         <div style={{padding: '70px'}} className='loginReset-signupReset-container'>

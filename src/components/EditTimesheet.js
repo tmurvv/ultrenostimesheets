@@ -12,8 +12,7 @@ import {PageContext} from "../contexts/PageContext";
 import {EditEntryContext} from "../contexts/EditEntryContext";
 import {ENTRY_INIT, LUNCHTIMES} from "../constants/inits";
 import {
-    getMinutesWorked, 
-    updateLunchTimeFromEdit, 
+    getMinutesWorked,  
     isFutureDay,
     checkJobsite
 } from "../utils/helpers";
@@ -163,7 +162,7 @@ function EditTimesheet(props) {
             <PageTitle maintitle='Edit Timesheet Entry' subtitle={user.email&&`for ${user.firstname} ${user.lastname}`} />
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>           
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
-                <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
+                <form style={{marginTop: `${winWidth<=750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>Start Time</h3>

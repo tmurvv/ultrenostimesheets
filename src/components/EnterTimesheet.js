@@ -141,8 +141,7 @@ function EnterTimesheet({setPage}) {
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
             
             <div className='form-container' id="signup" style={{marginTop: '0px'}}>
-                {user.id} {user.firstname}
-                <form style={{marginTop: `${winWidth<750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
+                <form style={{marginTop: `${winWidth<=750?'-50px':''}`}} onSubmit={()=>handleSubmit()}>
                     <div className='login-form'>
                         <div className="input-name">
                             <h3>Start Time</h3>
@@ -215,6 +214,7 @@ function EnterTimesheet({setPage}) {
                         > 
                             <option key='whattypeofwork'>What type of work?</option>
                             {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)}
+                            <option key='notfoundtask' value={['Other', '(please enter in notes)']}>Other (please enter in notes)</option>
                         </select>
                         <div className="input-name input-margin">
                             <h3>Notes</h3>

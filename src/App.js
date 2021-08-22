@@ -24,7 +24,7 @@ import {USER_INIT} from './constants/inits';
 function App() {
     const [user, setUser] = useState(USER_INIT);
     const [adminEditTimesheets, setAdminEditTimesheets] = useState(false);
-    const [page, setPage] = useState("login"); // BREAKING ['Homepage', 'Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'Admin']
+    const [page, setPage] = useState("login"); // ['Homepage', 'Login','Logout', 'Signup', 'EnterTimesheet', 'ViewTimesheets', 'EditTimesheet', 'PasswordReset', 'RefreshView', 'Admin', 'Profile']
     const [editEntry, setEditEntry] = useState(USER_INIT);
     const [resetPasswordEmail, setResetPasswordEmail] = useState();
     
@@ -38,7 +38,6 @@ function App() {
             value = isNaN(Number(value))? value : Number(value);
             return (q[key] = value, q);
         }, {});
-        window&&console.log('url:', window.location.search.substr(1).split('&'))
         if (!params || !params.reset) return;
         setPage('ResetPassword');
         params.reset&&setResetPasswordEmail(atob(params.reset));

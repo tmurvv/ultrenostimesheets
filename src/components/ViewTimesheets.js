@@ -80,7 +80,7 @@ function ViewTimesheets() {
                     entry.endtime=`${entry.endtime}`;
                     entry.lunchtimeview=`${entry.lunchtime} minutes`;
                     entry.hoursworked=minutesToDigital(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime)).toFixed(2);
-                    entry.editable=entryEditable(entry, adminEditTimesheets); // BREAKING
+                    entry.editable=entryEditable(entry, adminEditTimesheets);
                 });
                 // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
                 entries.sort((a,b) => (a.starttime > b.starttime) ? -1 : ((b.starttime > a.starttime) ? 1 : 0));
@@ -114,14 +114,13 @@ function ViewTimesheets() {
     return (
         <div style={{marginTop: '50px', marginBottom: '50px'}}>
             <Spinner />
-            <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname}. Usually entries may be edited within 24 hours of submission.`}/>
+            <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname} - entries may be edited until office prepares payroll`}/>
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
-            
             {/* mobile display */}
-            {winWidth<950?
-            <table className='table' style={{boxShadow: 'none'}}>
-                {!found&&<h4 style={{textAlign: 'center'}}>No timesheets entries found.</h4>}
-                <tbody>               
+            {winWidth<=950?
+            <table className='table' style={{boxShadow: 'none'}}>    
+                <tbody>
+                {!found&&<tr><h4 style={{textAlign: 'center'}}>No timesheets entries found.</h4></tr>}    
                 {Array.isArray(entries)?entries.map(entry=>
                 <tr key={entry._id} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                     <td className='cell' style={{opacity: `${entry.editable?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
@@ -155,10 +154,9 @@ function ViewTimesheets() {
                 </tr>):<tr>No entries found.</tr>}
                 </tbody>
             </table>:''
-            }
-            
+            }         
             {/* non-mobile display */}
-            {winWidth>=950&&
+            {winWidth>950&&
             <table className='table' style={{maxWidth: 'unset'}}>
                 <tbody>
                 <tr className='row'>
@@ -172,7 +170,7 @@ function ViewTimesheets() {
                     <th className='header'>Task</th>
                     <th className='header'>Notes</th>
                 </tr>
-                {!found&&<h4>No timesheet entries found.</h4>}
+                {!found&&<tr><h4>No timesheet entries found.</h4></tr>}
                 {Array.isArray(entries)?entries.map(entry=>
                 <tr key={entry._id} className='row'>
                     <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'space-between', minWidth: '60px'}} disable={entry.editable}>
@@ -199,8 +197,7 @@ function ViewTimesheets() {
                                 alert('Please contact office to make changes.')
                             }
                         }} alt='delete button'/>
-                    </td>
-                    
+                    </td>       
                     <td className='cell'><div style={{width: '90px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                     <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
                     <td className='cell'><div style={{width: '75px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>

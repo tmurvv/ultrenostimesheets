@@ -8,21 +8,16 @@ import DashboardCss from '../styles/Dashboard.css';
 import PageTitle from './PageTitle';
 import WhichAccount from './admin/WhichAccount';
 import Spinner from '../components/Spinner';
-import {USER_INIT} from '../constants/inits';
 import {UserContext} from '../contexts/UserContext';
-import {AdminEditTimesheetsContext} from '../contexts/AdminEditTimesheetsContext';
 
 function Dashboard({setPage}) {
-    const [winWidth, setWinWidth] = useState(2000);
     const [numSheets, setNumSheets] = useState(0);
     const [totSheets, setTotSheets] = useState(0);
     const [totUsers, setTotUsers] = useState(0);
     const [jobs, setJobs] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [dashboardPage, setDashboardPage] = useState('home');
-    const [accountToChange, setAccountToChange] = useState();
-    const { user, setUser } = useContext(UserContext);
-    const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
+    const {user} = useContext(UserContext);
     const [userLogin, setUserLogin] = useState({
         loginemail: '',
         loginpassword: '',
@@ -117,7 +112,6 @@ function Dashboard({setPage}) {
         window&&window.scrollTo(0,0);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
-    useEffect(()=>{setWinWidth(window.innerWidth)},[]);
     useEffect(()=>{
         // get data
         const numSheets = async () => {
@@ -392,21 +386,6 @@ function Dashboard({setPage}) {
                         <LoginSignupCSS />
                     </>         
                     }
-                    {/* {dashboardPage&&dashboardPage==='changeuser'
-                    &&
-                    <>
-                        <div style={{margin: '70px auto 50px'}}>
-                            <PageTitle maintitle={`User ${accountToChange}`} />
-                        </div>
-                        <div style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
-                            <input type='checkbox' name='toggleReminders' onClick={()=>alert('Under Construction')} />
-                            <label htmlFor='toggleReminders'>Turn reminder emails on/off.</label>
-                        </div>
-                        <div style={{display: 'flex', width: '100%', justifyContent: 'center', marginTop: '50px'}}>
-                            <button style={{textAlign: 'center', backgroundColor: 'tomato', fontSize: '20px', color: 'white', padding: '5px 7px'}} onClick={()=>{handleDeleteAccount()}}>Delete Account</button>
-                        </div>
-                    </>         
-                    } */}
                     </div>
                 </div>
                 <DashboardCss />

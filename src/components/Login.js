@@ -31,7 +31,6 @@ function Login({setPage}) {
             // login user
             const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             const returnedUser = res.data.data;
-            console.log('returnedUser:', returnedUser)
             // set user context to login user
             setUser({
                 firstname: returnedUser.firstname, 
