@@ -120,7 +120,7 @@ function ViewTimesheets() {
             {winWidth<=950?
             <table className='table' style={{boxShadow: 'none'}}>    
                 <tbody>
-                {!found&&<tr><td><h4 style={{textAlign: 'center'}}>No timesheets entries found.</h4></td></tr>}    
+                {!found&&<tr><td><p style={{textAlign: 'center'}}>No timesheets entries found.</p></td></tr>}    
                 {Array.isArray(entries)?entries.map(entry=>
                 <tr key={entry._id} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                     <td className='cell' style={{opacity: `${entry.editable?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
@@ -151,7 +151,7 @@ function ViewTimesheets() {
                     <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{(`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim()}</td>
                     <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
                     <td className='cell'><div style={{maxHeight: '120px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
-                </tr>):<tr>No entries found.</tr>}
+                </tr>):<tr><td>No entries found.</td></tr>}
                 </tbody>
             </table>:''
             }         

@@ -84,7 +84,7 @@ function Dashboard({setPage}) {
                 loginemail: '',
                 loginpassword: '',
                 loginchange: false,
-                role: 'select privileges'
+                role: 'select privileges',
             });
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
         } catch(e) {
@@ -153,6 +153,7 @@ function Dashboard({setPage}) {
                         <div style={{marginTop: '70px'}}>
                             <PageTitle maintitle='Admin Dashboard' subtitle=''>Admin Dashboard</PageTitle>
                         </div>
+                        {/* STAT CIRCLES*/}
                         <div style={{padding: '50px 0px 30px', display: 'flex',  justifyContent: 'space-evenly', width: '100%'}}>
                             <div style={{display: 'flex', flexDirection: 'column', flex: '3', alignItems: 'center', justifyContent: 'center', textAlign: 'center'}}>
                                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px', width: '100px', borderRadius: '50%', backgroundImage: 'linear-gradient(340deg, #f9bf1e 50%, #fffbb5 58%, #ffe58a 74%, #f9bf1e 87%)'}}>
@@ -188,19 +189,21 @@ function Dashboard({setPage}) {
                         <div style={{margin: '50px auto', display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'transparent'}}>
                             <img src="/img/tapered_line_blue.png" alt='tapered blue dividing line' style={{minWidth: '80%', height: '50px'}}/>
                         </div>
+                        {/* CURRENT LISTS */}
                         <h2 style={{textAlign: 'center', marginBottom: '50px'}}>Current Lists</h2>
                         <div className= 'lists' style={{backgroundColor: 'transparent', boxSizing: 'border-box', display: 'flex', width: '80%', margin: 'auto', flex: '8', justifyContent: 'space-evenly', textAlign: 'left'}}>
                             <ul style={{marginRight: '17px', flex: '1', boxSizing: 'border-box', textAlign: 'center'}}>
-                                <li style={{padding: '10px 10px 7px', fontWeight: 'bold', backgroundColor: 'lightgrey', width: '100%'}}>Works in Progress</li>
-                                {jobs&&jobs.map(job => <li style={{textAlign: 'left', borderBottom: '1px solid lightgrey', padding: '5px 10px', backgroundColor: 'white', width: '100%'}}>{job}</li>)}
+                                <li key='job' style={{padding: '10px 10px 7px', fontWeight: 'bold', backgroundColor: 'lightgrey', width: '100%'}}>Works in Progress</li>
+                                {jobs&&jobs.map(job => <li key={job} style={{textAlign: 'left', borderBottom: '1px solid lightgrey', padding: '5px 10px', backgroundColor: 'white', width: '100%'}}>{job}</li>)}
                             </ul>
                             <ul style={{marginLeft: '17px', flex: '1', boxSizing: 'border-box', textAlign: 'center'}}>
-                                <li style={{padding: '10px 10px 7px', fontWeight: 'bold', backgroundColor: 'lightgrey', width: '100%'}}>Tasks</li>
-                                {tasks&&tasks.map(task => <li style={{textAlign: 'left', borderBottom: '1px solid lightgrey', padding: '5px 10px', backgroundColor: 'white', width: '100%'}}>{task}</li>)}
+                                <li key='tasks' style={{padding: '10px 10px 7px', fontWeight: 'bold', backgroundColor: 'lightgrey', width: '100%'}}>Tasks</li>
+                                {tasks&&tasks.map(task => <li key={task} style={{textAlign: 'left', borderBottom: '1px solid lightgrey', padding: '5px 10px', backgroundColor: 'white', width: '100%'}}>{task}</li>)}
                             </ul>
                         </div>
                     </>
                     }
+                    {/* DOWNLOAD TIMESHEETS */}
                     {dashboardPage&&dashboardPage==='download'&&
                         <div className='login-signup-container' style={{minHeight: 'unset', paddingBottom: '25px', marginTop: '70px'}}>
                         <PageTitle maintitle='Download Timesheets' />          
@@ -216,7 +219,7 @@ function Dashboard({setPage}) {
                                 </div>
                                 <div style={{marginTop: '25px', width: '100%', display: 'flex', justifyContent: 'center'}}>
                                     <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto', backgroundColor: '#004976'}} onClick={()=>{if (!window.navigator.onLine) {window.alert('No network connection.')}}}>
-                                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadnewtimesheets`} onClick={()=>setPage('admin')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
+                                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadnewtimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
                                     </button>
                                 </div>
                             </div>
@@ -239,6 +242,7 @@ function Dashboard({setPage}) {
                         
                     </div>
                     }
+                    {/* UPLOAD LISTS */}
                     {dashboardPage&&dashboardPage==='upload'
                     &&
                     <>
@@ -247,6 +251,7 @@ function Dashboard({setPage}) {
                         <div className="form-container" style={{marginTop: '50px'}}>
                             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                                 <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                                    <input type='text' name='user' value={JSON.stringify(user)} hidden/>
                                     <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
                                     <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                                         Upload WIPs List
@@ -270,6 +275,7 @@ function Dashboard({setPage}) {
                         <div className="form-container" style={{marginTop: '50px'}}>
                             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                                 <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                                    <input type='text' name='user' value={JSON.stringify(user)} hidden/>
                                     <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
                                     <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "specific task" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                                         Upload Task List
@@ -286,12 +292,14 @@ function Dashboard({setPage}) {
                     </div>
                     </>
                     }
+                    {/* EDIT TIMESHEETS */}
                     {dashboardPage&&dashboardPage==='timesheets'
                     &&
                     <>
                         <WhichAccount title='Change User Timesheets' subtitle="Logs you into the user's account with permissions to make changes" accountHeading="Email on Timesheet" setPage={setPage}/>
                     </>         
                     }
+                    {/* DELETE USER */}
                     {dashboardPage&&dashboardPage==='manageusers'
                     &&
                     <>
@@ -335,6 +343,7 @@ function Dashboard({setPage}) {
                         <LoginSignupCSS />
                     </>         
                     }
+                    {/* ADMIN PRIVILEGES */}
                     {dashboardPage&&dashboardPage==='admin'
                     &&
                     <>

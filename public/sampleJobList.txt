@@ -1,6 +1,8 @@
+18238 Barbary
 18265 Ramsay
 19349 Shigematsu
 C19366 Baker
+C19822 Currey
 C19372 Rajan
 C20007 Cormack
 C20009 Petrie

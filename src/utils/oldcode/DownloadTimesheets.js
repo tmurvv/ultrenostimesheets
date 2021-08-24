@@ -23,8 +23,7 @@ function DownloadTimesheets({setPage}) {
     },[]);
     useEffect(()=>{
         const numSheets = async () => {
-            const res = await axios.get('http://localhost:3000/api/v1/ultrenostimesheets/numtimesheets');
-            // const res = await axios.get('https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/numtimesheets');
+            const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/numtimesheets`);
             setNumSheets(res.data.numsheets);
         }
         numSheets();
@@ -38,8 +37,7 @@ function DownloadTimesheets({setPage}) {
             <div className="form-container" style={{marginTop: '50px'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                     <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
-                        {/* <a href='http://localhost:3000/api/v1/ultrenostimesheets/downloadtimesheets' onClick={()=>setNumSheets('Refresh window for number of ')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a> */}
-                        <a href='https://take2tech.herokuapp.com/api/v1/ultrenostimesheets/downloadtimesheets' onClick={()=>setNumSheets('Refresh window for number of ')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a>
+                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/downloadtimesheets`} onClick={()=>setNumSheets('Refresh window for number of ')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download Timesheets</a>
                     </button>
                 </div>
             </div>

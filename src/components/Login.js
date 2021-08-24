@@ -45,7 +45,7 @@ function Login({setPage}) {
             
             // set admin or user environment
             if (returnedUser&&returnedUser.role&&returnedUser.role.toUpperCase()==="ADMIN") {
-                setPage('Admin'); 
+                setPage('Dashboard'); 
                 setAdminEditTimesheets(false);
             } else {
                 setTimeout(()=>{alert(`Login successful. Welcome ${returnedUser.firstname}`)},200);

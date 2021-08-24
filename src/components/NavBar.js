@@ -52,7 +52,7 @@ export default function NavBar() {
                         }
                         {user&&user.role&&user.role.toUpperCase()==='ADMIN'&&
                             <li>
-                                <Link to="/" onClick={()=>{setOpen(false);setPage('Admin');}}>Admin</Link>
+                                <Link to="/" onClick={()=>{setOpen(false);setPage('Dashboard');}}>Admin</Link>
                             </li>
                         }
                         <li>

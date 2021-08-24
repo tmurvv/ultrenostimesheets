@@ -5,6 +5,7 @@ function NavBarCss() {
                 box-sizing: border-box;
             }
             .navBarOuter {
+                background: #f9bf1e;
                 background-image: linear-gradient(340deg, #f9bf1e 50%, #fffbb5 58%, #ffe58a 74%, #f9bf1e 87%);
                 height: 40px;
                 border-bottom: 1px solid grey;
@@ -39,6 +40,7 @@ function NavBarCss() {
                     height: 162px;
                     padding: 10px;
                     border-radius: 3px;
+                    background: #f9bf1e;
                     background-image: linear-gradient(340deg, #f9bf1e 50%, #fffbb5 58%, #ffe58a 74%, #f9bf1e 87%);
                     z-index: 9500;
                 }

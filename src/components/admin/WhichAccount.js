@@ -10,7 +10,7 @@ import {UserContext} from '../../contexts/UserContext';
 import {AdminEditTimesheetsContext} from '../../contexts/AdminEditTimesheetsContext';
 function WhichAccount({ title, subtitle, accountHeading, setPage}) {
     // const [setWinWidth] = useState(2000);
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const { setAdminEditTimesheets } = useContext(AdminEditTimesheetsContext);
     const [userLogin, setUserLogin] = useState({
         loginemail: '',
@@ -25,14 +25,16 @@ function WhichAccount({ title, subtitle, accountHeading, setPage}) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
             // login user
-            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});  
+            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword, adminemail: user.email});  
             const returnedUser = res.data.data;
             // const jwt = res.data.token; // TODO
             // set user context to login user
             setUser({
                 firstname: returnedUser.firstname, 
                 lastname: returnedUser.lastname, 
-                email: returnedUser.email
+                email: returnedUser.email,
+                role: returnedUser.role,
+                id: returnedUser._id
             });
             // remove spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
