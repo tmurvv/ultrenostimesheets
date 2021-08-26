@@ -47,7 +47,7 @@ export default function NavBar() {
                         </div>
                         {user.email&&
                             <li style={{fontSize: '16px'}}>
-                                {user.email?`Welcome ${user.firstname}`:<Link to="/" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
+                                {user.email?<Link to="/" onClick={()=>setPage('Homepage')}>Welcome {user.firstname}</Link>:<Link to="/" onClick={()=>{setOpen(false);setPage('Login')}}>Login</Link>}
                             </li>
                         }
                         {user&&user.role&&user.role.toUpperCase()==='ADMIN'&&

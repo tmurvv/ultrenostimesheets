@@ -107,7 +107,6 @@ function EditTimesheet(props) {
     },[]);
     // get data
     useEffect(()=>{
-        console.log('editEntry:', editEntry)
         async function getSupportLists() {
             // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   

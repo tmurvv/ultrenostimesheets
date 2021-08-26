@@ -50,8 +50,8 @@ function EnterTimesheet({setPage}) {
         // start spinner
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         //find job id
-        let jobId=entry.jobname.split(',')[0];
-        const jobName=entry.jobname.split(',')[1];
+        let jobId=entry.jobname.split(' ')[0];
+        let jobName=entry.jobname.split(' ')[1];
         // create submit object
         const entryObject = {
             "userid": user.email,
