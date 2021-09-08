@@ -29,7 +29,7 @@ function Dashboard({setPage}) {
     }
     const handleSubmitPrivileges = async (e) => {
         const updateObject = {
-            email: document.querySelector('#updateroleemail').value, 
+            oldemail: document.querySelector('#updateroleemail').value, // called 'oldemail' to be consistant with profile which also calls updateUser in BE
             role: userLogin.role,
             adminemail: user.email,
             password: userLogin.loginpassword
@@ -37,7 +37,7 @@ function Dashboard({setPage}) {
         try {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/updateuser`, updateObject)
-            alert(`Privileges updated for user ${updateObject.email}.`);
+            alert(`Privileges updated for user ${updateObject.oldemail}.`);
             setUserLogin({
                 loginemail: '',
                 loginpassword: '',

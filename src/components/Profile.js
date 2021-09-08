@@ -103,7 +103,7 @@ function Profile({setPage}) {
                             placeholder={user&&user.lastname}
                         />
                         <div className="input-name input-margin">
-                            <h3>Email</h3>
+                            <h3>New Email</h3>
                             {/* <h3>Email<span style={{color: 'orangered'}}>*</span></h3> */}
                         </div>
                         <input 
@@ -116,7 +116,7 @@ function Profile({setPage}) {
                             placeholder={user.email}
                         />
                         <div className="input-name input-margin">
-                            <h3>Confirm Email<span style={{color: 'orangered'}}>*</span></h3>
+                            <h3>Confirm New Email<span style={{color: 'orangered'}}>*</span></h3>
                         </div>
                         <input 
                             className="field-input"
