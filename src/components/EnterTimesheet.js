@@ -52,6 +52,8 @@ function EnterTimesheet({setPage}) {
         //find job id
         let jobId=entry.jobname.split(' ')[0];
         let jobName=entry.jobname.split(' ')[1];
+        if (jobId.toUpperCase().startsWith("OTHER")) {jobId="Other"; jobName="  ";}
+        if (entry.task.toUpperCase().startsWith("OTHER")) entry.task="Other";
         // create submit object
         const entryObject = {
             "userid": user.email,
@@ -214,7 +216,7 @@ function EnterTimesheet({setPage}) {
                         > 
                             <option key='whattypeofwork'>What type of work?</option>
                             {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)}
-                            <option key='notfoundtask' value={['Other', '(please enter in notes)']}>Other (please enter in notes)</option>
+                            <option key='notfoundtask' value={'Other (please enter in notes)'}>Other (please enter in notes)</option>
                         </select>
                         <div className="input-name input-margin">
                             <h3>Notes</h3>

@@ -14,5 +14,4 @@ Painting
 Flooring
 Cleaning
 Deliver/Pickup/Driving etc.
-Administrative/Shopt ime (no specific job)
-Other (please enter in notes)
+Administrative/Shoptime (no specific job)

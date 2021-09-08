@@ -110,7 +110,17 @@ function Dashboard({setPage}) {
     // set environment
     useEffect(()=>{
         window&&window.scrollTo(0,0);
+        const params = window.location.search.substr(1).split('&').reduce(function (q, query) {
+            var chunks = query.split('=');
+            var key = chunks[0];
+            var value = decodeURIComponent(chunks[1]);
+            value = isNaN(Number(value))? value : Number(value);
+            return (q[key] = value, q);
+        }, {});
+        // if (document&&document.querySelector('#job-list-input')&&document.querySelector('#job-list-input').focus()) document.querySelector('#job-list-input').focus();
+        if (params&&params.auto) {setDashboardPage('upload');}
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
+        // setDashboardPage('upload');
     },[]);
     useEffect(()=>{
         // get data
@@ -252,8 +262,8 @@ function Dashboard({setPage}) {
                             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                                 <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                                     <input type='text' name='user' value={JSON.stringify(user)} hidden/>
-                                    <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                                    <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                                    <input id="job-list-input" type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} autoFocus />
+                                    <button id='submit-job-list' type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                                         Upload WIPs List
                                     </button>
                                 </form>
@@ -276,8 +286,9 @@ function Dashboard({setPage}) {
                             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                                 <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                                     <input type='text' name='user' value={JSON.stringify(user)} hidden/>
-                                    <input type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
-                                    <button type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "specific task" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
+                                    <input id="task-list-input" type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
+                                    {/* BREAKING = below type should be submit*/}
+                                    <button type='Button' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "specific task" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
                                         Upload Task List
                                     </button>
                                 </form>

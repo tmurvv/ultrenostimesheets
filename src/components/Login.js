@@ -121,6 +121,7 @@ function Login({setPage}) {
                                 onChange={handleChange}
                                 name='loginemail'
                                 required
+                                autoFocus
                             />
                             <div className="input-name input-margin">
                                 <h3>Password</h3>

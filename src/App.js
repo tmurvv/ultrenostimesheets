@@ -59,11 +59,15 @@ function App() {
                 value = isNaN(Number(value))? value : Number(value);
                 return (q[key] = value, q);
             }, {});
-            if (params&&params.user&&atob(params.user)) jParse(atob(params.user));
-            window.history.replaceState({}, document.title, "/");
-            if (!params || !params.success) return;
+            console.log('params:', params)
+            console.log('params.auto')
+            if (params&&params.user&&atob(params.user)) {jParse(atob(params.user));
+            window.history.replaceState({}, document.title, "/");}
+            else if (params&&params.auto) {setPage('Dashboard'); return;}
+            else if (!params || !params.success) {return;}
             alert('Your file has been uploaded.');
             setPage('Homepage');
+            window.history.replaceState({}, document.title, "/");
         }
     },[setPage]);
     return (

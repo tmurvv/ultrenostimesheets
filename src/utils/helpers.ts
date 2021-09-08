@@ -1,4 +1,5 @@
 export function getMinutesWorked(starttime: string, endtime: string, lunchtime: number) {
+    console.log(starttime,endtime,lunchtime)
     // validate for lunchtime
     if ((!lunchtime && lunchtime !== 0) || lunchtime<0 || isNaN(Number(lunchtime))) return -3;
     // validate if endtime before starttime
@@ -10,6 +11,7 @@ export function getMinutesWorked(starttime: string, endtime: string, lunchtime: 
     if (milliesWorked<=0) return -2;
     if (isNaN(Math.round((milliesWorked/60)/1000))) return -3;
     //return minutes worked
+    console.log(Math.round((milliesWorked/60)/1000))
     return Math.round((milliesWorked/60)/1000);
 }
 export function minutesToDigital(minutes: any) {
@@ -110,3 +112,21 @@ export function checkJobsite(joblist: string[], editEntry: any) {
     // check for jobsite in list
     return fullJobName.includes(editEntry.jobname);
 }
+
+export function getParams() {
+    // window.location.search.substr(1).split('&').reduce(function (q, query) {
+        
+    //     const chunks = query.split('=');
+    //     const key = chunks[0];
+    //     const value =  decodeURIComponent(chunks[1]);
+    //     // return (q[key] = value, q);
+    // }, {});
+
+    // window.location.search.substr(1).split('&').reduce(function (q, query) {
+    //     var chunks = query.split('=');
+    //     var key = chunks[0];
+    //     var value = decodeURIComponent(chunks[1]);
+    //     value = isNaN(Number(value))? value : Number(value);
+    //     return (q[key] = value, q);
+    // }, {});
+} 

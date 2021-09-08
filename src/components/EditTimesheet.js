@@ -60,6 +60,8 @@ function EditTimesheet(props) {
         //find job id
         let jobId=updateObject.jobname.split(' ')[0];
         let jobName=updateObject.jobname.split(/ (.+)/)[1];
+        if (jobId.toUpperCase().startsWith("OTHER")) {jobId="Other"; jobName="  ";}
+        if (updateObject.task.toUpperCase().startsWith("OTHER")) updateObject.task="Other";
         // create submit object
         const entryObject = {
             starttime: updateObject.starttime, 
@@ -215,7 +217,7 @@ function EditTimesheet(props) {
                             style={{width: '100%'}}
                             type='text'
                             id={uuid()}
-                            value={entry.jobname.replace('undefined', '').trim()}
+                            value={entry.jobname.replace('undefined', '').replace('Other','Other (please enter in notes)').trim()}
                             onChange={handleChange}
                             name='jobname'
                             placeholder={editEntry.jobname}
@@ -232,7 +234,7 @@ function EditTimesheet(props) {
                             className="field-input"
                             style={{width: '100%'}}
                             id={uuid()}
-                            value={entry.task}
+                            value={entry.task.replace('Other','Other (please enter in notes)')}
                             onChange={handleChange}
                             placeholder={editEntry.task}
                             name='task'
@@ -240,7 +242,7 @@ function EditTimesheet(props) {
                         > 
                             <option key='whattypeofwork'>What type of work?</option>
                             {tasks&&tasks.map(task=><option key={task} value={task}>{task}</option>)} 
-                            
+                            <option key='notfoundtask' value={'Other (please enter in notes)'}>Other (please enter in notes)</option>
                         </select>
                         <div className="input-name input-margin">
                             <h3>Notes</h3>
