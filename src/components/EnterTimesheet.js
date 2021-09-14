@@ -78,11 +78,17 @@ function EnterTimesheet({setPage}) {
             setEntry(ENTRY_INIT);
         } catch(e) {
             // log error
-            console.error(e.message);
+            console.error(e.response);
+            console.error(e.response.data.error);
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             // in-app message
-            setTimeout(()=>{alert('Something went wrong, please check network connection.')}, 200);
+            if (e.response&&e.response.data&&e.response.data.error&&e.response.data.error.includes('overlaps')) {
+                setTimeout(()=>{alert('Time overlaps with another timesheet. Please select "View Timesheets" from the menu to see the overlapping timesheet.')}, 200);
+            } else {
+                setTimeout(()=>{alert('Something went wrong, please check network connection.')}, 200);
+            }
+            
         }
     }
     // set environment

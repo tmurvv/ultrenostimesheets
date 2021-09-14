@@ -30,7 +30,6 @@ function EditTimesheet(props) {
     const handleChange = (evt) => {
         setEntry({...entry, [evt.target.name]: evt.target.value});
     }
-
     const handleSubmit = async (evt) => {
         // in-app message
         if (!window.confirm(`Make changes to this timesheet, are you sure?`)) return;
@@ -71,7 +70,8 @@ function EditTimesheet(props) {
             jobname: jobName, 
             task: updateObject.task, 
             notes: updateObject.notes, 
-            id: editEntry.entryId
+            id: editEntry.entryId,
+            userid: user.email
         };    
         try {
             // validate entryId
@@ -93,7 +93,11 @@ function EditTimesheet(props) {
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             // in-app message
-            setTimeout(()=>{alert('Something went wrong, please check network connection.')},200);  
+            if (e.response&&e.response.data&&e.response.data.error&&e.response.data.error.includes('overlaps')) {
+                setTimeout(()=>{alert('Time overlaps with another timesheet. Please select "View Timesheets" from the menu to see the overlapping timesheet.')}, 200);
+            } else {
+                setTimeout(()=>{alert('Something went wrong, please check network connection.')}, 200);
+            }
         }        
     }
     // set environment

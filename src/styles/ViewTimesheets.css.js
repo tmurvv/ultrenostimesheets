@@ -30,12 +30,12 @@ function ViewTimesheetsCss() {
                 display: table;
             }
             @media screen and (max-width: 950px) {
-                .table {
-                    display: block;
-                }
+                // .table {
+                //     display: block;
+                // }
             }
             .row {
-                display: table-row
+                display: table-row;
                 background: #f6f6f6;
             }
             .row:nth-of-type(odd) { 
@@ -62,14 +62,6 @@ function ViewTimesheetsCss() {
             .cell {
                 padding: 6px 12px;
                 max-height: 40px;
-            }
-            @media screen and (max-width: 950px) {
-                .cell {
-                    padding: 2px 12px;
-                    display: flex;
-                    align-items: center;
-                    max-height: unset;
-                }
             }
             @media screen and (max-width: 950px) {
                 .cell {

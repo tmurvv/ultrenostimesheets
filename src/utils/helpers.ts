@@ -1,5 +1,4 @@
 export function getMinutesWorked(starttime: string, endtime: string, lunchtime: number) {
-    console.log(starttime,endtime,lunchtime)
     // validate for lunchtime
     if ((!lunchtime && lunchtime !== 0) || lunchtime<0 || isNaN(Number(lunchtime))) return -3;
     // validate if endtime before starttime
@@ -11,7 +10,6 @@ export function getMinutesWorked(starttime: string, endtime: string, lunchtime: 
     if (milliesWorked<=0) return -2;
     if (isNaN(Math.round((milliesWorked/60)/1000))) return -3;
     //return minutes worked
-    console.log(Math.round((milliesWorked/60)/1000))
     return Math.round((milliesWorked/60)/1000);
 }
 export function minutesToDigital(minutes: any) {

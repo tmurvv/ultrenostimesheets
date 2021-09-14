@@ -19,7 +19,7 @@ import {
 import ViewTimesheetsCss from '../styles/ViewTimesheets.css';
 
 function ViewTimesheets() {
-    const [winWidth, setWinWidth] = useState(2000);
+    // const [winWidth, setWinWidth] = useState(2000);
     const [todayDate, setTodayDate] = useState(2000);
     const [entries, setEntries] = useState(2000);
     const [found, setFound] = useState(true);
@@ -27,7 +27,19 @@ function ViewTimesheets() {
     const {adminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const {setPage} = useContext(PageContext);
     const {setEditEntry} = useContext(EditEntryContext);
-      
+    const [mobile, setMobile] = useState();
+    const handleResize = () => {
+        // css media queries rounding is slightly different. Using <= and then >= instead of <= and > (without the=) eliminates the rounding issues
+        window.innerWidth<=950&&setMobile(true);
+        window.innerWidth>=951&&setMobile(false);
+    }
+    // set mobile environment
+    useEffect(()=>handleResize());
+    // reset window width on window resize
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return () => { window.removeEventListener('resize', handleResize) }
+    }, []);
     async function handleDelete(delId) {
         // in-app confirm message
         if (!window.confirm(`Delete this timesheet entry?`)) return;
@@ -61,7 +73,6 @@ function ViewTimesheets() {
         const month=todayDateRaw.getMonth()+1<10?`0${todayDateRaw.getMonth()+1}`:todayDateRaw.getMonth()+1;
         const day=todayDateRaw.getDate()<10?`0${todayDateRaw.getDate()}`:todayDateRaw.getDate();
         setTodayDate(`${todayDateRaw.getFullYear()}/${month}/${day}`);
-        setWinWidth(window.innerWidth);
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
     },[]);
     // get data
@@ -102,27 +113,19 @@ function ViewTimesheets() {
             console.log(e.message);
         }      
     },[user, setPage, adminEditTimesheets]);
-    // reset window width on window resize
-    useEffect(() => {
-        setWinWidth(window.innerWidth);
-        const handleResize = () => {
-            setWinWidth(window.innerWidth);
-        }
-        window.addEventListener('resize', handleResize);
-        return () => { window.removeEventListener('resize', handleResize) }
-    }, []);
+    
     return (
         <div style={{marginTop: '50px', marginBottom: '50px'}}>
             <Spinner />
             <PageTitle maintitle='View Timesheets' subtitle= {`for ${user.firstname} ${user.lastname} - entries may be edited until office prepares payroll`}/>
             <h4 style={{textAlign: 'center'}}>Today is {todayDate}</h4>
             {/* mobile display */}
-            {winWidth<=950?
-            <table className='table' style={{boxShadow: 'none'}}>    
+            {mobile?
+            <table className='table' style={{boxShadow: 'none', display: 'block'}}>    
                 <tbody>
-                {!found&&<tr><td><p style={{textAlign: 'center'}}>No timesheets entries found.</p></td></tr>}    
+                {!found&&<tr><td><p style={{width:'100%', textAlign: 'center'}}>No timesheets entries found.</p></td></tr>}    
                 {Array.isArray(entries)?entries.map(entry=>
-                <tr key={entry._id} className='row' style={{borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
+                <tr key={entry._id} className='row' style={{display: 'block', borderRadius: '7px', backgroundColor: 'rgba(2, 2, 2, 0.07)', marginBottom: '25px'}}>
                     <td className='cell' style={{opacity: `${entry.editable?1:.4}`, display: `flex`, justifyContent: 'flex-end'}} >
                         <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px 10px'}} onClick={()=>{
                             if (entry.editable) { 
@@ -143,20 +146,20 @@ function ViewTimesheets() {
                         }} alt='edit button' />
                         <img src='img/deleteRedX.png' style={{height: '15px', margin: '5px 10px'}} onClick={()=>entry.editable&&handleDelete(entry._id)} alt='delete button' />
                     </td>
-                    <td className='cell'><span className='header'>Date of Work:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
-                    <td className='cell'><span className='header'>Start Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
-                    <td className='cell'><span className='header'>End Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
-                    <td className='cell'><span className='header'>Lunch Time:&nbsp;</span>{entry.lunchtime} mins</td>
-                    <td className='cell'><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
-                    <td className='cell'><span className='header'>Job Worked:&nbsp;</span>{(`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim()}</td>
-                    <td className='cell'><span className='header'>Task:&nbsp;</span>{entry.task}</td>
-                    <td className='cell'><div style={{maxHeight: '120px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>Date of Work:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={`${entry.starttime.substr(0,10)}`} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>Start Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.starttime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>End Time:&nbsp;</span><div style={{width: '165px', overflow: 'hidden'}}><input type='text' defaultValue={militaryToAMPM((`${entry.endtime.substr(0,16)}`).substr(11))} style={{whiteSpace: 'nowrap', backgroundColor: 'transparent', border: 'none', fontFamily: 'Times New Roman, Helvetica, Arial', color: 'black', fontSize: '17px', WebkitTextFillColor: '#000', opacity: '1'}} disabled/></div></td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>Lunch Time:&nbsp;</span>{entry.lunchtime} mins</td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>Hours Worked:&nbsp;</span>{entry.hoursworked}</td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>Job Worked:&nbsp;</span>{(`${entry.jobid&&entry.jobid} ${entry.jobname&&entry.jobname}`).replace('undefined','').trim()}</td>
+                    <td className='cell' style={{display: 'flex'}}><span className='header'>Task:&nbsp;</span>{entry.task}</td>
+                    <td className='cell' style={{display: 'flex'}}><div style={{maxHeight: '120px', width: '100%', overflowY: 'auto'}}><span className='header'>Notes:&nbsp;</span>{entry.notes}</div></td>
                 </tr>):<tr><td>No entries found.</td></tr>}
                 </tbody>
             </table>:''
             }         
             {/* non-mobile display */}
-            {winWidth>950&&
+            {!mobile&&
             <table className='table' style={{maxWidth: 'unset'}}>
                 <tbody>
                 <tr className='row'>

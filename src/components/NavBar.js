@@ -14,16 +14,17 @@ export default function NavBar() {
     const {setAdminEditTimesheets} = useContext(AdminEditTimesheetsContext);
     const [mobile, setMobile] = useState();
     const [open, setOpen] = useState(false);
+    const handleResize = () => {
+        // css media queries rounding is slightly different. 
+        //Using <= and then >= instead of <= and > (without the=) eliminates the rounding issues
+        window.innerWidth<=550&&setMobile(true);
+        window.innerWidth>=551&&setMobile(false);
+        window.innerWidth>=551&&setOpen(true);
+    }
     // set mobile environment
-    useEffect(()=>window.innerWidth<550&&setMobile(true),[]);
+    useEffect(()=>handleResize());
     // reset window width on window resize
     useEffect(() => {
-        const handleResize = () => {
-            window.innerWidth<550&&setMobile(true);
-            window.innerWidth<550&&setOpen(false);
-            window.innerWidth>=550&&setMobile(false);
-            window.innerWidth>=550&&setOpen(true);
-        }
         window.addEventListener('resize', handleResize);
         return () => { window.removeEventListener('resize', handleResize) }
     }, []);

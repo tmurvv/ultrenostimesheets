@@ -47,7 +47,6 @@ function App() {
         if (process.env.NODE_ENV!=='test') {
             async function jParse(user) {
                 const ret = await JSON.parse(user);
-                console.log(ret);
                 setUser(ret);
                 setPage('Dashboard');
             }
@@ -59,8 +58,6 @@ function App() {
                 value = isNaN(Number(value))? value : Number(value);
                 return (q[key] = value, q);
             }, {});
-            console.log('params:', params)
-            console.log('params.auto')
             if (params&&params.user&&atob(params.user)) {jParse(atob(params.user));
             window.history.replaceState({}, document.title, "/");}
             else if (params&&params.auto) {setPage('Dashboard'); return;}
