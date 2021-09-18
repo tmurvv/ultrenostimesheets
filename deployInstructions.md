@@ -13,7 +13,8 @@ To Deploy FE:
 - check .env for BUILD_PATH=html
 - npm run build 
 Production BUILD:
-- scp -r html/ root@143.198.188.28:/var/www/timesheets.ultrenos.ca/   // adds/replaces html subdir and all files except
+- don't forget to run build
+- scp -r html/ root@143.198.188.28:/var/www/timesheets.ultrenos.ca/   // adds/replaces html subdir and all files
 Staging BUILD:
-
+- don't forget to run build
 - scp -r html/ root@143.198.188.28:/var/www/timesheets-staging.ultrenos.ca/   // adds/replaces html subdir and all files

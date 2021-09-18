@@ -23,7 +23,9 @@ function NavBarCss() {
             }
             .navLinks {
                 height: 100%;
+                display: -webkit-flex;
                 display: flex;
+                -webkit-justify-content: space-between;
                 justify-content: space-evenly;
                 align-items: center;
                 position: relative;
