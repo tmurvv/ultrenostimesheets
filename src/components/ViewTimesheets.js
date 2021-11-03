@@ -85,12 +85,19 @@ function ViewTimesheets() {
                 const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 if (res.data.num_returned===0) setFound(false);
                 let entries = res.data.data;
+                
                 entries.forEach(entry=>{
+                    
                     // adjust entry fields for display object requirements
                     entry.starttime=`${entry.starttime}`;
                     entry.endtime=`${entry.endtime}`;
                     entry.lunchtimeview=`${entry.lunchtime} minutes`;
-                    entry.hoursworked=minutesToDigital(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime)).toFixed(2);
+                    try {
+                        entry.hoursworked=minutesToDigital(getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime)).toFixed(2);
+                    } catch (e) {
+                        // BREAKING need error email sent to web master indicating an issue on a timesheet
+                        entry.hoursworked="unable to calculate";
+                    }
                     entry.editable=entryEditable(entry, adminEditTimesheets);
                 });
                 // sort by reverse date of work, please note that editable? depends on date timesheet is entered, not date of work
