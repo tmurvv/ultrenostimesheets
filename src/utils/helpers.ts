@@ -127,4 +127,23 @@ export function getParams() {
     //     value = isNaN(Number(value))? value : Number(value);
     //     return (q[key] = value, q);
     // }, {});
-} 
+}
+export function cleanHiddenCharacters(sheet: any) {
+    if (!sheet) return; // Report error
+    if (sheet.firstname) sheet.notes=sheet.firstname.replace(/\r?\n|\r/g, '/');
+    if (sheet.lastname) sheet.notes=sheet.lastname.replace(/\r?\n|\r/g, '/');
+    if (sheet.jobid) sheet.notes=sheet.jobid.replace(/\r?\n|\r/g, '/');
+    if (sheet.jobname) sheet.notes=sheet.jobname.replace(/\r?\n|\r/g, '/');
+    if (sheet.task) sheet.notes=sheet.task.replace(/\r?\n|\r/g, '/');
+    if (sheet.notes) sheet.notes=sheet.notes.replace(/\r?\n|\r/g, '/');
+}
+export function cleanCommas(sheet: any) {
+    if (!sheet) return; // Report error
+    if (sheet.firstname) sheet.firstname=sheet.firstname.replace(/,/g, '/');
+    if (sheet.lastname) sheet.lastname=sheet.lastname.replace(/,/g, '/');
+    if (sheet.jobid) sheet.jobid=sheet.jobid.replace(/,/g, '/');
+    if (sheet.jobname) sheet.jobname=sheet.jobname.replace(/,/g, '/');
+    if (sheet.task) sheet.task=sheet.task.replace(/,/g, '/');
+    if (sheet.notes) sheet.notes=sheet.notes.replace(/,/g, '/');
+    return sheet;
+}

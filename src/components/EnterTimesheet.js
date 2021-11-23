@@ -12,7 +12,9 @@ import {ENTRY_INIT, LUNCHTIMES} from "../constants/inits";
 import {
     getMinutesWorked,
     minutesToText,
-    isFutureDay
+    isFutureDay,
+    cleanCommas,
+    cleanHiddenCharacters
 } from "../utils/helpers";
 
 function EnterTimesheet({setPage}) {
@@ -38,6 +40,7 @@ function EnterTimesheet({setPage}) {
         if (!entry.lunchtime||entry.lunchtime==='How long for lunch?') return alert('Please enter lunch time (0 minutes if no break taken).');
         if (!entry.jobname||entry.jobname==='Which Job-site?') return alert('Please select a Job-site.');
         if (!entry.task||entry.task==='What type of work?') return alert('Please select type of work.');
+        
         // calculate hours
         const minutesWorked = getMinutesWorked(entry.starttime, entry.endtime, entry.lunchtime);
         if (minutesWorked===-1) return alert('End Time must be after Start Time.');
@@ -54,6 +57,7 @@ function EnterTimesheet({setPage}) {
         let jobName=entry.jobname.split(' ')[1];
         if (jobId.toUpperCase().startsWith("OTHER")) {jobId="Other"; jobName="  ";}
         if (entry.task.toUpperCase().startsWith("OTHER")) entry.task="Other";
+        
         // create submit object
         const entryObject = {
             "userid": user.email,
@@ -67,6 +71,9 @@ function EnterTimesheet({setPage}) {
             "task": entry.task,
             "notes": entry.notes
         }
+        // clean up text BREAKING needs testing
+        cleanCommas(entryObject);
+        cleanHiddenCharacters(entryObject);
         // submit entry
         try {
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);

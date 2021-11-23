@@ -14,7 +14,9 @@ import {ENTRY_INIT, LUNCHTIMES} from "../constants/inits";
 import {
     getMinutesWorked,  
     isFutureDay,
-    checkJobsite
+    checkJobsite,
+    cleanHiddenCharacters,
+    cleanCommas
 } from "../utils/helpers";
 
 function EditTimesheet(props) {
@@ -45,6 +47,7 @@ function EditTimesheet(props) {
             submitTime: editEntry.timesubmitted,
             entryId: editEntry.entryId,
         }
+        
         // validations
         if (isFutureDay(entry.starttime)) return alert("Timesheet may not be submitted for a future date.")
         if (!updateObject.starttime) return alert('Please enter start time.');
@@ -72,7 +75,10 @@ function EditTimesheet(props) {
             notes: updateObject.notes, 
             id: editEntry.entryId,
             userid: user.email
-        };    
+        };
+        // clean up the input
+        cleanCommas(entryObject);
+        cleanHiddenCharacters(entryObject);
         try {
             // validate entryId
             if (!(editEntry.entryId)) throw new Error('Entry Id not found. Entry not updated');
