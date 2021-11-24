@@ -183,7 +183,7 @@ function ViewTimesheets() {
                 {!found&&<tr><td><h4>No timesheet entries found.</h4></td></tr>}
                 {Array.isArray(entries)?entries.map(entry=>
                 <tr key={entry._id} className='row'>
-                    <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'space-between', minWidth: '60px'}} disable={entry.editable}>
+                    <td className='cell' style={{opacity: `${entry.editable?1:.2}`, display: 'flex', justifyContent: 'space-between', minWidth: '60px'}} disabled={entry.editable}>
                         <img src='img/editItemIcon.png' style={{height: '15px', margin: '5px'}} 
                         onClick={()=>{if (entry.editable) {setPage('EditTimesheet'); setEditEntry({
                             entryId: entry._id,

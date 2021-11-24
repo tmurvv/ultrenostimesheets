@@ -130,12 +130,13 @@ export function getParams() {
 }
 export function cleanHiddenCharacters(sheet: any) {
     if (!sheet) return; // Report error
-    if (sheet.firstname) sheet.notes=sheet.firstname.replace(/\r?\n|\r/g, '/');
-    if (sheet.lastname) sheet.notes=sheet.lastname.replace(/\r?\n|\r/g, '/');
-    if (sheet.jobid) sheet.notes=sheet.jobid.replace(/\r?\n|\r/g, '/');
-    if (sheet.jobname) sheet.notes=sheet.jobname.replace(/\r?\n|\r/g, '/');
-    if (sheet.task) sheet.notes=sheet.task.replace(/\r?\n|\r/g, '/');
+    if (sheet.firstname) sheet.firstname=sheet.firstname.replace(/\r?\n|\r/g, '/');
+    if (sheet.lastname) sheet.lastname=sheet.lastname.replace(/\r?\n|\r/g, '/');
+    if (sheet.jobid) sheet.jobid=sheet.jobid.replace(/\r?\n|\r/g, '/');
+    if (sheet.jobname) sheet.jobname=sheet.jobname.replace(/\r?\n|\r/g, '/');
+    if (sheet.task) sheet.task=sheet.task.replace(/\r?\n|\r/g, '/');
     if (sheet.notes) sheet.notes=sheet.notes.replace(/\r?\n|\r/g, '/');
+    return sheet;
 }
 export function cleanCommas(sheet: any) {
     if (!sheet) return; // Report error

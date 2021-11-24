@@ -59,7 +59,7 @@ function EnterTimesheet({setPage}) {
         if (entry.task.toUpperCase().startsWith("OTHER")) entry.task="Other";
         
         // create submit object
-        const entryObject = {
+        let entryObject = {
             "userid": user.email,
             "firstname": user.firstname,
             "lastname": user.lastname,
@@ -71,9 +71,10 @@ function EnterTimesheet({setPage}) {
             "task": entry.task,
             "notes": entry.notes
         }
-        // clean up text BREAKING needs testing
-        cleanCommas(entryObject);
-        cleanHiddenCharacters(entryObject);
+        // clean linebreaks and commas from text fields
+        entryObject = cleanCommas(entryObject);
+        entryObject = cleanHiddenCharacters(entryObject);
+
         // submit entry
         try {
             await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
