@@ -44,6 +44,7 @@ function App() {
     },[]);
     // check for file upload
     useEffect(() =>{
+        console.log('appp use effect', process.env.TEST)
         if (process.env.NODE_ENV!=='test') {
             async function jParse(user) {
                 const ret = await JSON.parse(user);

@@ -29,7 +29,8 @@ function Login({setPage}) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
             // login user
-            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            // const res = await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
+            const res = await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword});
             const returnedUser = res.data.data;
             // set user context to login user
             setUser({
@@ -80,7 +81,7 @@ function Login({setPage}) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
         try {
             // send forgot password email
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/sendresetemail`, {useremail: userLogin.loginemail});
             // in-app message
             setTimeout(()=>{alert('Please check your inbox for an email with instructions to reset your password..')}, 200);
             // stop spinner

@@ -41,7 +41,7 @@ function ResetPassword(props) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
         try {
             // reset password
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/resetpassword`, {useremail: props.useremail, newpassword: userLogin.newpassword});
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/resetpassword`, {useremail: props.useremail, newpassword: userLogin.newpassword});
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             // in-app message

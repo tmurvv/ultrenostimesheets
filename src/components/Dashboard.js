@@ -36,7 +36,7 @@ function Dashboard({setPage}) {
         };
         try {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/updateuser`, updateObject)
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/updateuser`, updateObject)
             alert(`Privileges updated for user ${updateObject.oldemail}.`);
             setUserLogin({
                 loginemail: '',
@@ -78,7 +78,7 @@ function Dashboard({setPage}) {
         };
         try {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/deleteuser`, deleteObject)
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/deleteuser`, deleteObject)
             alert(`User ${deleteObject.email} deleted.`);
             setUserLogin({
                 loginemail: '',
@@ -125,7 +125,7 @@ function Dashboard({setPage}) {
     useEffect(()=>{
         // get data
         const numSheets = async () => {
-            const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/numtimesheets`);
+            const res = await axios.get(`http://localhost:7050/api/v1/ultrenostimesheets/admin/numtimesheets`);
             if (res.data.numsheets&&res.data.numsheets!==0) setNumSheets(res.data.numsheets);
             if (res.data.totsheets&&res.data.totsheets!==0) setTotSheets(res.data.totsheets);
             if (res.data.totusers&&res.data.totusers!==0) setTotUsers(res.data.totusers);
@@ -229,7 +229,7 @@ function Dashboard({setPage}) {
                                 </div>
                                 <div style={{marginTop: '25px', width: '100%', display: 'flex', justifyContent: 'center'}}>
                                     <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto', backgroundColor: '#004976'}} onClick={()=>{if (!window.navigator.onLine) {window.alert('No network connection.')}}}>
-                                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadnewtimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
+                                        <a href={`http://localhost:7050/api/v1/ultrenostimesheets/admin/downloadnewtimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
                                     </button>
                                 </div>
                             </div>
@@ -244,7 +244,7 @@ function Dashboard({setPage}) {
                                 </div>
                                 <div style={{width: '100%', marginTop: '25px', display: 'flex', justifyContent: 'center'}}>
                                     <button type='button' className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto', backgroundColor: '#004976'}} onClick={()=>{if (!window.navigator.onLine) {window.alert('No network connection.')}}}>
-                                        <a href={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/downloadalltimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
+                                        <a href={`http://localhost:7050/api/v1/ultrenostimesheets/admin/downloadalltimesheets`} onClick={()=>setPage('Homepage')} style={{textDecoration: 'none', fontFamily: 'sans-serif', letterSpacing: '2px', fontSize: '14px', color: 'white'}}>Download</a>
                                     </button>
                                 </div>
                             </div>  
@@ -260,7 +260,7 @@ function Dashboard({setPage}) {
                         <PageTitle maintitle='Upload Works in Progress List' subtitle={`The listings uploaded here will replace all of the listings in the timesheet "job name" select box.`} />
                         <div className="form-container" style={{marginTop: '50px'}}>
                             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                                <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                                <form action={`http://localhost:7050/api/v1/ultrenostimesheets/admin/uploadjoblist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                                     <input type='text' name='user' value={JSON.stringify(user)} hidden/>
                                     <input id="job-list-input" type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} autoFocus />
                                     <button id='submit-job-list' type='Submit' onClick={(e)=>{if (window.navigator.onLine) {alert('This upload replaces all of the selections in the "job name" select box.')}else{e.preventDefault(); alert('No network connection.'); return false;}}} className="submit-btn login-signup-title" style={{boxShadow: '3px 3px 3px lightgrey', width: '150px', margin: 'auto'}}>
@@ -284,7 +284,7 @@ function Dashboard({setPage}) {
                         <PageTitle maintitle='Upload Tasks List' subtitle={`The tasks uploaded here will replace all of the tasks in the timesheet "task" select box.`} />
                         <div className="form-container" style={{marginTop: '50px'}}>
                             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                                <form action={`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                                <form action={`http://localhost:7050/api/v1/ultrenostimesheets/admin/uploadtasklist`} encType="multipart/form-data" method="post" style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                                     <input type='text' name='user' value={JSON.stringify(user)} hidden/>
                                     <input id="task-list-input" type="file" name="file-to-upload" style={{margin: '0 0 30px 55px', textAlign: 'center'}} required/>
                                     {/* BREAKING = below type should be submit*/}

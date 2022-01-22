@@ -25,7 +25,7 @@ function WhichAccount({ title, subtitle, accountHeading, setPage}) {
         if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";         
         try {
             // login user
-            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword, adminemail: user.email});  
+            const res = await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/login`, {email: userLogin.loginemail, password: userLogin.loginpassword, adminemail: user.email});  
             const returnedUser = res.data.data;
             // const jwt = res.data.token; // TODO
             // set user context to login user
@@ -64,7 +64,7 @@ function WhichAccount({ title, subtitle, accountHeading, setPage}) {
     // useEffect(()=>{
     //     // get data
     //     const numSheets = async () => {
-    //         // const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/admin/numtimesheets`);
+    //         // const res = await axios.get(`http://localhost:7050/api/v1/ultrenostimesheets/admin/numtimesheets`);
     //         // if (res.data.numsheets&&res.data.numsheets!==0) setNumSheets(res.data.numsheets);
     //         // if (res.data.totsheets&&res.data.totsheets!==0) setTotSheets(res.data.totsheets);
     //         // if (res.data.totusers&&res.data.totusers!==0) setTotUsers(res.data.totusers);

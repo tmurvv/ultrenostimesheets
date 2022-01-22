@@ -49,7 +49,7 @@ function ViewTimesheets() {
             // validation
             if (!delId) throw new Error('Entry Id not found. Entry not updated');
             // Submit Entry
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/deletetimesheet`, {delid: delId});
             // set environment
             setPage('RefreshView');
             // stop spinner
@@ -82,7 +82,7 @@ function ViewTimesheets() {
         async function getEntries() {
             try {
                 // get entries
-                const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
+                const res = await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/viewtimesheetsbyuser`, {userid: user.email});
                 if (res.data.num_returned===0) setFound(false);
                 let entries = res.data.data;
                 

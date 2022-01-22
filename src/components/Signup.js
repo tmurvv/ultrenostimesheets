@@ -36,7 +36,7 @@ function Signup({setPage}) {
         };     
         try {
             // signup user
-            const res = await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/users/signup`, newUser);
+            const res = await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/users/signup`, newUser);
             if (res.status===201 || res.status===200) {                   
                 // set userContext to added user
                 const addeduser = res.data.newuser;

@@ -85,7 +85,7 @@ function EditTimesheet(props) {
             // start spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";
             // Submit Entry
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/updatetimesheet`, entryObject);
             // set environment
             setEditEntry(ENTRY_INIT);
             setPage('ViewTimesheets');
@@ -124,7 +124,7 @@ function EditTimesheet(props) {
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="flex";   
             // get tasks
             try {  
-                const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
+                const tasksArrays = await axios.get(`http://localhost:7050/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
                 Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task));
                 setTasks(incomingTasks);
@@ -136,7 +136,7 @@ function EditTimesheet(props) {
             }
             // get current job-site list
             try {
-                const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                const currentJobsArrays = await axios.get(`http://localhost:7050/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
                 Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobname&&currentJobArray.jobid}`, `${currentJobArray.jobname&&currentJobArray.jobname}`])})
                 if (incomingCurrentJobs.length<=0) alert('Problem getting job list. Please check network connection.');

@@ -77,7 +77,7 @@ function EnterTimesheet({setPage}) {
 
         // submit entry
         try {
-            await axios.post(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
+            await axios.post(`http://localhost:7050/api/v1/ultrenostimesheets/appendtimesheet`, entryObject);
             // stop spinner
             if (document.querySelector('#spinner')) document.querySelector('#spinner').style.display="none";
             // in-app message
@@ -113,7 +113,7 @@ function EnterTimesheet({setPage}) {
         async function getSupportLists() {
             // tasks
             try {
-                const tasksArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/tasks`);
+                const tasksArrays = await axios.get(`http://localhost:7050/api/v1/ultrenostimesheets/supportlists/tasks`);
                 let incomingTasks = [];
                 Array.isArray(Array.from(tasksArrays.data.data))&&Array.from(tasksArrays.data.data).forEach((taskArray, idx)=>idx>0&&incomingTasks.push(taskArray.task))
                 setTasks(incomingTasks);
@@ -128,7 +128,7 @@ function EnterTimesheet({setPage}) {
             }
             // current jobs
             try {
-                const currentJobsArrays = await axios.get(`${process.env.REACT_APP_DEV_ENV}/api/v1/ultrenostimesheets/supportlists/currentjobs`);
+                const currentJobsArrays = await axios.get(`http://localhost:7050/api/v1/ultrenostimesheets/supportlists/currentjobs`);
                 let incomingCurrentJobs = [];
                 Array.isArray(Array.from(currentJobsArrays.data.data))&&Array.from(currentJobsArrays.data.data).forEach(currentJobArray=>{if (currentJobArray.current===true&&currentJobArray!==undefined&&currentJobArray.jobname&&currentJobArray.jobname.toUpperCase()!=='JOBNAMEDB') incomingCurrentJobs.push([`${currentJobArray.jobid} ${currentJobArray.jobname}`])})
                 setCurrentJobs(incomingCurrentJobs);
